@@ -73,7 +73,7 @@
                                     </div>
 
                                     <div class="button-group justify-center">
-                                        <a href="https://github.com/kniraven/employee-manager" class="button button-ghost" target="_blank" rel="noopener">GitHub</a>
+                                        <a href="https://github.com/kniraven/nickolaspatino.com/tree/main/public/demos/employee-manager" class="button button-ghost" target="_blank" rel="noopener">GitHub</a>
                                     </div>
                                 </div>
                             </div>
@@ -107,7 +107,7 @@
                                     </div>
 
                                     <div class="button-group justify-center">
-                                        <a href="https://github.com/kniraven/monster-maker" class="button button-ghost" target="_blank" rel="noopener">GitHub</a>
+                                        <a href="https://github.com/kniraven/nickolaspatino.com/tree/main/public/demos/monster-maker" class="button button-ghost" target="_blank" rel="noopener">GitHub</a>
                                     </div>
                                 </div>
                             </div>
@@ -141,7 +141,7 @@
                                     </div>
 
                                     <div class="button-group justify-center">
-                                        <a href="https://github.com/kniraven/goblin-slayer" class="button button-ghost" target="_blank" rel="noopener">GitHub</a>
+                                        <a href="https://github.com/kniraven/nickolaspatino.com/tree/main/public/demos/goblin-slayer" class="button button-ghost" target="_blank" rel="noopener">GitHub</a>
                                     </div>
                                 </div>
                             </div>

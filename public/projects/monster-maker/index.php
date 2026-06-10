@@ -45,7 +45,7 @@
 
                             <div class="button-group">
                                 <a href="/demos/monster-maker/" class="button button-primary" target="_blank" rel="noopener">Live Demo</a>
-                                <a href="https://github.com/kniraven/monster-maker" class="button button-secondary" target="_blank" rel="noopener">GitHub</a>
+                                <a href="https://github.com/kniraven/nickolaspatino.com/tree/main/public/demos/monster-maker" class="button button-secondary" target="_blank" rel="noopener">GitHub</a>
                                 <a href="/projects/" class="button button-ghost">Back to Projects</a>
                             </div>
                         </div>
@@ -393,7 +393,7 @@
 
                     <div class="button-group">
                         <a href="/demos/monster-maker/" class="button button-primary" target="_blank" rel="noopener">Live Demo</a>
-                        <a href="https://github.com/kniraven/monster-maker" class="button button-secondary" target="_blank" rel="noopener">GitHub</a>
+                        <a href="https://github.com/kniraven/nickolaspatino.com/tree/main/public/demos/monster-maker" class="button button-secondary" target="_blank" rel="noopener">GitHub</a>
                         <a href="/projects/" class="button button-ghost">Back to Projects</a>
                     </div>
                 </article>
