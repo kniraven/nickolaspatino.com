@@ -1,0 +1,914 @@
+/* =========================================================
+   Kniraven Theme CSS
+   File: /public/assets/css/theme.css
+
+   Purpose:
+   This file defines Kniraven's reusable visual standards:
+   - Colors
+   - Font families
+   - Font weights
+   - Border colors/styles/radius
+   - Backgrounds
+   - Shadows
+   - Focus/hover visual states
+   - Decorative visual treatments
+   - Other visual skinning
+
+   Important:
+   This file should be safe to remove or heavily change without
+   destroying layout. The page may become plain, but it should
+   remain usable if structure.css is still present.
+
+   Structure CSS answers questions like:
+   - How wide is the content area?
+   - How much spacing does a section have?
+   - How does a grid behave?
+   - How do cards/buttons/forms flow?
+
+   Theme CSS answers questions like:
+   - What colors are used?
+   - What fonts are used?
+   - How bold is text?
+   - Are corners rounded, sharp, clipped, or glowing?
+   - What do shadows, borders, hover states, and backgrounds look like?
+
+   Rule:
+   If a rule affects layout, spacing, sizing, alignment, flow,
+   wrapping, or usability, it belongs in structure.css.
+
+   If a rule only affects visual appearance, it belongs here.
+   ========================================================= */
+
+
+/* =========================================================
+   1. THEME TOKENS
+   ========================================================= */
+
+:root {
+  /* Brand colors */
+  --color-primary: #60156c;
+  --color-primary-dark: #2a0835;
+  --color-primary-deep: #14051b;
+  --color-primary-light: #a83ac0;
+  --color-primary-hot: #d75cff;
+  --color-primary-soft: #f5e7fa;
+  --color-primary-faint: rgb(96 21 108 / 0.10);
+
+  /* Accent colors */
+  --color-accent-blue: #5ee7ff;
+  --color-accent-cyan: #9ff6ff;
+  --color-accent-pink: #ff6bd6;
+  --color-accent-violet: #b76cff;
+  --color-accent-white: #ffffff;
+
+  /* Page and surface colors */
+  --color-bg: #fff7ff;
+  --color-bg-soft: #faedff;
+  --color-bg-strong: #ffffff;
+
+  --color-surface: rgb(255 255 255 / 0.76);
+  --color-surface-solid: #ffffff;
+  --color-surface-strong: #f0ddf7;
+  --color-surface-muted: #fbf3ff;
+
+  /* Text colors */
+  --color-text: #241329;
+  --color-muted: #6f5c79;
+  --color-heading: #120618;
+
+  /* Border colors */
+  --color-border: rgb(96 21 108 / 0.24);
+  --color-border-strong: rgb(168 58 192 / 0.55);
+  --color-border-faint: rgb(96 21 108 / 0.12);
+  --color-border-glow: rgb(215 92 255 / 0.62);
+
+  /* Contrast colors */
+  --color-on-primary: #ffffff;
+  --color-on-dark: #ffffff;
+
+  /* Links */
+  --color-link: var(--color-primary);
+  --color-link-hover: var(--color-primary-dark);
+
+  /* Status colors */
+  --color-success: #237a4b;
+  --color-warning: #9a6700;
+  --color-danger: #b42318;
+
+  /* Fonts */
+  --font-body: "IBM Plex Mono", "Aptos Mono", "Cascadia Code", "Cascadia Mono", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace;
+  --font-heading: "IBM Plex Mono", "Aptos Mono", "Cascadia Code", "Cascadia Mono", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace;
+  --font-mono: "IBM Plex Mono", "Aptos Mono", "Cascadia Code", "Cascadia Mono", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace;
+
+  /* Font weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 550;
+  --font-weight-semibold: 650;
+  --font-weight-bold: 750;
+  --font-weight-heavy: 850;
+
+  /* Border appearance */
+  --border-style-default: solid;
+
+  /* Decorative radius */
+  --radius-sm: 0.125rem;
+  --radius-md: 0.25rem;
+  --radius-lg: 0.375rem;
+  --radius-xl: 0.5rem;
+  --radius-pill: 0.375rem;
+
+  /* Angular sci-fi corner cuts */
+  --corner-cut-sm: 0.45rem;
+  --corner-cut-md: 0.75rem;
+  --corner-cut-lg: 1.05rem;
+  --corner-cut-xl: 1.35rem;
+
+  /* Clip-path shapes */
+  --clip-panel: polygon(
+    0 0,
+    calc(100% - var(--corner-cut-lg)) 0,
+    100% var(--corner-cut-lg),
+    100% 100%,
+    var(--corner-cut-md) 100%,
+    0 calc(100% - var(--corner-cut-md))
+  );
+
+  --clip-panel-alt: polygon(
+    var(--corner-cut-md) 0,
+    100% 0,
+    100% calc(100% - var(--corner-cut-lg)),
+    calc(100% - var(--corner-cut-lg)) 100%,
+    0 100%,
+    0 var(--corner-cut-md)
+  );
+
+  --clip-button: polygon(
+    0 0,
+    calc(100% - var(--corner-cut-sm)) 0,
+    100% var(--corner-cut-sm),
+    100% 100%,
+    var(--corner-cut-sm) 100%,
+    0 calc(100% - var(--corner-cut-sm))
+  );
+
+  --clip-media: polygon(
+    0 0,
+    calc(100% - var(--corner-cut-md)) 0,
+    100% var(--corner-cut-md),
+    100% 100%,
+    0 100%
+  );
+
+  /* Decorative shadows */
+  --shadow-soft: 0 0.75rem 2rem rgb(31 23 36 / 0.08);
+  --shadow-card: 0 1rem 2.75rem rgb(31 23 36 / 0.14);
+  --shadow-strong: 0 1.5rem 4rem rgb(31 23 36 / 0.22);
+  --shadow-focus: 0 0 0 0.25rem rgb(215 92 255 / 0.26);
+  --shadow-inner-line: inset 0 1px 0 rgb(255 255 255 / 0.82);
+  --shadow-inner-dark-line: inset 0 1px 0 rgb(255 255 255 / 0.14);
+
+  --shadow-neon-purple:
+    0 0 1rem rgb(215 92 255 / 0.22),
+    0 0 2.25rem rgb(96 21 108 / 0.18);
+
+  --shadow-neon-blue:
+    0 0 1rem rgb(94 231 255 / 0.22),
+    0 0 2.25rem rgb(94 231 255 / 0.12);
+
+  --shadow-neon-hot:
+    0 0 1.25rem rgb(215 92 255 / 0.28),
+    0 0 3rem rgb(94 231 255 / 0.12);
+
+  /* Visual transitions */
+  --transition-fast: 160ms ease;
+  --transition-standard: 220ms ease;
+}
+
+
+/* =========================================================
+   2. BASE THEME
+   ========================================================= */
+
+body {
+  background:
+    radial-gradient(circle at 8% 8%, rgb(215 92 255 / 0.28), transparent 18rem),
+    radial-gradient(circle at 88% 6%, rgb(94 231 255 / 0.18), transparent 16rem),
+    radial-gradient(circle at 68% 48%, rgb(183 108 255 / 0.12), transparent 24rem),
+    radial-gradient(circle at 14% 84%, rgb(96 21 108 / 0.13), transparent 22rem),
+    linear-gradient(rgb(96 21 108 / 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(96 21 108 / 0.05) 1px, transparent 1px),
+    linear-gradient(rgb(215 92 255 / 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(215 92 255 / 0.035) 1px, transparent 1px),
+    linear-gradient(135deg, rgb(255 255 255 / 0) 0%, rgb(255 255 255 / 0) 45%, rgb(215 92 255 / 0.08) 45%, rgb(215 92 255 / 0.08) 46%, rgb(255 255 255 / 0) 46%),
+    linear-gradient(180deg, #fffaff 0%, #f7e9ff 34%, #fff8ff 100%);
+  background-size:
+    auto,
+    auto,
+    auto,
+    auto,
+    2rem 2rem,
+    2rem 2rem,
+    8rem 8rem,
+    8rem 8rem,
+    100% 100%,
+    auto;
+  background-attachment:
+    fixed,
+    fixed,
+    fixed,
+    fixed,
+    fixed,
+    fixed,
+    fixed,
+    fixed,
+    fixed,
+    fixed;
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-normal);
+  font-variant-ligatures: contextual;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: var(--color-heading);
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-heavy);
+  letter-spacing: -0.06em;
+}
+
+h1 {
+  text-shadow:
+    0 0.45rem 1.25rem rgb(96 21 108 / 0.18),
+    0 0 2rem rgb(215 92 255 / 0.12);
+}
+
+h2 {
+  text-shadow: 0 0.35rem 1rem rgb(96 21 108 / 0.10);
+}
+
+p,
+li,
+dd {
+  color: var(--color-text);
+}
+
+dt {
+  color: var(--color-heading);
+  font-weight: var(--font-weight-bold);
+}
+
+strong,
+b {
+  color: var(--color-heading);
+  font-weight: var(--font-weight-bold);
+}
+
+small,
+.small-text,
+.text-muted {
+  color: var(--color-muted);
+}
+
+.small-text {
+  color: var(--color-primary);
+  font-weight: var(--font-weight-heavy);
+  letter-spacing: 0.075em;
+  text-transform: uppercase;
+}
+
+code,
+kbd,
+samp,
+pre {
+  font-family: var(--font-mono);
+}
+
+a {
+  color: var(--color-link);
+  text-decoration-color: rgb(96 21 108 / 0.45);
+  text-decoration-thickness: 0.09em;
+  text-underline-offset: 0.25em;
+  transition:
+    color var(--transition-fast),
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    text-decoration-color var(--transition-fast),
+    text-shadow var(--transition-fast);
+}
+
+a:hover,
+a:focus-visible {
+  color: var(--color-link-hover);
+  text-decoration-color: currentColor;
+  text-shadow: 0 0 0.75rem rgb(215 92 255 / 0.28);
+}
+
+::selection {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+:focus-visible {
+  outline-color: var(--color-primary-hot);
+}
+
+
+/* =========================================================
+   3. HEADER / NAV THEME
+   ========================================================= */
+
+.site-header {
+  background:
+    linear-gradient(90deg, rgb(255 255 255 / 0.86), rgb(248 236 255 / 0.74)),
+    linear-gradient(135deg, rgb(215 92 255 / 0.10), rgb(94 231 255 / 0.06));
+  border-bottom-color: var(--color-border-faint);
+  border-bottom-style: var(--border-style-default);
+  box-shadow:
+    0 0.5rem 1.5rem rgb(31 23 36 / 0.06),
+    inset 0 -1px 0 rgb(255 255 255 / 0.72),
+    0 0 2rem rgb(215 92 255 / 0.08);
+  backdrop-filter: blur(18px);
+}
+
+.site-brand {
+  color: var(--color-heading);
+  font-weight: var(--font-weight-heavy);
+  letter-spacing: -0.045em;
+  text-decoration: none;
+  text-shadow: 0 0 1rem rgb(96 21 108 / 0.12);
+}
+
+.site-brand:hover,
+.site-brand:focus-visible {
+  color: var(--color-primary);
+  text-shadow: var(--shadow-neon-purple);
+}
+
+.site-brand-logo {
+  border-radius: var(--radius-md);
+  clip-path: var(--clip-button);
+  box-shadow:
+    0 0.45rem 1.1rem rgb(96 21 108 / 0.18),
+    0 0 1.5rem rgb(215 92 255 / 0.16);
+}
+
+.site-nav-link {
+  color: var(--color-text);
+  font-weight: var(--font-weight-bold);
+  text-decoration: none;
+  background: transparent;
+  border-radius: var(--radius-md);
+  clip-path: var(--clip-button);
+  transition:
+    color var(--transition-fast),
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    text-shadow var(--transition-fast);
+}
+
+.site-nav-link:hover,
+.site-nav-link:focus-visible {
+  color: var(--color-primary);
+  background:
+    linear-gradient(135deg, rgb(215 92 255 / 0.14), rgb(94 231 255 / 0.08));
+  box-shadow:
+    inset 0 0 0 1px var(--color-border-faint),
+    inset 0 1px 0 rgb(255 255 255 / 0.78),
+    0 0 1rem rgb(215 92 255 / 0.12);
+}
+
+.site-nav-link[aria-current="page"] {
+  color: var(--color-primary-dark);
+  background:
+    linear-gradient(135deg, rgb(215 92 255 / 0.20), rgb(94 231 255 / 0.13));
+  box-shadow:
+    inset 0 0 0 1px var(--color-border-strong),
+    var(--shadow-inner-line),
+    0 0 1.25rem rgb(215 92 255 / 0.14);
+}
+
+.nav-toggle {
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.92), rgb(249 235 255 / 0.82));
+  color: var(--color-text);
+  border-color: var(--color-border);
+  border-style: var(--border-style-default);
+  border-radius: var(--radius-md);
+  clip-path: var(--clip-button);
+  font-weight: var(--font-weight-bold);
+  box-shadow:
+    var(--shadow-soft),
+    var(--shadow-inner-line);
+}
+
+.nav-toggle:hover,
+.nav-toggle:focus-visible {
+  color: var(--color-primary);
+  border-color: var(--color-primary-light);
+  box-shadow:
+    var(--shadow-card),
+    var(--shadow-neon-purple);
+}
+
+
+/* =========================================================
+   4. SURFACES / CARDS / MEDIA THEME
+   ========================================================= */
+
+.card {
+  background:
+    linear-gradient(135deg, rgb(255 255 255 / 0.93), rgb(255 255 255 / 0.70)),
+    linear-gradient(135deg, rgb(215 92 255 / 0.13), rgb(94 231 255 / 0.09));
+  border-color: var(--color-border);
+  border-style: var(--border-style-default);
+  border-radius: var(--radius-lg);
+  clip-path: var(--clip-panel);
+  box-shadow:
+    var(--shadow-soft),
+    var(--shadow-inner-line),
+    inset 0 0 0 1px rgb(255 255 255 / 0.42);
+  backdrop-filter: blur(14px);
+  transition:
+    border-color var(--transition-standard),
+    box-shadow var(--transition-standard),
+    background-color var(--transition-standard),
+    filter var(--transition-standard),
+    transform var(--transition-standard);
+}
+
+.card:hover {
+  border-color: var(--color-border-glow);
+  box-shadow:
+    var(--shadow-card),
+    var(--shadow-neon-purple),
+    var(--shadow-inner-line);
+  filter: saturate(1.05);
+}
+
+.card:nth-of-type(even) {
+  clip-path: var(--clip-panel-alt);
+}
+
+.card-media,
+.media-frame {
+  background:
+    linear-gradient(135deg, rgb(42 8 53 / 0.12), rgb(215 92 255 / 0.16)),
+    linear-gradient(135deg, var(--color-surface-strong), var(--color-primary-soft));
+  border-radius: var(--radius-md);
+  clip-path: var(--clip-media);
+  box-shadow:
+    inset 0 0 0 1px rgb(96 21 108 / 0.18),
+    inset 0 1px 0 rgb(255 255 255 / 0.55),
+    0 0 1.25rem rgb(215 92 255 / 0.08);
+}
+
+.feature-image {
+  box-shadow:
+    var(--shadow-card),
+    var(--shadow-neon-purple);
+}
+
+.surface {
+  background:
+    linear-gradient(135deg, rgb(255 255 255 / 0.78), rgb(244 233 247 / 0.82));
+}
+
+.surface-strong {
+  background:
+    linear-gradient(135deg, rgb(240 221 247 / 0.95), rgb(255 255 255 / 0.72));
+}
+
+.surface-muted {
+  background: var(--color-surface-muted);
+}
+
+/* Reusable contrast plate for light logos, pale graphics,
+   transparent graphics, or images with white/light text. */
+.graphic-plate,
+.card.graphic-plate {
+  background:
+    radial-gradient(circle at 18% 12%, rgb(215 92 255 / 0.58), transparent 34%),
+    radial-gradient(circle at 84% 16%, rgb(94 231 255 / 0.26), transparent 28%),
+    linear-gradient(135deg, var(--color-primary-dark), #16091c 70%) !important;
+  color: var(--color-on-dark);
+  border-color: rgb(255 255 255 / 0.16);
+  border-style: var(--border-style-default);
+  clip-path: var(--clip-panel);
+  box-shadow:
+    0 1rem 2.5rem rgb(31 23 36 / 0.22),
+    0 0 2rem rgb(215 92 255 / 0.16),
+    inset 0 1px 0 rgb(255 255 255 / 0.16);
+}
+
+.graphic-plate.card:nth-of-type(even),
+.card.graphic-plate:nth-of-type(even) {
+  clip-path: var(--clip-panel);
+}
+
+.graphic-plate h1,
+.graphic-plate h2,
+.graphic-plate h3,
+.graphic-plate h4,
+.graphic-plate p,
+.graphic-plate li,
+.graphic-plate dd,
+.graphic-plate dt,
+.graphic-plate small,
+.graphic-plate .small-text,
+.graphic-plate .text-muted {
+  color: var(--color-on-dark);
+}
+
+.graphic-plate a {
+  color: var(--color-on-dark);
+}
+
+.graphic-plate img {
+  filter:
+    drop-shadow(0 0.5rem 1rem rgb(0 0 0 / 0.32))
+    drop-shadow(0 0 1rem rgb(215 92 255 / 0.18));
+}
+
+
+/* =========================================================
+   5. BUTTON THEME
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   Button system
+
+   Buttons share the same visual language as the navigation:
+   - angular sci-fi clipping
+   - subtle glass backgrounds
+   - inset border lines
+   - soft purple/cyan glow
+   - clear hover and focus states
+
+   Button hierarchy:
+   .button-primary   = highest-emphasis action
+   .button-secondary = normal alternate action
+   .button-ghost     = lowest-emphasis action
+   --------------------------------------------------------- */
+
+.button,
+button,
+input[type="submit"],
+input[type="button"] {
+  color: var(--color-text);
+  background:
+    linear-gradient(135deg, rgb(255 255 255 / 0.74), rgb(248 236 255 / 0.56));
+  border-color: var(--color-border);
+  border-style: var(--border-style-default);
+  border-radius: var(--radius-md);
+  clip-path: var(--clip-button);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.46),
+    inset 0 1px 0 rgb(255 255 255 / 0.74),
+    0 0 1rem rgb(215 92 255 / 0.07);
+  font-weight: var(--font-weight-heavy);
+  letter-spacing: -0.025em;
+  text-decoration: none;
+  text-shadow: none;
+  transition:
+    color var(--transition-fast),
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    filter var(--transition-fast),
+    text-shadow var(--transition-fast);
+}
+
+.button:hover,
+.button:focus-visible,
+button:hover,
+button:focus-visible,
+input[type="submit"]:hover,
+input[type="submit"]:focus-visible,
+input[type="button"]:hover,
+input[type="button"]:focus-visible {
+  color: var(--color-primary);
+  background:
+    linear-gradient(135deg, rgb(215 92 255 / 0.14), rgb(94 231 255 / 0.08));
+  border-color: var(--color-border-strong);
+  box-shadow:
+    inset 0 0 0 1px var(--color-border-faint),
+    inset 0 1px 0 rgb(255 255 255 / 0.78),
+    0 0 1rem rgb(215 92 255 / 0.14);
+  text-shadow: 0 0 0.75rem rgb(215 92 255 / 0.22);
+  filter: saturate(1.04);
+}
+
+.button:active,
+button:active,
+input[type="submit"]:active,
+input[type="button"]:active {
+  filter: saturate(1);
+  box-shadow:
+    inset 0 0 0 1px var(--color-border-strong),
+    inset 0 0.25rem 0.75rem rgb(96 21 108 / 0.12);
+}
+
+/* Primary:
+   Use for the main action you most want the user to take.
+   Examples: Contact Me, Hire Me, Start Project, Submit Form,
+   Download Resume if that is the page's main goal.
+*/
+.button-primary,
+input[type="submit"] {
+  color: var(--color-on-primary);
+  background:
+    linear-gradient(135deg, var(--color-primary-dark), var(--color-primary) 54%, var(--color-primary-light));
+  border-color: rgb(215 92 255 / 0.72);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.12),
+    inset 0 1px 0 rgb(255 255 255 / 0.22),
+    0 0.8rem 1.6rem rgb(96 21 108 / 0.22),
+    0 0 1.4rem rgb(215 92 255 / 0.22);
+  text-shadow: 0 0 0.8rem rgb(255 255 255 / 0.26);
+}
+
+.button-primary:hover,
+.button-primary:focus-visible,
+input[type="submit"]:hover,
+input[type="submit"]:focus-visible {
+  color: var(--color-on-primary);
+  background:
+    linear-gradient(135deg, #1b0624, var(--color-primary-dark) 48%, var(--color-primary-hot));
+  border-color: rgb(215 92 255 / 0.92);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.16),
+    inset 0 1px 0 rgb(255 255 255 / 0.24),
+    0 0.9rem 1.85rem rgb(96 21 108 / 0.28),
+    0 0 2rem rgb(215 92 255 / 0.34);
+  text-shadow: 0 0 0.95rem rgb(255 255 255 / 0.32);
+}
+
+/* Secondary:
+   Use for important alternatives that should still look clickable
+   but should not compete with the primary action.
+   Examples: View Projects, Download PDF, Learn More, View Demo.
+*/
+.button-secondary {
+  color: var(--color-primary-dark);
+  background:
+    linear-gradient(135deg, rgb(215 92 255 / 0.20), rgb(94 231 255 / 0.13));
+  border-color: var(--color-border-strong);
+  box-shadow:
+    inset 0 0 0 1px var(--color-border-faint),
+    var(--shadow-inner-line),
+    0 0 1.25rem rgb(215 92 255 / 0.14);
+}
+
+.button-secondary:hover,
+.button-secondary:focus-visible {
+  color: var(--color-primary-dark);
+  background:
+    linear-gradient(135deg, rgb(215 92 255 / 0.28), rgb(94 231 255 / 0.18));
+  border-color: var(--color-border-glow);
+  box-shadow:
+    inset 0 0 0 1px var(--color-border-strong),
+    var(--shadow-inner-line),
+    0 0 1.5rem rgb(215 92 255 / 0.22),
+    0 0 1.5rem rgb(94 231 255 / 0.10);
+}
+
+/* Ghost:
+   Use for low-emphasis actions that are useful but not the main path.
+   Examples: Back, Cancel, Contact Me when it is secondary, Read More,
+   optional links inside button groups.
+*/
+.button-ghost {
+  color: var(--color-text);
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.button-ghost:hover,
+.button-ghost:focus-visible {
+  color: var(--color-primary);
+  background:
+    linear-gradient(135deg, rgb(215 92 255 / 0.14), rgb(94 231 255 / 0.08));
+  border-color: var(--color-border-faint);
+  box-shadow:
+    inset 0 0 0 1px var(--color-border-faint),
+    inset 0 1px 0 rgb(255 255 255 / 0.78),
+    0 0 1rem rgb(215 92 255 / 0.12);
+}
+
+
+/* =========================================================
+   6. FORM THEME
+   ========================================================= */
+
+label {
+  color: var(--color-heading);
+  font-weight: var(--font-weight-bold);
+}
+
+input,
+textarea,
+select {
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.90), rgb(255 255 255 / 0.78));
+  color: var(--color-text);
+  border-color: var(--color-border);
+  border-style: var(--border-style-default);
+  border-radius: var(--radius-md);
+  box-shadow:
+    var(--shadow-inner-line),
+    inset 0 0 0 1px rgb(255 255 255 / 0.34);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  background: var(--color-bg-strong);
+  border-color: var(--color-primary-hot);
+  box-shadow:
+    var(--shadow-focus),
+    var(--shadow-inner-line),
+    0 0 1rem rgb(215 92 255 / 0.16);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-muted);
+}
+
+
+/* =========================================================
+   7. LIST / TABLE / CODE THEME
+   ========================================================= */
+
+.feature-list li::marker {
+  color: var(--color-primary-hot);
+}
+
+table {
+  background: var(--color-bg-strong);
+}
+
+th {
+  color: var(--color-heading);
+  font-weight: var(--font-weight-bold);
+}
+
+td,
+th {
+  border-color: var(--color-border);
+  border-style: var(--border-style-default);
+}
+
+pre {
+  background:
+    radial-gradient(circle at top left, rgb(215 92 255 / 0.22), transparent 35%),
+    linear-gradient(180deg, #24102d, #120616);
+  color: #f8eaff;
+  border-color: rgb(255 255 255 / 0.14);
+  border-style: var(--border-style-default);
+  border-radius: var(--radius-md);
+  clip-path: var(--clip-panel);
+  box-shadow:
+    var(--shadow-soft),
+    0 0 2rem rgb(96 21 108 / 0.20);
+}
+
+code {
+  color: var(--color-primary-dark);
+  background: rgb(215 92 255 / 0.11);
+  border-radius: var(--radius-sm);
+}
+
+pre code {
+  color: inherit;
+  background: transparent;
+}
+
+
+/* =========================================================
+   8. UTILITY THEME
+   ========================================================= */
+
+.text-primary {
+  color: var(--color-primary);
+}
+
+.text-muted {
+  color: var(--color-muted);
+}
+
+.text-success {
+  color: var(--color-success);
+}
+
+.text-warning {
+  color: var(--color-warning);
+}
+
+.text-danger {
+  color: var(--color-danger);
+}
+
+.bordered {
+  border-color: var(--color-border);
+  border-style: var(--border-style-default);
+  border-radius: var(--radius-md);
+}
+
+.rounded {
+  border-radius: var(--radius-md);
+}
+
+.rounded-lg {
+  border-radius: var(--radius-lg);
+}
+
+.rounded-xl {
+  border-radius: var(--radius-xl);
+}
+
+.rounded-pill {
+  border-radius: var(--radius-pill);
+}
+
+.angular {
+  clip-path: var(--clip-panel);
+}
+
+.angular-alt {
+  clip-path: var(--clip-panel-alt);
+}
+
+.shadow-soft {
+  box-shadow: var(--shadow-soft);
+}
+
+.shadow-card {
+  box-shadow: var(--shadow-card);
+}
+
+.shadow-strong {
+  box-shadow: var(--shadow-strong);
+}
+
+
+/* =========================================================
+   9. FOOTER THEME
+   ========================================================= */
+
+.site-footer {
+  background:
+    radial-gradient(circle at top left, rgb(215 92 255 / 0.13), transparent 26rem),
+    radial-gradient(circle at top right, rgb(94 231 255 / 0.08), transparent 22rem),
+    linear-gradient(180deg, rgb(96 21 108 / 0.11), rgb(96 21 108 / 0.18));
+  border-top-color: var(--color-border);
+  border-top-style: var(--border-style-default);
+  color: var(--color-muted);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.45),
+    0 -0.75rem 2rem rgb(96 21 108 / 0.06);
+}
+
+.site-footer a {
+  color: var(--color-text);
+}
+
+.site-footer a:hover,
+.site-footer a:focus-visible {
+  color: var(--color-primary);
+}
+
+
+/* =========================================================
+   10. MOTION PREFERENCE
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  a,
+  .card,
+  .button,
+  button,
+  input,
+  textarea,
+  select {
+    transition: none;
+  }
+
+  .button:hover,
+  button:hover,
+  input[type="submit"]:hover,
+  input[type="button"]:hover {
+    transform: none;
+  }
+}

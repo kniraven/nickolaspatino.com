@@ -1,0 +1,27 @@
+/* =========================================================
+   NickolasPatino.com Home Page CSS
+   File: /public/assets/css/pages/home.css
+
+   Purpose:
+   Only homepage-specific structure or theme overrides.
+   Keep generic layout/components in structure.css and theme.css.
+   ========================================================= */
+
+.hero {
+  padding-block: var(--space-4xl);
+}
+
+.hero-actions {
+  margin-block-start: var(--space-xl);
+}
+
+.hero-portrait {
+  max-inline-size: 20rem;
+  margin-inline: auto;
+}
+
+@media (min-width: 1024px) {
+  .hero-portrait {
+    margin-inline-end: 0;
+  }
+}

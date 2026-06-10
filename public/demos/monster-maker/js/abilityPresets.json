@@ -1,0 +1,142 @@
+{
+  "Aggressive": {
+    "description": "As a bonus action, the [NAME] can move up to its speed toward a hostile creature that it can see.",
+    "effect": {
+      "DPR": 2
+    }
+  },
+  "Ambusher": {
+    "description": "The [NAME] has advantage on attack rolls against any creature it has surprised.",
+    "effect": {
+      "Effective Attack Bonus": 1
+    }
+  },
+  "Avoidance": {
+    "description": "If the [NAME] is subjected to an effect that allows it to make a saving throw to only take half damage, it instead takes no damage if it succeeds on the saving throw, and only half damage if it fails.",
+    "effect": {
+      "Effective AC": 1
+    }
+  },
+  "Blood Frenzy": {
+    "description": "The [NAME] has advantage on melee attack rolls against any creature that doesn't have all its hit points.",
+    "effect": {
+      "Effective Attack Bonus": 4
+    }
+  },
+  "Brute": {
+    "description": "A melee weapon deals one extra die of its damage when the [NAME] hits with it (included in the attack).",
+    "effect": {
+      "Melee Weapon Damage Dice": 1
+    }
+  },
+  "Damage Transfer": {
+    "description": "While attached or grappling a creature, the [NAME] takes only half damage dealt to it (rounded down), and the other creature takes the other half.",
+    "effect": {
+      "Effective HP Mult": 2,
+      "DPR": "(1/3 * [HP]), TODO TODO"
+    }
+  },
+  "Death Burst": {
+    "description": " When the [NAME] dies, each creature within 10 feet of it must make a DC [DC] Dexterity saving throw, taking [DIE AMOUNT] fire damage on a failed save, or half as much damage on a successful one. Flammable objects that aren't being worn or carried in that area are ignited.",
+    "effect": {
+      "One Round DPR": "[AMOUNT] * 2"
+    }
+  },
+  "Frightful Presence": {
+    "description": "Each creature of the [NAME]'s choice that is within 120 feet of the [NAME] and aware of it must succeed on a DC [DC] Wisdom saving throw or become frightened for 1 minute. A creature can repeat the saving throw at the end of each of its turns, ending the effect on itself on a success. If a creature's saving throw is successful or the effect ends for it, the creature is immune to the [NAME]'s [TRAIT NAME] for the next 24 hours.",
+    "effect": {
+      "Effective HP": 0.25
+    }
+  },
+  "Legendary Resistance (3/Day)": {
+    "description": "If the [NAME] fails a saving throw, it can choose to succeed instead.",
+    "effect": {
+      "Effective HP": "???"
+    }
+  },
+  "Magic Resistance": {
+    "description": "The [NAME] has advantage on saving throws against spells and other magical effects.",
+    "effect": {
+      "Effective AC": 2
+    }
+  },
+  "Martial Advantage": {
+    "description": "Once per turn, the [NAME] can deal an extra [DIE AMOUNT] damage to a creature it hits with a weapon attack if that creature is within 5 feet of an ally of the [NAME] that isn't incapacitated.",
+    "effect": {
+      "One Attack Per Round": "[AMOUNT]"
+    }
+  },
+  "Nimble Escape": {
+    "description": "The [NAME] can take the Disengage or Hide action as a bonus action on each of its turns.",
+    "effect": {
+      "Effective AC": 4,
+      "Effective Attack Bonus": 4
+    }
+  },
+  "Pack Tactics": {
+    "description": "The [NAME] has advantage on an attack roll against a creature if at least one of the creature's allies is within 5 feet of the creature and the ally isn't incapacitated.",
+    "effect": {
+      "Effective Attack Bonus": 1
+    }
+  },
+  "Parry": {
+    "description": "The creature adds its proficiency bonus to its AC against one melee attack that would hit it as a reaction.",
+    "effect": {
+      "Effective AC": 1
+    }
+  },
+  "Psychic Defense": {
+    "description": "While the [NAME] is wearing no armor and wielding no shield, its AC includes its Wisdom modifier.",
+    "effect": {
+      "AC": "[WIS MOD]"
+    }
+  },
+  "Rampage": {
+    "description": "When the [NAME] reduces a creature to 0 hit points with a melee attack on its turn, the [NAME] can take a bonus action to move up to half its speed and make a bite attack.",
+    "effect": {
+      "DPR": 2
+    }
+  },
+  "Regeneration": {
+    "description": "The [NAME] regains [AMOUNT] hit points at the start of its turn. If the [NAME] takes acid or fire damage, this trait doesn't function at the start of the [NAME]'s next turn. The [NAME] dies only if it starts its turn with 0 hit points and doesn't regenerate.",
+    "effect": {
+      "Effective HP": "[AMOUNT]"
+    }
+  },
+  "Shadow Stealth": {
+    "description": "While in dim light or darkness, the [NAME] can take the Hide action as a bonus action.",
+    "effect": {
+      "Effective AC": "4"
+    }
+  },
+  "Relentless": {
+    "description": "If the [NAME] takes [AMOUNT] damage or less that would reduce it to 0 hit points, it is reduced to 1 hit point instead.",
+    "effect": {
+      "Effective AC": "4"
+    }
+  },
+  "Stench": {
+    "description": "Any creature other than a [NAME] that starts its turn within 5 feet of the [NAME] must succeed on a DC [DC] Constitution saving throw or be poisoned until the start of the creature's next turn. On a successful saving throw, the creature is immune to the stench of all [NAME]s for 1 hour.",
+    "effect": {
+      "Effective AC": "1"
+    }
+  },
+  "Superior Invisibility": {
+    "description": "As a bonus action, the [NAME] magically turns invisible until its concentration ends (as if concentrating on a spell). Any equipment the [NAME] wears or carries is invisible with it.",
+    "effect": {
+      "Effective AC": "2"
+    }
+  },
+  "Surprise Attack": {
+    "description": "If the [NAME] surprises a creature and hits it with an attack during the first round of combat, the target takes an extra [DIE AMOUNT] damage from the attack.",
+    "effect": {
+      "Effective One Round DPR": "[AMOUNT]"
+    }
+  },
+  "Wounded Fury": {
+    "description": "While it has [AMOUNT] hit points or fewer, the [NAME] has advantage on attack rolls. In addition, it deals an extra [DIE AMOUNT] damage to any target it hits with a melee attack.",
+    "effect": {
+      "One Round DPR": "[AMOUNT]"
+    }
+  }
+}

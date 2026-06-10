@@ -1,0 +1,27 @@
+/* =========================================================
+   NickolasPatino.com Projects Page CSS
+   File: /public/assets/css/pages/projects.css
+
+   Purpose:
+   Project index and case-study page-specific rules only.
+   ========================================================= */
+
+.project-meta-list {
+  display: grid;
+  gap: var(--space-sm);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.project-screenshot {
+  overflow: hidden;
+  border-width: var(--border-width);
+  border-radius: var(--radius-lg);
+}
+
+.project-screenshot {
+  border-style: var(--border-style-default);
+  border-color: var(--color-border);
+  background: var(--color-surface);
+}

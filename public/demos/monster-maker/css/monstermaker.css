@@ -1,0 +1,125 @@
+/* CUSTOM STAT BLOCK THEMES */
+/* [data="dark-theme"] {
+    background-color: black!important;
+    color: lightgray!important;
+    border: 1px solid lightgray!important;
+}
+[data="light-theme"] {
+    background-color: white!important;
+    color: black!important;
+    border: 1px solid black!important;
+} */
+
+/* MEDIA QUERY FOR SMALLER SCREENS */
+@media (max-width: 768px) { /* Adjust the breakpoint as needed */
+    .kniravencontent #monsterTabContent {
+        font-size: 0.8em; /* Smaller font size for smaller screens */
+    }
+}
+.kniravencontent .container {
+    max-width: 1200px; /* Changes the cursor to indicate the text is editable */
+}
+.kniravencontent .editable {
+    cursor: pointer; /* Changes the cursor to indicate the text is editable */
+}
+
+/* MONSTER BLOCK */
+.kniravencontent #printableArea
+{
+    border-radius: 5px;
+    font-family: var(--bs-font-sans-serif);
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    padding: 5px;
+}
+#featureOptions, #featurePreview {
+    height: 40vh;
+    overflow-y: auto;
+}
+.kniravencontent .monsterblock, .kniravencontent .modal-body, .kniravencontent .modal-header, .kniravencontent #featureControls, .kniravencontent #featureInfo, .kniravencontent #featureOptions, .kniravencontent #featurePreview, .kniravencontent #monsterTabContent, .kniravencontent .nav-link
+{
+  background-color: #ffffcc;
+  color: #822000;
+  border: 1px solid #822000;
+}
+
+.kniravencontent .monsterblock hr {
+    background-color: #822000;
+    color: #822000;
+    opacity: 1;
+}
+.kniravencontent .monsterblock
+{
+  border-radius: 10px;
+  padding: 15px;
+}
+.kniravencontent input[type="text"],
+.kniravencontent input[type="password"],
+.kniravencontent input[type="email"],
+.kniravencontent input[type="number"]
+{
+  background-color: white!important;
+  color: black!important;
+}
+.kniravencontent .monsterstats {font-size: 0.8em;padding:0px;text-align:center;}
+.kniravencontent .monstername{font-size:1.5em;font-weight:bold;}
+.kniravencontent .monsterdesc{font-style:italic;}
+.kniravencontent .monsterheader{font-size:1.3em;font-weight:bold;}
+.kniravencontent .spacer{margin-bottom:15px;}
+.kniravencontent .indented{margin-left:10px;margin-top:5px;margin-bottom:5px;}
+.kniravencontent .modal-body .row {margin-right: 0;margin-left: 0;}
+.kniravencontent .modal-body .row .col-6 {padding-top: 1rem;padding-bottom: 1rem;}
+
+/* MONSTER OPTIONS MODAL */
+.kniravencontent .monsterOp {
+    display: inline-block;
+    width: 180px!important;
+}
+.kniravencontent .nav-item .active {
+    background-color: white!important;
+    color: black!important;
+    border: 1px solid black!important;
+}
+.kniravencontent .nav-item:hover {
+    background-color: white!important;
+    color: black!important;
+    border-color: #696969!important;
+}
+
+.kniravencontent .transparentBG, .kniravencontent .transparentBG * {
+    background-color: transparent;
+}
+
+/* Print Rules */
+.kniravencontent .break-before {
+    break-before: page;
+}
+.kniravencontent .break-after {
+    break-after: page;
+}
+.kniravencontent .break-inside {
+    break-inside: avoid;
+}
+@media print {
+    .kniravencontent body, .kniravencontent html, .kniravencontent .container {
+        margin: 0!important;
+        padding: 0!important;
+        width: 100%!important;
+        max-width: 100%!important;
+    }
+    .kniravencontent * {
+        font-size: 95%;
+    }
+    .kniravencontent .noprint {
+        display: none !important;
+    }
+    .kniravencontent #printableArea {
+        margin: 0px;
+        padding: 0px;
+    }
+    /*.kniravencontent #printableArea {
+        background-color: white!important;
+        color: black!important;
+    }*/
+}

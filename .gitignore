@@ -1,0 +1,33 @@
+﻿# Real local/private config
+config/
+.env
+.env.*
+
+# Keep example config/templates public
+!config.example/
+!config.example/**
+
+# Runtime/storage/private files
+storage/
+*.log
+
+# Dependencies
+vendor/
+node_modules/
+
+# OS/editor junk
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local database/export files
+*.sql
+*.sqlite
+*.db
+
+# Backups/zips
+*.zip
+*.bak
+*.backup
+*.old

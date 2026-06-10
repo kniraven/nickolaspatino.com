@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goblin Slayer!</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="game-container">
+        <h1>Goblin Slayer, Don't Let the Goblins Pass!</h1>
+        <p>Score: <span id="score">0</span></p>
+
+        <!-- Difficulty Selection -->
+        <div>
+            <label for="difficulty">Select Difficulty:</label>
+            <select id="difficulty" aria-label="Select Difficulty">
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+            </select>
+            <button onclick="startGame()" aria-label="Start Game">Start Game</button>
+            <button id="pauseButton" class="btn btn-warning" aria-label="Pause Game">Pause</button>
+        </div>
+
+        <!-- Game Area -->
+        <div id="gameArea">
+            <div id="player"></div> <!-- Player sprite -->
+            <!-- Enemies will be dynamically added here -->
+        </div>
+    </div>
+
+    <noscript>
+        <p style="color: red;">JavaScript is required to play this game. Please enable JavaScript in your browser.</p>
+    </noscript>
+
+    <script src="js/game.js"></script>
+</body>
+</html>

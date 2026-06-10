@@ -1,0 +1,68 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #222;
+    color: #fff;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+.game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+}
+
+#gameArea {
+    position: relative;
+    width: 90vw;
+    height: 90vw;
+    max-width: 600px;
+    max-height: 600px;
+    border: 2px solid #fff;
+    overflow: hidden;
+    background-color: #333;
+    margin-top: 20px;
+    background-image: url('../images/dirt.png'); /* Path to your background image */
+    background-size: 100px 100px; /* Tile the image at 100x100 pixels */
+    background-repeat: repeat; /* Ensure the image is repeated */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+#player {
+    position: absolute;
+    width: 64px; /* Width of each sprite frame */
+    height: 64px; /* Height of each sprite frame */
+    background-image: url('../images/Human-Soldier-Red.png'); /* Path to your sprite sheet */
+    background-repeat: no-repeat;
+    background-size: 1536px 512px; /* Size of the entire sprite sheet */
+    bottom: 0;
+    left: 44%;
+    background-position: 0px -256px; /* Initial frame for "Walk Up" animation (facing up, idle) */
+}
+
+.enemy {
+    position: absolute;
+    width: 64px; /* Width of each sprite frame */
+    height: 64px; /* Height of each sprite frame */
+    background-image: url('../images/Orc-Peon-Cyan.png'); /* Path to your sprite sheet */
+    background-repeat: no-repeat;
+    background-size: 1536px 512px; /* Size of the entire sprite sheet */
+    background-position: 0px 0px; /* Initial frame for "Falling Down" animation */
+}
+
+@media (max-width: 600px) {
+    body {
+        font-size: 14px; /* Adjust text size for smaller screens */
+    }
+
+    #gameArea {
+        width: 100vw; /* Take full width on smaller screens */
+        height: 100vw; /* Keep the aspect ratio */
+        max-width: none; /* Remove max-width restriction */
+        max-height: none; /* Remove max-height restriction */
+    }
+}
+
+
