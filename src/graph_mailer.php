@@ -42,12 +42,41 @@ function getGraphAccessToken(array $graphConfig): string
     return $data['access_token'];
 }
 
-function sendGraphContactEmail(array $graphConfig, array $messageData): void
+function sendGraphMailPayload(array $graphConfig, string $accessToken, array $payload): void
 {
-    $accessToken = getGraphAccessToken($graphConfig);
-
     $fromUser = rawurlencode($graphConfig['from_user']);
     $sendMailUrl = "https://graph.microsoft.com/v1.0/users/{$fromUser}/sendMail";
+
+    $ch = curl_init($sendMailUrl);
+
+    curl_setopt_array($ch, [
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => json_encode($payload),
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER => [
+            'Authorization: Bearer ' . $accessToken,
+            'Content-Type: application/json',
+        ],
+    ]);
+
+    $response = curl_exec($ch);
+    $curlError = curl_error($ch);
+    $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+    curl_close($ch);
+
+    if ($response === false) {
+        throw new RuntimeException("Mail request failed: {$curlError}");
+    }
+
+    if ($statusCode < 200 || $statusCode >= 300) {
+        throw new RuntimeException("Mail request failed with HTTP {$statusCode}: {$response}");
+    }
+}
+
+function sendGraphContactEmail(array $graphConfig, array $messageData, ?string $accessToken = null): void
+{
+    $accessToken = $accessToken ?? getGraphAccessToken($graphConfig);
 
     $subject = '[' . $graphConfig['site_name'] . '] Contact Form: ' . $messageData['reason'];
 
@@ -89,29 +118,52 @@ function sendGraphContactEmail(array $graphConfig, array $messageData): void
         'saveToSentItems' => true,
     ];
 
-    $ch = curl_init($sendMailUrl);
+    sendGraphMailPayload($graphConfig, $accessToken, $payload);
+}
 
-    curl_setopt_array($ch, [
-        CURLOPT_POST => true,
-        CURLOPT_POSTFIELDS => json_encode($payload),
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_HTTPHEADER => [
-            'Authorization: Bearer ' . $accessToken,
-            'Content-Type: application/json',
-        ],
+function sendGraphSenderConfirmationEmail(array $graphConfig, array $messageData, ?string $accessToken = null): void
+{
+    $accessToken = $accessToken ?? getGraphAccessToken($graphConfig);
+
+    $subject = 'Thanks for contacting Nickolas Patino';
+
+    $body = implode("\n", [
+        "Hi " . $messageData['name'] . ",",
+        "",
+        "This confirms that your message was sent through NickolasPatino.com.",
+        "",
+        "I received your inquiry and will follow up if a reply is needed.",
+        "",
+        "Submitted reason: " . $messageData['reason'],
+        "Company / Organization / Project: " . ($messageData['organization'] ?: 'Not provided'),
+        "",
+        "Message:",
+        $messageData['message'],
+        "",
+        "To add more detail later, please submit another message through the contact form.",
+        "",
+        "Thank you,",
+        "Nickolas Patino",
     ]);
 
-    $response = curl_exec($ch);
-    $curlError = curl_error($ch);
-    $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $payload = [
+        'message' => [
+            'subject' => $subject,
+            'body' => [
+                'contentType' => 'Text',
+                'content' => $body,
+            ],
+            'toRecipients' => [
+                [
+                    'emailAddress' => [
+                        'address' => $messageData['email'],
+                        'name' => $messageData['name'],
+                    ],
+                ],
+            ],
+        ],
+        'saveToSentItems' => true,
+    ];
 
-    curl_close($ch);
-
-    if ($response === false) {
-        throw new RuntimeException("Mail request failed: {$curlError}");
-    }
-
-    if ($statusCode < 200 || $statusCode >= 300) {
-        throw new RuntimeException("Mail request failed with HTTP {$statusCode}: {$response}");
-    }
+    sendGraphMailPayload($graphConfig, $accessToken, $payload);
 }

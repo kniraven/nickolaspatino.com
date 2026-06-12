@@ -1,18 +1,20 @@
-<!--
+<?php
+declare(strict_types=1);
+
+/*
     Author: Nickolas Patino
     Created: 06/08/2026
     Updated: 06/08/2026
--->
+*/
 
-<?php
-    $projectRoot = dirname($_SERVER['DOCUMENT_ROOT']);
-    $pageLocked = "";
+$projectRoot = dirname($_SERVER['DOCUMENT_ROOT']);
+$pageLocked = "";
 
-    require_once $projectRoot . '/config/session.php';
+require_once $projectRoot . '/config/session.php';
 
-    $pageTitle = "Nickolas Patino | Resume";
-    $pageDescription = "Resume for Nickolas Patino: web developer, automation-focused problem solver, and operations professional based near Madison, Wisconsin.";
-    $pageCss = "resume";
+$pageTitle = "Nickolas Patino | Resume";
+$pageDescription = "Resume for Nickolas Patino: web developer, automation-focused problem solver, and operations professional based near Madison, Wisconsin.";
+$pageCss = "resume";
 ?>
 
 <!DOCTYPE html>
@@ -22,18 +24,18 @@
 </head>
 
 <body>
-    <header class="site-header">
-        <div class="container site-header-inner">
+    <header class="kn-site-header">
+        <div class="kn-container kn-site-header-inner">
             <?php require_once $projectRoot . '/src/nav.php'; ?>
         </div>
     </header>
 
     <main>
         <section>
-            <div class="container">
-                <nav aria-label="Resume links">
-                    <a href="/assets/files/nickolas-patino-resume.pdf" class="button button-primary" target="_blank" rel="noopener">Download PDF</a>
-                    <a href="/contact.php" class="button button-secondary">Contact Me</a>
+            <div class="kn-container">
+                <nav class="kn-button-group" aria-label="Resume links">
+                    <a href="/assets/files/nickolas-patino-resume.pdf" class="kn-button kn-button-primary" target="_blank" rel="noopener">Download PDF</a>
+                    <a href="/contact.php" class="kn-button kn-button-secondary">Contact Me</a>
                 </nav>
 
                 <article id="resume" aria-label="Resume for Nickolas Patino">
@@ -220,8 +222,8 @@
         </section>
     </main>
 
-    <footer class="site-footer">
-        <div class="container site-footer-inner">
+    <footer class="kn-site-footer">
+        <div class="kn-container kn-site-footer-inner">
             <?php require_once $projectRoot . '/src/footer.php'; ?>
         </div>
     </footer>

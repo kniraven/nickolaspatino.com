@@ -1,136 +1,124 @@
-<!--
+<?php
+declare(strict_types=1);
+
+/*
     Author: Nickolas Patino
     Created: 06/09/2026
     Updated: 06/09/2026
--->
+*/
 
-<?php
-    $projectRoot = dirname($_SERVER['DOCUMENT_ROOT']);
-    $pageLocked = "";
+$projectRoot = dirname($_SERVER['DOCUMENT_ROOT']);
+$pageLocked = "";
 
-    require_once $projectRoot . '/config/session.php';
+require_once $projectRoot . '/config/session.php';
 
-    $pageTitle = "Nickolas Patino | Services";
-    $pageDescription = "Services from Nickolas Patino including web development, website refreshes, internal tools, workflow automation, livestreaming, video, editing, and practical small business technology help.";
+$pageTitle = "Nickolas Patino | Services";
+$pageDescription = "Local business websites, artist pages, portfolios, personal brands, game design content, event livestreaming, video editing, Excel/VBA automation, and recurring report reconciliation services from Nickolas Patino.";
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <?php require_once $projectRoot . '/src/head.php'; ?>
+
+    <style>
+        @layer kn.structure {
+            .kn-services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            @media (min-width: 42rem) {
+                .kn-services-grid {
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                }
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <header class="site-header">
-        <div class="container site-header-inner">
+    <header class="kn-site-header">
+        <div class="kn-container kn-site-header-inner">
             <?php require_once $projectRoot . '/src/nav.php'; ?>
         </div>
     </header>
 
     <main>
         <!-- Services Hero / Offerings -->
-        <section class="hero">
-            <div class="container">
-                <div class="stack stack-roomy">
-                    <div class="page-hero-content">
-                        <p class="small-text text-primary">
-                            Websites • Automation • Internal Tools • Streaming • Video • Editing
+        <section class="kn-hero">
+            <div class="kn-container">
+                <div class="kn-stack kn-stack-roomy">
+                    <div class="kn-page-hero-content">
+                        <p class="kn-small-text kn-text-primary">
+                            Local Websites • Game Content • Event Streaming • Video Editing • Excel/VBA • Reporting
                         </p>
 
-                        <h1>Services that make your digital work easier.</h1>
+                        <h1>Practical services for websites, content, events, and recurring work.</h1>
 
-                        <p class="lead">
-                            Practical help with websites, internal tools, automation, livestreaming, video, editing, and small business technology.
+                        <p class="kn-lead">
+                            I help local businesses, artists, creators, game designers, streamers, and teams turn rough ideas, unfinished work, scattered files, footage, spreadsheets, and reports into finished systems people can use.
                         </p>
 
-                        <div class="button-group">
-                            <a href="/contact.php" class="button button-primary">Start a Conversation</a>
-                            <a href="/projects/" class="button button-secondary">View Projects</a>
+                        <div class="kn-button-group">
+                            <a href="/contact.php" class="kn-button kn-button-primary">Start a Conversation</a>
+                            <a href="/projects/" class="kn-button kn-button-secondary">View Projects</a>
                         </div>
                     </div>
 
-                    <div class="card-grid">
-                        <article class="card stack">
-                            <h2>Web Development</h2>
+                    <div class="kn-card-grid kn-services-grid">
+                        <article class="kn-card kn-stack">
+                            <h2>Business Websites</h2>
 
                             <p>
-                                Clean, responsive websites and pages for businesses, portfolios, services, campaigns, projects, and personal brands.
+                                Websites for local businesses, artists, portfolios, personal brands, gaming groups, and creative projects that need to look credible, explain the offer clearly, and make the next step easy.
                             </p>
 
-                            <ul class="feature-list">
-                                <li>HTML, CSS, JavaScript, PHP, and SQL</li>
-                                <li>Responsive layouts and mobile-friendly pages</li>
-                                <li>Forms, landing pages, and content pages</li>
+                            <ul class="kn-feature-list">
+                                <li>Mobile-friendly, responsive page design</li>
+                                <li>Accessibility-conscious structure and markup</li>
+                                <li>Admin pages or CMS workflows for easier content updates</li>
                             </ul>
                         </article>
 
-                        <article class="card stack">
-                            <h2>Website Refreshes</h2>
+                        <article class="kn-card kn-stack">
+                            <h2>Game Design &amp; Content</h2>
 
                             <p>
-                                Improvements to existing websites that need better structure, clearer content, cleaner layouts, or stronger presentation.
+                                TTRPG and game content support for turning concepts, notes, lore, mechanics, or unfinished drafts into organized, playable material with clear rules and table-ready presentation.
                             </p>
 
-                            <ul class="feature-list">
-                                <li>Page cleanup and reorganization</li>
-                                <li>Content and navigation improvements</li>
-                                <li>Readability and usability cleanup</li>
+                            <ul class="kn-feature-list">
+                                <li>Campaign modules, encounters, factions, settings, and worldbuilding</li>
+                                <li>Rule adherence, mechanics cleanup, balance review, and formatting</li>
+                                <li>Stat blocks, items, abilities, lore text, and release-ready documents</li>
                             </ul>
                         </article>
 
-                        <article class="card stack">
-                            <h2>Internal Tools</h2>
+                        <article class="kn-card kn-stack">
+                            <h2>Livestreaming &amp; Video Editing</h2>
 
                             <p>
-                                Lightweight tools that organize information, reduce repetitive work, or make internal processes easier to manage.
+                                Event streaming and editing support for people who need live coverage, cleaner footage, stronger pacing, and videos shaped around viewer retention and a clear call to action.
                             </p>
 
-                            <ul class="feature-list">
-                                <li>Browser-based utilities</li>
-                                <li>Administrative forms and workflows</li>
-                                <li>Small PHP/MySQL tools and prototypes</li>
+                            <ul class="kn-feature-list">
+                                <li>On-site event streaming with my livestreaming backpack setup</li>
+                                <li>Edited footage cut for pacing, clarity, retention, and viewer interest</li>
+                                <li>Finished videos, clips, highlights, and CTA-focused edits</li>
                             </ul>
                         </article>
 
-                        <article class="card stack">
-                            <h2>Automation</h2>
+                        <article class="kn-card kn-stack">
+                            <h2>Excel/VBA &amp; Reporting</h2>
 
                             <p>
-                                Practical automation and workflow cleanup for teams spending too much time on repetitive manual work.
+                                Automation and reporting support for recurring reports, reconciliations, data checks, and spreadsheet-heavy processes that need to be faster, cleaner, and easier to repeat.
                             </p>
 
-                            <ul class="feature-list">
-                                <li>Excel/VBA automation</li>
-                                <li>Reporting templates and data cleanup</li>
-                                <li>Forms, SharePoint, and Power Automate support</li>
-                            </ul>
-                        </article>
-
-                        <article class="card stack">
-                            <h2>Streaming &amp; Video</h2>
-
-                            <p>
-                                Support for livestreaming, recorded video, editing, and creator-facing content workflows.
-                            </p>
-
-                            <ul class="feature-list">
-                                <li>Livestream planning and setup support</li>
-                                <li>Video editing and content cleanup</li>
-                                <li>Short-form clips and presentation polish</li>
-                            </ul>
-                        </article>
-
-                        <article class="card stack">
-                            <h2>Small Business Tech</h2>
-
-                            <p>
-                                Practical technical help for small businesses, solo LLCs, creators, and local organizations.
-                            </p>
-
-                            <ul class="feature-list">
-                                <li>Website updates and troubleshooting</li>
-                                <li>Digital organization and documentation</li>
-                                <li>Simple systems that are easy to maintain</li>
+                            <ul class="kn-feature-list">
+                                <li>Excel/VBA automation for recurring reports and manual refresh steps</li>
+                                <li>Reconciliation support for financial data, invoices, access lists, and operational records</li>
+                                <li>Reporting templates with formulas, summaries, validation, and handoff documentation</li>
                             </ul>
                         </article>
                     </div>
@@ -140,58 +128,58 @@
 
         <!-- How I Work -->
         <section>
-            <div class="container">
-                <div class="stack stack-roomy">
-                    <div class="split split-sidebar align-start">
-                        <div class="section-header">
+            <div class="kn-container">
+                <div class="kn-stack kn-stack-roomy">
+                    <div class="kn-split kn-split-sidebar kn-align-start">
+                        <div class="kn-section-header">
                             <h2>How I Work</h2>
 
                             <p>
-                                I prefer clear, practical projects with a defined goal. The process does not need to be complicated, but it does need to be organized.
+                                I can start from a rough idea, an existing file, a broken workflow, or a blank page. The important part is defining the goal, constraints, and finished result before the build starts.
                             </p>
                         </div>
 
-                        <aside class="card stack">
+                        <aside class="kn-card kn-stack">
                             <h3>Good Starting Point</h3>
 
                             <p>
-                                Send what you have, what is not working, what you want improved, and any deadline or important constraint.
+                                You do not need a finished plan. Send the idea, goal, problem, event, content need, report requirement, or existing material you have. I can help turn that into a clear deliverable.
                             </p>
 
-                            <a href="/contact.php" class="button button-primary">Contact Me</a>
+                            <a href="/contact.php" class="kn-button kn-button-primary">Contact Me</a>
                         </aside>
                     </div>
 
-                    <div class="grid">
-                        <article class="card stack">
-                            <h3>1. Define the Need</h3>
+                    <div class="kn-grid">
+                        <article class="kn-card kn-stack">
+                            <h3>1. Clarify the Goal</h3>
 
                             <p>
-                                We clarify the problem, what already exists, and what a successful outcome should look like.
+                                We define what needs to exist, what problem it should solve, who will use it, and what a successful result looks like.
                             </p>
                         </article>
 
-                        <article class="card stack">
-                            <h3>2. Build the Solution</h3>
+                        <article class="kn-card kn-stack">
+                            <h3>2. Define the Deliverable</h3>
 
                             <p>
-                                I create the page, tool, workflow, edit, document, or technical improvement with practical usability in mind.
+                                We agree on the specific website, content package, event stream, video edit, report, automation, or documentation being delivered.
                             </p>
                         </article>
 
-                        <article class="card stack">
-                            <h3>3. Review and Refine</h3>
+                        <article class="kn-card kn-stack">
+                            <h3>3. Build and Test</h3>
 
                             <p>
-                                We review the work, clean up issues, adjust details, and make sure the result is useful and understandable.
+                                I build the work, check the obvious failure points, and clean up layout, wording, usability, pacing, accuracy, and handoff issues.
                             </p>
                         </article>
 
-                        <article class="card stack">
-                            <h3>4. Hand Off Clearly</h3>
+                        <article class="kn-card kn-stack">
+                            <h3>4. Hand Off the Work</h3>
 
                             <p>
-                                I provide clear notes, files, instructions, or next steps so the work can be used, maintained, or expanded later.
+                                You receive the finished files, notes, instructions, or next steps needed to use, maintain, repeat, or expand the work later.
                             </p>
                         </article>
                     </div>
@@ -201,27 +189,27 @@
 
         <!-- CTA -->
         <section>
-            <div class="container">
-                <article class="card stack">
-                    <div class="text-block">
-                        <h2>Need practical help with a website, workflow, or content project?</h2>
+            <div class="kn-container">
+                <article class="kn-card kn-stack">
+                    <div class="kn-text-block">
+                        <h2>Need a website, game document, event stream, video edit, report, or spreadsheet built?</h2>
 
                         <p>
-                            Send a message with what you are working on, what you need fixed or built, and the best next step.
+                            Send the idea, problem, file, footage, report, workflow, or outcome you want. Starting from scratch is fine.
                         </p>
                     </div>
 
-                    <div class="button-group">
-                        <a href="/contact.php" class="button button-primary">Start a Conversation</a>
-                        <a href="/projects/" class="button button-secondary">View Projects</a>
+                    <div class="kn-button-group">
+                        <a href="/contact.php" class="kn-button kn-button-primary">Start a Conversation</a>
+                        <a href="/projects/" class="kn-button kn-button-secondary">View Projects</a>
                     </div>
                 </article>
             </div>
         </section>
     </main>
 
-    <footer class="site-footer">
-        <div class="container site-footer-inner">
+    <footer class="kn-site-footer">
+        <div class="kn-container kn-site-footer-inner">
             <?php require_once $projectRoot . '/src/footer.php'; ?>
         </div>
     </footer>

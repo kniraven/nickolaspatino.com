@@ -1,18 +1,19 @@
-```php
-<!--
+<?php
+declare(strict_types=1);
+
+/*
     Author: Nickolas Patino
     Created: 06/09/2026
     Updated: 06/09/2026
--->
+*/
 
-<?php
-    $projectRoot = dirname($_SERVER['DOCUMENT_ROOT']);
-    $pageLocked = "";
+$projectRoot = dirname($_SERVER['DOCUMENT_ROOT']);
+$pageLocked = "";
 
-    require_once $projectRoot . '/config/session.php';
+require_once $projectRoot . '/config/session.php';
 
-    $pageTitle = "Nickolas Patino | Employee Manager Case Study";
-    $pageDescription = "Case study for Employee Manager, a PHP/MySQL CRUD web application for managing employee records, search, sorting, manager assignment, and responsive administrative views.";
+$pageTitle = "Nickolas Patino | Employee Manager Case Study";
+$pageDescription = "Case study for Employee Manager, a PHP/MySQL CRUD web application for managing employee records, search, sorting, manager assignment, and responsive administrative views.";
 ?>
 
 <!DOCTYPE html>
@@ -22,36 +23,36 @@
 </head>
 
 <body>
-    <header class="site-header">
-        <div class="container site-header-inner">
+    <header class="kn-site-header">
+        <div class="kn-container kn-site-header-inner">
             <?php require_once $projectRoot . '/src/nav.php'; ?>
         </div>
     </header>
 
     <main>
-        <section class="hero">
-            <div class="container">
-                <div class="stack stack-roomy">
-                    <div class="split split-sidebar align-start">
-                        <div class="page-hero-content">
-                            <p class="small-text text-primary">
+        <section class="kn-hero">
+            <div class="kn-container">
+                <div class="kn-stack kn-stack-roomy">
+                    <div class="kn-split kn-split-sidebar kn-align-start">
+                        <div class="kn-page-hero-content">
+                            <p class="kn-small-text kn-text-primary">
                                 PHP • MySQL • PDO • CRUD • Admin Interface
                             </p>
 
                             <h1>Employee Manager</h1>
 
-                            <p class="lead">
+                            <p class="kn-lead">
                                 A database-backed employee management application for creating, viewing, searching, editing, and deleting employee records.
                             </p>
 
-                            <div class="button-group">
-                                <a href="/demos/employee-manager/" class="button button-primary" target="_blank" rel="noopener">Live Demo</a>
-                                <a href="https://github.com/kniraven/nickolaspatino.com/tree/main/public/demos/employee-manager" class="button button-secondary" target="_blank" rel="noopener">GitHub</a>
-                                <a href="/projects/" class="button button-ghost">Back to Projects</a>
+                            <div class="kn-button-group">
+                                <a href="/demos/employee-manager/" class="kn-button kn-button-primary" target="_blank" rel="noopener">Live Demo</a>
+                                <a href="https://github.com/kniraven/nickolaspatino.com/tree/main/public/demos/employee-manager" class="kn-button kn-button-secondary" target="_blank" rel="noopener">GitHub</a>
+                                <a href="/projects/" class="kn-button kn-button-ghost">Back to Projects</a>
                             </div>
                         </div>
 
-                        <aside class="card stack">
+                        <aside class="kn-card kn-stack">
                             <h2>Project Summary</h2>
 
                             <dl>
@@ -70,7 +71,7 @@
                         </aside>
                     </div>
 
-                    <div class="media-frame aspect-video">
+                    <div class="kn-media-frame kn-aspect-video">
                         <img
                             src="/assets/images/projects/employeemanager.png"
                             alt="Employee Manager application screenshot"
@@ -81,10 +82,10 @@
         </section>
 
         <section>
-            <div class="container">
-                <div class="split split-sidebar align-start">
-                    <article class="stack">
-                        <div class="section-header">
+            <div class="kn-container">
+                <div class="kn-split kn-split-sidebar kn-align-start">
+                    <article class="kn-stack">
+                        <div class="kn-section-header">
                             <h2>Overview</h2>
 
                             <p>
@@ -92,8 +93,8 @@
                             </p>
                         </div>
 
-                        <div class="grid">
-                            <article class="card stack">
+                        <div class="kn-grid">
+                            <article class="kn-card kn-stack">
                                 <h3>Employee Directory</h3>
 
                                 <p>
@@ -101,7 +102,7 @@
                                 </p>
                             </article>
 
-                            <article class="card stack">
+                            <article class="kn-card kn-stack">
                                 <h3>Search and Sorting</h3>
 
                                 <p>
@@ -109,7 +110,7 @@
                                 </p>
                             </article>
 
-                            <article class="card stack">
+                            <article class="kn-card kn-stack">
                                 <h3>Record Management</h3>
 
                                 <p>
@@ -119,10 +120,10 @@
                         </div>
                     </article>
 
-                    <aside class="card stack">
+                    <aside class="kn-card kn-stack">
                         <h2>Employee Fields</h2>
 
-                        <ul class="feature-list">
+                        <ul class="kn-feature-list">
                             <li>First name</li>
                             <li>Last name</li>
                             <li>Email</li>
@@ -138,9 +139,9 @@
         </section>
 
         <section>
-            <div class="container">
-                <div class="stack stack-roomy">
-                    <div class="section-header">
+            <div class="kn-container">
+                <div class="kn-stack kn-stack-roomy">
+                    <div class="kn-section-header">
                         <h2>Application Features</h2>
 
                         <p>
@@ -148,8 +149,8 @@
                         </p>
                     </div>
 
-                    <div class="card-grid">
-                        <article class="card stack">
+                    <div class="kn-card-grid">
+                        <article class="kn-card kn-stack">
                             <h3>Employee List</h3>
 
                             <p>
@@ -157,7 +158,7 @@
                             </p>
                         </article>
 
-                        <article class="card stack">
+                        <article class="kn-card kn-stack">
                             <h3>Search</h3>
 
                             <p>
@@ -165,7 +166,7 @@
                             </p>
                         </article>
 
-                        <article class="card stack">
+                        <article class="kn-card kn-stack">
                             <h3>Sortable Columns</h3>
 
                             <p>
@@ -173,7 +174,7 @@
                             </p>
                         </article>
 
-                        <article class="card stack">
+                        <article class="kn-card kn-stack">
                             <h3>Add Employee</h3>
 
                             <p>
@@ -181,7 +182,7 @@
                             </p>
                         </article>
 
-                        <article class="card stack">
+                        <article class="kn-card kn-stack">
                             <h3>Edit Employee</h3>
 
                             <p>
@@ -189,7 +190,7 @@
                             </p>
                         </article>
 
-                        <article class="card stack">
+                        <article class="kn-card kn-stack">
                             <h3>Responsive Views</h3>
 
                             <p>
@@ -202,10 +203,10 @@
         </section>
 
         <section>
-            <div class="container">
-                <div class="split split-sidebar align-start">
-                    <div class="stack">
-                        <div class="section-header">
+            <div class="kn-container">
+                <div class="kn-split kn-split-sidebar kn-align-start">
+                    <div class="kn-stack">
+                        <div class="kn-section-header">
                             <h2>Technical Implementation</h2>
 
                             <p>
@@ -213,8 +214,8 @@
                             </p>
                         </div>
 
-                        <div class="grid">
-                            <article class="card stack">
+                        <div class="kn-grid">
+                            <article class="kn-card kn-stack">
                                 <h3>PHP and PDO</h3>
 
                                 <p>
@@ -222,7 +223,7 @@
                                 </p>
                             </article>
 
-                            <article class="card stack">
+                            <article class="kn-card kn-stack">
                                 <h3>Manager Relationship</h3>
 
                                 <p>
@@ -230,7 +231,7 @@
                                 </p>
                             </article>
 
-                            <article class="card stack">
+                            <article class="kn-card kn-stack">
                                 <h3>Responsive Interface</h3>
 
                                 <p>
@@ -240,10 +241,10 @@
                         </div>
                     </div>
 
-                    <aside class="card stack">
+                    <aside class="kn-card kn-stack">
                         <h2>Project Files</h2>
 
-                        <ul class="feature-list">
+                        <ul class="kn-feature-list">
                             <li><code>index.php</code></li>
                             <li><code>create.php</code></li>
                             <li><code>read.php</code></li>
@@ -259,9 +260,9 @@
         </section>
 
         <section>
-            <div class="container">
-                <div class="split split-sidebar align-start">
-                    <div class="section-header">
+            <div class="kn-container">
+                <div class="kn-split kn-split-sidebar kn-align-start">
+                    <div class="kn-section-header">
                         <h2>Project Scope</h2>
 
                         <p>
@@ -269,10 +270,10 @@
                         </p>
                     </div>
 
-                    <aside class="card stack">
+                    <aside class="kn-card kn-stack">
                         <h3>Included Screens</h3>
 
-                        <ul class="feature-list">
+                        <ul class="kn-feature-list">
                             <li>Employee list</li>
                             <li>Add employee</li>
                             <li>Employee details</li>
@@ -285,9 +286,9 @@
         </section>
 
         <section>
-            <div class="container">
-                <article class="card stack">
-                    <div class="text-block">
+            <div class="kn-container">
+                <article class="kn-card kn-stack">
+                    <div class="kn-text-block">
                         <h2>View the project.</h2>
 
                         <p>
@@ -295,21 +296,20 @@
                         </p>
                     </div>
 
-                    <div class="button-group">
-                        <a href="/demos/employee-manager/" class="button button-primary" target="_blank" rel="noopener">Live Demo</a>
-                        <a href="https://github.com/kniraven/nickolaspatino.com/tree/main/public/demos/employee-manager" class="button button-secondary" target="_blank" rel="noopener">GitHub</a>
-                        <a href="/projects/" class="button button-ghost">Back to Projects</a>
+                    <div class="kn-button-group">
+                        <a href="/demos/employee-manager/" class="kn-button kn-button-primary" target="_blank" rel="noopener">Live Demo</a>
+                        <a href="https://github.com/kniraven/nickolaspatino.com/tree/main/public/demos/employee-manager" class="kn-button kn-button-secondary" target="_blank" rel="noopener">GitHub</a>
+                        <a href="/projects/" class="kn-button kn-button-ghost">Back to Projects</a>
                     </div>
                 </article>
             </div>
         </section>
     </main>
 
-    <footer class="site-footer">
-        <div class="container site-footer-inner">
+    <footer class="kn-site-footer">
+        <div class="kn-container kn-site-footer-inner">
             <?php require_once $projectRoot . '/src/footer.php'; ?>
         </div>
     </footer>
 </body>
 </html>
-```

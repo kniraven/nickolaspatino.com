@@ -1,0 +1,390 @@
+/* =========================================================
+   Kniraven Standard CSS
+   File: /public/assets/css/kn/kn-standard.css
+
+   Purpose:
+   This file defines Kniraven's standard behavior for plain HTML
+   elements and shared structural tokens.
+
+   Use this file for site-wide element decisions like:
+   - Standard section rhythm
+   - Standard heading and paragraph spacing
+   - Standard form element sizing
+   - Standard table behavior
+   - Standard cursor behavior
+   - Shared structural tokens
+
+   Do not put reusable layout classes here.
+   Those belong in kn-structure.css.
+
+   Do not put browser normalization here.
+   Browser normalization belongs in kn-normalize.css.
+
+   Do not put visual theme styling here.
+   Colors, fonts, shadows, border colors, border styles,
+   border radius, hover colors, and visual personality belong
+   in a kn-theme-*.css file.
+
+   Public/reusable convention:
+   - File name uses the kn- prefix.
+   - CSS custom properties use the --kn- prefix.
+   - This file uses a cascade layer.
+   - This file intentionally affects plain HTML elements.
+   - Element selectors use low specificity where practical so
+     project CSS and third-party CSS can override them easily.
+   ========================================================= */
+
+@layer kn.normalize, kn.standard, kn.structure, kn.theme;
+
+@layer kn.standard {
+  /* =========================================================
+     1. STRUCTURE TOKENS
+     ========================================================= */
+
+  :root {
+    /* ---------------------------------------------------------
+       Breakpoints
+       --------------------------------------------------------- */
+
+    --kn-screen-sm: 576px;
+    --kn-screen-md: 768px;
+    --kn-screen-lg: 1024px;
+    --kn-screen-xl: 1280px;
+    --kn-screen-xxl: 1536px;
+
+    /* ---------------------------------------------------------
+       Container
+       --------------------------------------------------------- */
+
+    --kn-container-size: 100%;
+    --kn-container-padding-inline: 1rem;
+
+    /* ---------------------------------------------------------
+       Text measure
+       --------------------------------------------------------- */
+
+    --kn-measure-narrow: 50ch;
+    --kn-measure-standard: 64ch;
+    --kn-measure-wide: 76ch;
+
+    /* ---------------------------------------------------------
+       Spacing scale
+       --------------------------------------------------------- */
+
+    --kn-space-2xs: 0.25rem;
+    --kn-space-xs: 0.5rem;
+    --kn-space-sm: 0.75rem;
+    --kn-space-md: 1rem;
+    --kn-space-lg: 1.5rem;
+    --kn-space-xl: 2rem;
+    --kn-space-2xl: 3rem;
+    --kn-space-3xl: 4rem;
+    --kn-space-4xl: 6rem;
+
+    /* ---------------------------------------------------------
+       Section rhythm
+       --------------------------------------------------------- */
+
+    --kn-section-padding-tight: 1rem;
+    --kn-section-padding-block: 1.5rem;
+    --kn-section-padding-roomy: 2.5rem;
+
+    /* ---------------------------------------------------------
+       Document/article rhythm
+       --------------------------------------------------------- */
+
+    --kn-article-header-gap: var(--kn-space-lg);
+    --kn-article-section-gap: var(--kn-space-xl);
+    --kn-article-entry-gap: var(--kn-space-lg);
+    --kn-article-header-row-gap: var(--kn-space-xs);
+    --kn-article-header-column-gap: var(--kn-space-lg);
+
+    /* ---------------------------------------------------------
+       Layout rhythm
+       --------------------------------------------------------- */
+
+    --kn-content-gap: var(--kn-space-lg);
+    --kn-grid-gap: 1.25rem;
+    --kn-stack-gap: var(--kn-space-md);
+    --kn-inline-gap: var(--kn-space-sm);
+
+    /* ---------------------------------------------------------
+       Typography sizing
+       --------------------------------------------------------- */
+
+    --kn-font-size-sm: 0.875rem;
+    --kn-font-size-base: 1rem;
+    --kn-font-size-md: 1.0625rem;
+    --kn-font-size-lg: clamp(1.15rem, 1.5vw, 1.375rem);
+    --kn-font-size-xl: clamp(1.55rem, 2.5vw, 2rem);
+    --kn-font-size-2xl: clamp(2rem, 4vw, 3.4rem);
+
+    --kn-line-height-tight: 1.08;
+    --kn-line-height-heading: 1.15;
+    --kn-line-height-body: 1.6;
+
+    /* ---------------------------------------------------------
+       Component sizing
+       --------------------------------------------------------- */
+
+    --kn-border-width: 1px;
+
+    --kn-button-min-block-size: 2.5rem;
+    --kn-button-padding-block: 0.625rem;
+    --kn-button-padding-inline: 0.875rem;
+
+    --kn-button-small-min-block-size: 2.125rem;
+    --kn-button-small-padding-block: 0.45rem;
+    --kn-button-small-padding-inline: 0.7rem;
+
+    --kn-card-padding: var(--kn-space-md);
+
+    --kn-form-field-padding-block: 0.75rem;
+    --kn-form-field-padding-inline: 0.875rem;
+
+    --kn-site-header-min-height: 4.25rem;
+  }
+
+  @media (min-width: 576px) {
+    :root {
+      --kn-container-size: 540px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    :root {
+      --kn-container-size: 720px;
+      --kn-container-padding-inline: 1.5rem;
+
+      --kn-section-padding-tight: 1.25rem;
+      --kn-section-padding-block: 1.75rem;
+      --kn-section-padding-roomy: 2.75rem;
+
+      --kn-article-header-gap: var(--kn-space-xl);
+      --kn-article-section-gap: var(--kn-space-xl);
+      --kn-article-entry-gap: var(--kn-space-lg);
+
+      --kn-card-padding: 1rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    :root {
+      --kn-container-size: 960px;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    :root {
+      --kn-container-size: 1140px;
+
+      --kn-section-padding-tight: 1.25rem;
+      --kn-section-padding-block: 2rem;
+      --kn-section-padding-roomy: 3.25rem;
+    }
+  }
+
+  @media (min-width: 1536px) {
+    :root {
+      --kn-container-size: 1200px;
+    }
+  }
+
+
+  /* =========================================================
+     2. BASE PAGE ELEMENTS
+     ========================================================= */
+
+  :where(body) {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100svh;
+    font-size: var(--kn-font-size-base);
+    line-height: var(--kn-line-height-body);
+  }
+
+  :where(main) {
+    flex: 1;
+  }
+
+  :where(main > section) {
+    padding-block: var(--kn-section-padding-block);
+  }
+
+
+  /* =========================================================
+     3. DOCUMENT / ARTICLE ELEMENT RHYTHM
+     ========================================================= */
+
+  :where(article > header) {
+    margin-block-end: var(--kn-article-header-gap);
+  }
+
+  :where(article > section + section) {
+    margin-block-start: var(--kn-article-section-gap);
+  }
+
+  :where(article > section > section + section) {
+    margin-block-start: var(--kn-article-entry-gap);
+  }
+
+  :where(article > section > section > header) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--kn-article-header-row-gap) var(--kn-article-header-column-gap);
+    margin-block-end: var(--kn-space-sm);
+  }
+
+  :where(article > section > section > header > *) {
+    margin-block-end: 0;
+  }
+
+  @media (min-width: 768px) {
+    :where(article > section > section > header) {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: start;
+    }
+
+    :where(article > section > section > header > :last-child) {
+      justify-self: end;
+      text-align: right;
+      white-space: nowrap;
+    }
+  }
+
+
+  /* =========================================================
+     4. TYPOGRAPHY ELEMENT DEFAULTS
+     ========================================================= */
+
+  :where(h1, h2, h3, h4) {
+    line-height: var(--kn-line-height-heading);
+    margin-block-end: var(--kn-space-sm);
+  }
+
+  :where(h1) {
+    font-size: var(--kn-font-size-2xl);
+    line-height: var(--kn-line-height-tight);
+  }
+
+  :where(h2) {
+    font-size: var(--kn-font-size-xl);
+  }
+
+  :where(h3) {
+    font-size: var(--kn-font-size-lg);
+  }
+
+  :where(h4) {
+    font-size: var(--kn-font-size-md);
+  }
+
+  :where(p, ul, ol, dl, blockquote) {
+    margin-block-end: var(--kn-space-md);
+  }
+
+  :where(dt) {
+    margin-block-start: var(--kn-space-xs);
+  }
+
+  :where(dt:first-child) {
+    margin-block-start: 0;
+  }
+
+  :where(dd) {
+    margin-inline-start: var(--kn-space-lg);
+    margin-block-end: var(--kn-space-xs);
+  }
+
+  :where(li) {
+    margin-block-end: var(--kn-space-2xs);
+  }
+
+  :where(li:last-child) {
+    margin-block-end: 0;
+  }
+
+  :where(a) {
+    overflow-wrap: break-word;
+  }
+
+  :where(blockquote) {
+    margin-inline-start: 0;
+  }
+
+  :where(pre) {
+    overflow-x: auto;
+  }
+
+
+  /* =========================================================
+     5. TABLE ELEMENT DEFAULTS
+     ========================================================= */
+
+  :where(table) {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+
+  /* =========================================================
+     6. FORM ELEMENT DEFAULTS
+     ========================================================= */
+
+  :where(label) {
+    display: inline-block;
+  }
+
+  :where(input, textarea, select) {
+    width: 100%;
+    padding: var(--kn-form-field-padding-block) var(--kn-form-field-padding-inline);
+    border-width: var(--kn-border-width);
+  }
+
+  :where(textarea) {
+    min-height: 10rem;
+    resize: vertical;
+  }
+
+  :where(button, input[type="submit"], input[type="button"]) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--kn-space-xs);
+    min-height: var(--kn-button-min-block-size);
+    padding: var(--kn-button-padding-block) var(--kn-button-padding-inline);
+    border-width: var(--kn-border-width);
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  :where(button, input, textarea, select):disabled {
+    cursor: not-allowed;
+  }
+
+
+  /* =========================================================
+     7. USABILITY ELEMENT DEFAULTS
+     ========================================================= */
+
+  :where(:target) {
+    scroll-margin-block: 2rem;
+  }
+
+  :where(:focus-visible) {
+    outline-offset: 0.25rem;
+  }
+
+  :where(summary, select, label[for], input[type="checkbox"], input[type="radio"]) {
+    cursor: pointer;
+  }
+
+  :where(input, textarea, [contenteditable="true"]) {
+    cursor: text;
+  }
+
+  :where(details > summary) {
+    user-select: none;
+  }
+}

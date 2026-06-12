@@ -1,17 +1,19 @@
-<!--
+<?php
+declare(strict_types=1);
+
+/*
     Author: Nickolas Patino
     Created: 06/09/2026
     Updated: 06/09/2026
--->
+*/
 
-<?php
-    $projectRoot = dirname($_SERVER['DOCUMENT_ROOT']);
-    $pageLocked = "";
+$projectRoot = dirname($_SERVER['DOCUMENT_ROOT']);
+$pageLocked = "";
 
-    require_once $projectRoot . '/config/session.php';
+require_once $projectRoot . '/config/session.php';
 
-    $pageTitle = "Nickolas Patino | 5E Monster Maker Case Study";
-    $pageDescription = "Case study for 5E Monster Maker, an interactive TTRPG monster stat block builder with editable fields, monster options, custom actions, CR calculation, theme customization, save/load, and image export.";
+$pageTitle = "Nickolas Patino | 5E Monster Maker Case Study";
+$pageDescription = "Case study for 5E Monster Maker, an interactive TTRPG monster stat block builder with editable fields, monster options, custom actions, CR calculation, theme customization, save/load, and image export.";
 ?>
 
 <!DOCTYPE html>
@@ -21,36 +23,36 @@
 </head>
 
 <body>
-    <header class="site-header">
-        <div class="container site-header-inner">
+    <header class="kn-site-header">
+        <div class="kn-container kn-site-header-inner">
             <?php require_once $projectRoot . '/src/nav.php'; ?>
         </div>
     </header>
 
     <main>
-        <section class="hero">
-            <div class="container">
-                <div class="stack stack-roomy">
-                    <div class="split split-sidebar align-start">
-                        <div class="page-hero-content">
-                            <p class="small-text text-primary">
+        <section class="kn-hero">
+            <div class="kn-container">
+                <div class="kn-stack kn-stack-roomy">
+                    <div class="kn-split kn-split-sidebar kn-align-start">
+                        <div class="kn-page-hero-content">
+                            <p class="kn-small-text kn-text-primary">
                                 JavaScript • PHP • Bootstrap • TTRPG Tool • HTML2Canvas
                             </p>
 
                             <h1>5E Monster Maker</h1>
 
-                            <p class="lead">
+                            <p class="kn-lead">
                                 An interactive monster stat block builder for creating, editing, saving, loading, styling, and exporting 5E-compatible TTRPG monsters.
                             </p>
 
-                            <div class="button-group">
-                                <a href="/demos/monster-maker/" class="button button-primary" target="_blank" rel="noopener">Live Demo</a>
-                                <a href="https://github.com/kniraven/nickolaspatino.com/tree/main/public/demos/monster-maker" class="button button-secondary" target="_blank" rel="noopener">GitHub</a>
-                                <a href="/projects/" class="button button-ghost">Back to Projects</a>
+                            <div class="kn-button-group">
+                                <a href="/demos/monster-maker/" class="kn-button kn-button-primary" target="_blank" rel="noopener">Live Demo</a>
+                                <a href="https://github.com/kniraven/nickolaspatino.com/tree/main/public/demos/monster-maker" class="kn-button kn-button-secondary" target="_blank" rel="noopener">GitHub</a>
+                                <a href="/projects/" class="kn-button kn-button-ghost">Back to Projects</a>
                             </div>
                         </div>
 
-                        <aside class="card stack">
+                        <aside class="kn-card kn-stack">
                             <h2>Project Summary</h2>
 
                             <dl>
@@ -69,7 +71,7 @@
                         </aside>
                     </div>
 
-                    <div class="media-frame aspect-video">
+                    <div class="kn-media-frame kn-aspect-video">
                         <img
                             src="/assets/images/projects/monstermaker.png"
                             alt="5E Monster Maker project screenshot"
@@ -80,10 +82,10 @@
         </section>
 
         <section>
-            <div class="container">
-                <div class="split split-sidebar align-start">
-                    <article class="stack">
-                        <div class="section-header">
+            <div class="kn-container">
+                <div class="kn-split kn-split-sidebar kn-align-start">
+                    <article class="kn-stack">
+                        <div class="kn-section-header">
                             <h2>Overview</h2>
 
                             <p>
@@ -91,8 +93,8 @@
                             </p>
                         </div>
 
-                        <div class="grid">
-                            <article class="card stack">
+                        <div class="kn-grid">
+                            <article class="kn-card kn-stack">
                                 <h3>Editable Stat Block</h3>
 
                                 <p>
@@ -100,7 +102,7 @@
                                 </p>
                             </article>
 
-                            <article class="card stack">
+                            <article class="kn-card kn-stack">
                                 <h3>Rules-Oriented Controls</h3>
 
                                 <p>
@@ -108,7 +110,7 @@
                                 </p>
                             </article>
 
-                            <article class="card stack">
+                            <article class="kn-card kn-stack">
                                 <h3>Exportable Output</h3>
 
                                 <p>
@@ -118,10 +120,10 @@
                         </div>
                     </article>
 
-                    <aside class="card stack">
+                    <aside class="kn-card kn-stack">
                         <h2>Monster Fields</h2>
 
-                        <ul class="feature-list">
+                        <ul class="kn-feature-list">
                             <li>Name, image, and description</li>
                             <li>Size, type, subtype, and alignment</li>
                             <li>Armor class and hit points</li>
@@ -136,9 +138,9 @@
         </section>
 
         <section>
-            <div class="container">
-                <div class="stack stack-roomy">
-                    <div class="section-header">
+            <div class="kn-container">
+                <div class="kn-stack kn-stack-roomy">
+                    <div class="kn-section-header">
                         <h2>Application Features</h2>
 
                         <p>
@@ -146,8 +148,8 @@
                         </p>
                     </div>
 
-                    <div class="card-grid">
-                        <article class="card stack">
+                    <div class="kn-card-grid">
+                        <article class="kn-card kn-stack">
                             <h3>Inline Editing</h3>
 
                             <p>
@@ -155,7 +157,7 @@
                             </p>
                         </article>
 
-                        <article class="card stack">
+                        <article class="kn-card kn-stack">
                             <h3>Monster Options Modal</h3>
 
                             <p>
@@ -163,7 +165,7 @@
                             </p>
                         </article>
 
-                        <article class="card stack">
+                        <article class="kn-card kn-stack">
                             <h3>Feature Builder</h3>
 
                             <p>
@@ -171,7 +173,7 @@
                             </p>
                         </article>
 
-                        <article class="card stack">
+                        <article class="kn-card kn-stack">
                             <h3>Action Generation</h3>
 
                             <p>
@@ -179,7 +181,7 @@
                             </p>
                         </article>
 
-                        <article class="card stack">
+                        <article class="kn-card kn-stack">
                             <h3>Challenge Rating</h3>
 
                             <p>
@@ -187,7 +189,7 @@
                             </p>
                         </article>
 
-                        <article class="card stack">
+                        <article class="kn-card kn-stack">
                             <h3>Theme Controls</h3>
 
                             <p>
@@ -200,10 +202,10 @@
         </section>
 
         <section>
-            <div class="container">
-                <div class="split split-sidebar align-start">
-                    <div class="stack">
-                        <div class="section-header">
+            <div class="kn-container">
+                <div class="kn-split kn-split-sidebar kn-align-start">
+                    <div class="kn-stack">
+                        <div class="kn-section-header">
                             <h2>Technical Implementation</h2>
 
                             <p>
@@ -211,8 +213,8 @@
                             </p>
                         </div>
 
-                        <div class="grid">
-                            <article class="card stack">
+                        <div class="kn-grid">
+                            <article class="kn-card kn-stack">
                                 <h3>PHP Partials</h3>
 
                                 <p>
@@ -220,7 +222,7 @@
                                 </p>
                             </article>
 
-                            <article class="card stack">
+                            <article class="kn-card kn-stack">
                                 <h3>JavaScript Modules</h3>
 
                                 <p>
@@ -228,7 +230,7 @@
                                 </p>
                             </article>
 
-                            <article class="card stack">
+                            <article class="kn-card kn-stack">
                                 <h3>Scoped Styling</h3>
 
                                 <p>
@@ -238,10 +240,10 @@
                         </div>
                     </div>
 
-                    <aside class="card stack">
+                    <aside class="kn-card kn-stack">
                         <h2>Representative Files</h2>
 
-                        <ul class="feature-list">
+                        <ul class="kn-feature-list">
                             <li><code>index.php</code></li>
                             <li><code>monsterModule.js</code></li>
                             <li><code>themes.js</code></li>
@@ -261,9 +263,9 @@
         </section>
 
         <section>
-            <div class="container">
-                <div class="stack stack-roomy">
-                    <div class="section-header">
+            <div class="kn-container">
+                <div class="kn-stack kn-stack-roomy">
+                    <div class="kn-section-header">
                         <h2>Monster Creation Workflow</h2>
 
                         <p>
@@ -271,8 +273,8 @@
                         </p>
                     </div>
 
-                    <div class="grid">
-                        <article class="card stack">
+                    <div class="kn-grid">
+                        <article class="kn-card kn-stack">
                             <h3>1. Edit Core Stats</h3>
 
                             <p>
@@ -280,7 +282,7 @@
                             </p>
                         </article>
 
-                        <article class="card stack">
+                        <article class="kn-card kn-stack">
                             <h3>2. Configure Options</h3>
 
                             <p>
@@ -288,7 +290,7 @@
                             </p>
                         </article>
 
-                        <article class="card stack">
+                        <article class="kn-card kn-stack">
                             <h3>3. Add Features</h3>
 
                             <p>
@@ -296,7 +298,7 @@
                             </p>
                         </article>
 
-                        <article class="card stack">
+                        <article class="kn-card kn-stack">
                             <h3>4. Style the Sheet</h3>
 
                             <p>
@@ -304,7 +306,7 @@
                             </p>
                         </article>
 
-                        <article class="card stack">
+                        <article class="kn-card kn-stack">
                             <h3>5. Save or Load</h3>
 
                             <p>
@@ -312,7 +314,7 @@
                             </p>
                         </article>
 
-                        <article class="card stack">
+                        <article class="kn-card kn-stack">
                             <h3>6. Export Image</h3>
 
                             <p>
@@ -325,10 +327,10 @@
         </section>
 
         <section>
-            <div class="container">
-                <div class="split split-sidebar align-start">
-                    <div class="stack">
-                        <div class="section-header">
+            <div class="kn-container">
+                <div class="kn-split kn-split-sidebar kn-align-start">
+                    <div class="kn-stack">
+                        <div class="kn-section-header">
                             <h2>Design Notes</h2>
 
                             <p>
@@ -336,8 +338,8 @@
                             </p>
                         </div>
 
-                        <div class="grid">
-                            <article class="card stack">
+                        <div class="kn-grid">
+                            <article class="kn-card kn-stack">
                                 <h3>Live Preview</h3>
 
                                 <p>
@@ -345,7 +347,7 @@
                                 </p>
                             </article>
 
-                            <article class="card stack">
+                            <article class="kn-card kn-stack">
                                 <h3>Modal Organization</h3>
 
                                 <p>
@@ -353,7 +355,7 @@
                                 </p>
                             </article>
 
-                            <article class="card stack">
+                            <article class="kn-card kn-stack">
                                 <h3>Layout Rebalancing</h3>
 
                                 <p>
@@ -363,10 +365,10 @@
                         </div>
                     </div>
 
-                    <aside class="card stack">
+                    <aside class="kn-card kn-stack">
                         <h2>Asset Support</h2>
 
-                        <ul class="feature-list">
+                        <ul class="kn-feature-list">
                             <li>Default mimic artwork</li>
                             <li>Papyrus texture</li>
                             <li>Sci-fi texture</li>
@@ -381,9 +383,9 @@
         </section>
 
         <section>
-            <div class="container">
-                <article class="card stack">
-                    <div class="text-block">
+            <div class="kn-container">
+                <article class="kn-card kn-stack">
+                    <div class="kn-text-block">
                         <h2>View the project.</h2>
 
                         <p>
@@ -391,18 +393,18 @@
                         </p>
                     </div>
 
-                    <div class="button-group">
-                        <a href="/demos/monster-maker/" class="button button-primary" target="_blank" rel="noopener">Live Demo</a>
-                        <a href="https://github.com/kniraven/nickolaspatino.com/tree/main/public/demos/monster-maker" class="button button-secondary" target="_blank" rel="noopener">GitHub</a>
-                        <a href="/projects/" class="button button-ghost">Back to Projects</a>
+                    <div class="kn-button-group">
+                        <a href="/demos/monster-maker/" class="kn-button kn-button-primary" target="_blank" rel="noopener">Live Demo</a>
+                        <a href="https://github.com/kniraven/nickolaspatino.com/tree/main/public/demos/monster-maker" class="kn-button kn-button-secondary" target="_blank" rel="noopener">GitHub</a>
+                        <a href="/projects/" class="kn-button kn-button-ghost">Back to Projects</a>
                     </div>
                 </article>
             </div>
         </section>
     </main>
 
-    <footer class="site-footer">
-        <div class="container site-footer-inner">
+    <footer class="kn-site-footer">
+        <div class="kn-container kn-site-footer-inner">
             <?php require_once $projectRoot . '/src/footer.php'; ?>
         </div>
     </footer>

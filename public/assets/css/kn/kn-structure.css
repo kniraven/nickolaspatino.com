@@ -1,0 +1,696 @@
+/* =========================================================
+   Kniraven Structure CSS
+   File: /public/assets/css/kn/kn-structure.css
+
+   Purpose:
+   This file defines Kniraven's reusable structural classes.
+
+   Use this file for:
+   - Containers
+   - Section utilities
+   - Layout patterns
+   - Flow helpers
+   - Cards
+   - Button classes
+   - Form layout classes
+   - Header and footer structure
+   - Media structure utilities
+   - Print layout behavior
+
+   Do not put browser normalization here.
+   Browser normalization belongs in kn-normalize.css.
+
+   Do not put plain HTML element standards here.
+   Kniraven element standards belong in kn-standard.css.
+
+   Do not put visual theme styling here.
+   Colors, fonts, shadows, border colors, border styles,
+   border radius, hover colors, and visual personality belong
+   in a kn-theme-*.css file.
+
+   Public/reusable convention:
+   - File name uses the kn- prefix.
+   - Public structural classes use the .kn- prefix.
+   - CSS custom properties are read from --kn-* tokens.
+   - This file uses a cascade layer.
+   - Generic aliases like .container, .card, and .button are
+     intentionally omitted to avoid collisions with frameworks.
+   ========================================================= */
+
+@layer kn.normalize, kn.standard, kn.structure, kn.theme;
+
+@layer kn.structure {
+  /* =========================================================
+     1. PAGE STRUCTURE CLASSES
+     ========================================================= */
+
+  .kn-section {
+    padding-block: var(--kn-section-padding-block);
+  }
+
+  .kn-section-tight {
+    padding-block: var(--kn-section-padding-tight);
+  }
+
+  .kn-section-roomy {
+    padding-block: var(--kn-section-padding-roomy);
+  }
+
+  .kn-container {
+    width: 100%;
+    max-width: var(--kn-container-size);
+    margin-inline: auto;
+    padding-inline: var(--kn-container-padding-inline);
+  }
+
+
+  /* =========================================================
+     2. TYPOGRAPHY STRUCTURE CLASSES
+     ========================================================= */
+
+  .kn-lead {
+    font-size: var(--kn-font-size-md);
+  }
+
+  .kn-small-text {
+    font-size: var(--kn-font-size-sm);
+  }
+
+  .kn-text-block,
+  .kn-measure-standard {
+    max-width: var(--kn-measure-standard);
+  }
+
+  .kn-text-block-wide,
+  .kn-measure-wide {
+    max-width: var(--kn-measure-wide);
+  }
+
+  .kn-text-block-narrow,
+  .kn-measure-narrow {
+    max-width: var(--kn-measure-narrow);
+  }
+
+  .kn-text-block > :last-child,
+  .kn-text-block-wide > :last-child,
+  .kn-text-block-narrow > :last-child,
+  .kn-measure-standard > :last-child,
+  .kn-measure-wide > :last-child,
+  .kn-measure-narrow > :last-child {
+    margin-block-end: 0;
+  }
+
+
+  /* =========================================================
+     3. SECTION COMPOSITION CLASSES
+     ========================================================= */
+
+  .kn-page-hero,
+  .kn-hero {
+    padding-block: var(--kn-section-padding-roomy);
+  }
+
+  .kn-page-hero-content {
+    display: grid;
+    gap: var(--kn-space-md);
+    max-width: var(--kn-measure-wide);
+  }
+
+  .kn-page-hero-content > * {
+    margin-block-end: 0;
+  }
+
+  .kn-section-header {
+    display: grid;
+    gap: var(--kn-space-sm);
+    max-width: var(--kn-measure-standard);
+    margin-block-end: var(--kn-space-lg);
+  }
+
+  .kn-section-header > * {
+    margin-block-end: 0;
+  }
+
+  .kn-section-header-centered {
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  @media (min-width: 1024px) {
+    .kn-page-hero,
+    .kn-hero {
+      padding-block: 3rem;
+    }
+  }
+
+
+  /* =========================================================
+     4. UNIVERSAL LAYOUT PATTERNS
+     ========================================================= */
+
+  .kn-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: var(--kn-grid-gap);
+    align-items: stretch;
+  }
+
+  .kn-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    gap: var(--kn-grid-gap);
+    align-items: stretch;
+  }
+
+  .kn-split {
+    display: grid;
+    gap: var(--kn-grid-gap);
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .kn-split {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+    .kn-split-main {
+      grid-template-columns: minmax(0, 6.5fr) minmax(0, 4.5fr);
+    }
+
+    .kn-split-sidebar {
+      grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+    }
+
+    .kn-split-media {
+      grid-template-columns: minmax(0, 3.5fr) minmax(0, 8.5fr);
+    }
+
+    .kn-split-media-reverse {
+      grid-template-columns: minmax(0, 8.5fr) minmax(0, 3.5fr);
+    }
+  }
+
+
+  /* =========================================================
+     5. FLOW HELPERS
+     ========================================================= */
+
+  .kn-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--kn-stack-gap);
+  }
+
+  .kn-stack > * {
+    margin-block-end: 0;
+  }
+
+  .kn-stack-tight {
+    --kn-stack-gap: var(--kn-space-sm);
+  }
+
+  .kn-stack-loose {
+    --kn-stack-gap: var(--kn-space-lg);
+  }
+
+  .kn-stack-roomy {
+    --kn-stack-gap: var(--kn-space-xl);
+  }
+
+  .kn-inline-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--kn-inline-gap);
+    align-items: center;
+  }
+
+  .kn-cluster {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--kn-inline-gap);
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .kn-button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--kn-space-sm);
+  }
+
+  .kn-center-content {
+    display: grid;
+    place-items: center;
+  }
+
+  .kn-align-start {
+    align-items: start;
+  }
+
+  .kn-align-center {
+    align-items: center;
+  }
+
+  .kn-justify-center {
+    justify-content: center;
+  }
+
+  .kn-full-width {
+    width: 100%;
+  }
+
+  .kn-clean-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .kn-feature-list {
+    display: grid;
+    gap: var(--kn-space-xs);
+    margin-block-end: 0;
+    padding-inline-start: 1.25rem;
+  }
+
+  .kn-table-wrap {
+    overflow-x: auto;
+  }
+
+
+  /* =========================================================
+     6. ACCESSIBILITY UTILITIES
+     ========================================================= */
+
+  .kn-visually-hidden {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .kn-skip-link {
+    position: absolute;
+    inset-block-start: var(--kn-space-sm);
+    inset-inline-start: var(--kn-space-sm);
+    z-index: 999;
+    transform: translateY(-200%);
+  }
+
+  .kn-skip-link:focus {
+    transform: translateY(0);
+  }
+
+
+  /* =========================================================
+     7. MEDIA STRUCTURE CLASSES
+     ========================================================= */
+
+  .kn-card-media,
+  .kn-media-frame {
+    overflow: hidden;
+  }
+
+  .kn-card-media img,
+  .kn-media-frame img {
+    width: 100%;
+  }
+
+  .kn-media-logo {
+    width: min(100%, 15rem);
+    margin-inline: auto;
+  }
+
+  .kn-aspect-square {
+    aspect-ratio: 1;
+  }
+
+  .kn-aspect-video {
+    aspect-ratio: 16 / 9;
+  }
+
+  .kn-aspect-wide {
+    aspect-ratio: 21 / 9;
+  }
+
+  .kn-aspect-photo {
+    aspect-ratio: 3 / 2;
+  }
+
+  .kn-aspect-portrait {
+    aspect-ratio: 4 / 5;
+  }
+
+  .kn-aspect-square,
+  .kn-aspect-video,
+  .kn-aspect-wide,
+  .kn-aspect-photo,
+  .kn-aspect-portrait {
+    overflow: hidden;
+  }
+
+  .kn-aspect-square > img,
+  .kn-aspect-video > img,
+  .kn-aspect-wide > img,
+  .kn-aspect-photo > img,
+  .kn-aspect-portrait > img,
+  .kn-aspect-square > picture,
+  .kn-aspect-video > picture,
+  .kn-aspect-wide > picture,
+  .kn-aspect-photo > picture,
+  .kn-aspect-portrait > picture {
+    width: 100%;
+    height: 100%;
+  }
+
+  .kn-aspect-square > img,
+  .kn-aspect-video > img,
+  .kn-aspect-wide > img,
+  .kn-aspect-photo > img,
+  .kn-aspect-portrait > img {
+    object-fit: cover;
+  }
+
+
+  /* =========================================================
+     8. HEADER / NAV STRUCTURE CLASSES
+     ========================================================= */
+
+  .kn-site-header {
+    min-height: var(--kn-site-header-min-height);
+    border-bottom-width: var(--kn-border-width);
+  }
+
+  .kn-site-header-inner {
+    min-height: var(--kn-site-header-min-height);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--kn-space-md);
+  }
+
+  .kn-site-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--kn-space-sm);
+  }
+
+  .kn-site-brand-logo {
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
+    flex: 0 0 auto;
+  }
+
+  .kn-site-nav {
+    margin-inline-start: auto;
+  }
+
+  .kn-site-nav-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--kn-space-sm);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .kn-site-nav-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--kn-button-min-block-size);
+    padding-inline: var(--kn-space-sm);
+  }
+
+  .kn-nav-toggle {
+    display: none;
+  }
+
+  @media (max-width: 767.98px) {
+    .kn-site-header-inner {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      padding-block: var(--kn-space-sm);
+    }
+
+    .kn-site-brand {
+      grid-column: 1;
+    }
+
+    .kn-site-nav {
+      display: contents;
+    }
+
+    .kn-nav-toggle {
+      grid-column: 2;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-inline-size: var(--kn-button-min-block-size);
+      min-block-size: var(--kn-button-min-block-size);
+    }
+
+    .kn-site-nav-list {
+      grid-column: 1 / -1;
+      display: none;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      width: 100%;
+      padding-block-start: var(--kn-space-sm);
+    }
+
+    .kn-site-nav.is-open .kn-site-nav-list {
+      display: flex;
+    }
+
+    .kn-site-nav-link {
+      width: 100%;
+    }
+  }
+
+
+  /* =========================================================
+     9. CARD STRUCTURE CLASSES
+     ========================================================= */
+
+  .kn-card {
+    padding: var(--kn-card-padding);
+    border-width: var(--kn-border-width);
+  }
+
+  .kn-card > :last-child {
+    margin-block-end: 0;
+  }
+
+  .kn-card-equal {
+    height: 100%;
+  }
+
+  .kn-card-compact {
+    --kn-card-padding: var(--kn-space-sm);
+  }
+
+  .kn-card-roomy {
+    --kn-card-padding: var(--kn-space-lg);
+  }
+
+  .kn-media-card {
+    display: grid;
+    gap: var(--kn-space-md);
+  }
+
+  @media (min-width: 768px) {
+    .kn-media-card {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+      align-items: center;
+    }
+  }
+
+  .kn-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--kn-space-sm);
+    margin-block-start: auto;
+  }
+
+
+  /* =========================================================
+     10. BUTTON STRUCTURE CLASSES
+     ========================================================= */
+
+  .kn-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--kn-space-xs);
+    min-height: var(--kn-button-min-block-size);
+    padding: var(--kn-button-padding-block) var(--kn-button-padding-inline);
+    border-width: var(--kn-border-width);
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .kn-button-small {
+    min-height: var(--kn-button-small-min-block-size);
+    padding: var(--kn-button-small-padding-block) var(--kn-button-small-padding-inline);
+    font-size: var(--kn-font-size-sm);
+  }
+
+  @media (max-width: 575.98px) {
+    .kn-button-group .kn-button,
+    .kn-button-group button {
+      width: 100%;
+    }
+  }
+
+
+  /* =========================================================
+     11. FORM STRUCTURE CLASSES
+     ========================================================= */
+
+  .kn-form {
+    display: grid;
+    gap: var(--kn-space-md);
+  }
+
+  .kn-form-row {
+    display: grid;
+    gap: var(--kn-space-md);
+  }
+
+  @media (min-width: 768px) {
+    .kn-form-row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .kn-form-field {
+    display: grid;
+    gap: var(--kn-space-xs);
+  }
+
+
+  /* ---------------------------------------------------------
+     Field help tooltips
+
+     Reusable help icon pattern for forms.
+     The tooltip stays anchored to the field label and scrolls with it.
+     Visual color, border color, shadow, and surface styling may be
+     enhanced in a kn-theme-*.css file if needed.
+     --------------------------------------------------------- */
+
+  .kn-field-label-row {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--kn-space-xs);
+    width: fit-content;
+  }
+
+  .kn-field-help {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-inline-size: 1.25rem;
+    min-block-size: 1.25rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    line-height: 1;
+    cursor: help;
+  }
+
+  .kn-field-help-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 1.15rem;
+    block-size: 1.15rem;
+    line-height: 1;
+    font-size: var(--kn-font-size-sm);
+  }
+
+  .kn-field-help-tooltip {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: calc(100% + var(--kn-space-xs));
+    z-index: 30;
+    display: none;
+    width: min(24rem, 70vw);
+    transform: translateY(-50%);
+    text-align: left;
+    line-height: var(--kn-line-height-body);
+    font-weight: 400;
+    white-space: normal;
+  }
+
+  .kn-field-help:hover .kn-field-help-tooltip,
+  .kn-field-help:focus .kn-field-help-tooltip,
+  .kn-field-help:focus-visible .kn-field-help-tooltip,
+  .kn-field-help:focus-within .kn-field-help-tooltip {
+    display: block;
+  }
+
+  @media (max-width: 767.98px) {
+    .kn-field-help-tooltip {
+      inset-block-start: calc(100% + var(--kn-space-xs));
+      inset-inline-start: auto;
+      inset-inline-end: 0;
+      width: min(20rem, 78vw);
+      transform: none;
+    }
+  }
+
+
+  /* =========================================================
+     12. FOOTER STRUCTURE CLASSES
+     ========================================================= */
+
+  .kn-site-footer {
+    padding-block: var(--kn-space-lg);
+    border-top-width: var(--kn-border-width);
+  }
+
+  .kn-site-footer-inner {
+    display: grid;
+    gap: var(--kn-space-md);
+  }
+
+  @media (min-width: 768px) {
+    .kn-site-footer-inner {
+      grid-template-columns: 1fr auto;
+      align-items: center;
+    }
+  }
+
+
+  /* =========================================================
+     13. PRINT STRUCTURE
+     ========================================================= */
+
+  @media print {
+    .kn-noprint,
+    .kn-site-header,
+    .kn-site-footer {
+      display: none !important;
+    }
+
+    body {
+      display: block;
+    }
+
+    main > section,
+    .kn-section {
+      padding-block: 1rem;
+    }
+
+    .kn-container {
+      width: 100%;
+      max-width: none;
+      padding-inline: 0;
+    }
+  }
+}

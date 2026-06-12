@@ -4,35 +4,35 @@
  *
  * This file assumes it is being included inside:
  *
- * <footer class="site-footer">
- *     <div class="container-wide site-footer-inner">
+ * <footer class="kn-site-footer">
+ *     <div class="kn-container kn-site-footer-inner">
  *         <?php require_once $projectRoot . '/src/footer.php'; ?>
  *     </div>
  * </footer>
  */
 ?>
 
-<div class="stack">
-    <p class="small-text">
+<div class="kn-stack">
+    <p class="kn-small-text">
         © 2018-<?= date("Y"); ?> Nickolas D. Patino. All rights reserved.
     </p>
 
-    <p class="small-text text-muted">
+    <p class="kn-small-text kn-text-muted">
         Web developer and automation-focused problem solver based near Madison, Wisconsin.
     </p>
 </div>
 
-<nav class="inline-list noprint" aria-label="Footer navigation">
-    <a class="site-nav-link" href="/">Home</a>
-    <a class="site-nav-link" href="/projects/">Projects</a>
-    <a class="site-nav-link" href="/services.php">Services</a>
-    <a class="site-nav-link" href="/resume.php">Resume</a>
-    <a class="site-nav-link" href="/about.php">About</a>
-    <a class="site-nav-link" href="/blog/">Blog</a>
-    <a class="site-nav-link" href="/contact.php">Contact</a>
+<nav class="kn-inline-list kn-noprint" aria-label="Footer navigation">
+    <a class="kn-site-nav-link" href="/">Home</a>
+    <a class="kn-site-nav-link" href="/projects/">Projects</a>
+    <a class="kn-site-nav-link" href="/services.php">Services</a>
+    <a class="kn-site-nav-link" href="/resume.php">Resume</a>
+    <a class="kn-site-nav-link" href="/about.php">About</a>
+    <a class="kn-site-nav-link" href="/blog/">Blog</a>
+    <a class="kn-site-nav-link" href="/contact.php">Contact</a>
 
     <a
-        class="site-nav-link"
+        class="kn-site-nav-link"
         href="https://www.linkedin.com/in/nickolaspatino"
         target="_blank"
         rel="noopener"
@@ -41,3 +41,5 @@
         LinkedIn
     </a>
 </nav>
+
+<script src="/assets/js/kn-grid-snakes.js" defer></script>

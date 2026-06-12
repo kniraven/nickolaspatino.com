@@ -1,0 +1,977 @@
+/* =========================================================
+   Kniraven Light Theme CSS
+   File: /public/assets/css/kn/themes/kn-theme-light.css
+
+   Purpose:
+   This file defines one reusable Kniraven visual theme.
+
+   This file controls visual skinning only:
+   - Colors
+   - Font families
+   - Font weights
+   - Border colors/styles/radius
+   - Backgrounds
+   - Shadows
+   - Focus/hover visual states
+   - Decorative visual treatments
+
+   Important:
+   This file should be safe to remove or swap without destroying
+   layout. The page may become plain, but it should remain usable
+   if kn-normalize.css, kn-standard.css, and kn-structure.css are
+   still present.
+
+   Kniraven structure files answer questions like:
+   - How wide is the content area?
+   - How much spacing does a section have?
+   - How does a grid behave?
+   - How do cards/buttons/forms flow?
+
+   Theme files answer questions like:
+   - What colors are used?
+   - What fonts are used?
+   - How bold is text?
+   - Are corners rounded, sharp, clipped, or glowing?
+   - What do shadows, borders, hover states, and backgrounds look like?
+
+   Rule:
+   If a rule affects layout, spacing, sizing, alignment, flow,
+   wrapping, or usability, it belongs in kn-standard.css or
+   kn-structure.css.
+
+   If a rule only affects visual appearance, it belongs here.
+
+   Public/reusable convention:
+   - File name uses the kn-theme- prefix.
+   - Theme variables use the --kn- prefix.
+   - Theme utility classes use the .kn- prefix.
+   - This file uses the kn.theme cascade layer.
+   - Generic aliases like .card, .button, and .site-header are
+     intentionally omitted to avoid collisions with frameworks.
+   ========================================================= */
+
+@layer kn.normalize, kn.standard, kn.structure, kn.theme;
+
+@layer kn.theme {
+  /* =========================================================
+     1. THEME TOKENS
+     ========================================================= */
+
+  :root {
+    /* Brand colors */
+    --kn-color-primary: #60156c;
+    --kn-color-primary-dark: #2a0835;
+    --kn-color-primary-deep: #14051b;
+    --kn-color-primary-light: #a83ac0;
+    --kn-color-primary-hot: #d75cff;
+    --kn-color-primary-soft: #f5e7fa;
+    --kn-color-primary-faint: rgb(96 21 108 / 0.10);
+
+    /* Accent colors */
+    --kn-color-accent-blue: #5ee7ff;
+    --kn-color-accent-cyan: #9ff6ff;
+    --kn-color-accent-pink: #ff6bd6;
+    --kn-color-accent-violet: #b76cff;
+    --kn-color-accent-white: #ffffff;
+
+    /* Page and surface colors */
+    --kn-color-bg: #fff7ff;
+    --kn-color-bg-soft: #faedff;
+    --kn-color-bg-strong: #ffffff;
+
+    --kn-color-surface: rgb(255 255 255 / 0.76);
+    --kn-color-surface-solid: #ffffff;
+    --kn-color-surface-strong: #f0ddf7;
+    --kn-color-surface-muted: #fbf3ff;
+
+    /* Text colors */
+    --kn-color-text: #241329;
+    --kn-color-muted: #6f5c79;
+    --kn-color-heading: #120618;
+
+    /* Border colors */
+    --kn-color-border: rgb(96 21 108 / 0.24);
+    --kn-color-border-strong: rgb(168 58 192 / 0.55);
+    --kn-color-border-faint: rgb(96 21 108 / 0.12);
+    --kn-color-border-glow: rgb(215 92 255 / 0.62);
+
+    /* Contrast colors */
+    --kn-color-on-primary: #ffffff;
+    --kn-color-on-dark: #ffffff;
+
+    /* Links */
+    --kn-color-link: var(--kn-color-primary);
+    --kn-color-link-hover: var(--kn-color-primary-dark);
+
+    /* Status colors */
+    --kn-color-success: #237a4b;
+    --kn-color-warning: #9a6700;
+    --kn-color-danger: #b42318;
+
+    /* Fonts */
+    --kn-font-body: "IBM Plex Mono", "Aptos Mono", "Cascadia Code", "Cascadia Mono", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace;
+    --kn-font-heading: "IBM Plex Mono", "Aptos Mono", "Cascadia Code", "Cascadia Mono", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace;
+    --kn-font-mono: "IBM Plex Mono", "Aptos Mono", "Cascadia Code", "Cascadia Mono", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace;
+
+    /* Font weights */
+    --kn-font-weight-normal: 400;
+    --kn-font-weight-medium: 550;
+    --kn-font-weight-semibold: 650;
+    --kn-font-weight-bold: 750;
+    --kn-font-weight-heavy: 850;
+
+    /* Border appearance */
+    --kn-border-style-default: solid;
+
+    /* Decorative radius */
+    --kn-radius-sm: 0.125rem;
+    --kn-radius-md: 0.25rem;
+    --kn-radius-lg: 0.375rem;
+    --kn-radius-xl: 0.5rem;
+    --kn-radius-pill: 999px;
+
+    /* Angular sci-fi corner cuts */
+    --kn-corner-cut-sm: 0.45rem;
+    --kn-corner-cut-md: 0.75rem;
+    --kn-corner-cut-lg: 1.05rem;
+    --kn-corner-cut-xl: 1.35rem;
+
+    /* Clip-path shapes */
+    --kn-clip-panel: polygon(
+      0 0,
+      calc(100% - var(--kn-corner-cut-lg)) 0,
+      100% var(--kn-corner-cut-lg),
+      100% 100%,
+      var(--kn-corner-cut-md) 100%,
+      0 calc(100% - var(--kn-corner-cut-md))
+    );
+
+    --kn-clip-panel-alt: polygon(
+      var(--kn-corner-cut-md) 0,
+      100% 0,
+      100% calc(100% - var(--kn-corner-cut-lg)),
+      calc(100% - var(--kn-corner-cut-lg)) 100%,
+      0 100%,
+      0 var(--kn-corner-cut-md)
+    );
+
+    --kn-clip-button: polygon(
+      0 0,
+      calc(100% - var(--kn-corner-cut-sm)) 0,
+      100% var(--kn-corner-cut-sm),
+      100% 100%,
+      var(--kn-corner-cut-sm) 100%,
+      0 calc(100% - var(--kn-corner-cut-sm))
+    );
+
+    --kn-clip-media: polygon(
+      0 0,
+      calc(100% - var(--kn-corner-cut-md)) 0,
+      100% var(--kn-corner-cut-md),
+      100% 100%,
+      0 100%
+    );
+
+    /* Decorative shadows */
+    --kn-shadow-soft: 0 0.75rem 2rem rgb(31 23 36 / 0.08);
+    --kn-shadow-card: 0 1rem 2.75rem rgb(31 23 36 / 0.14);
+    --kn-shadow-strong: 0 1.5rem 4rem rgb(31 23 36 / 0.22);
+    --kn-shadow-focus: 0 0 0 0.25rem rgb(215 92 255 / 0.26);
+    --kn-shadow-inner-line: inset 0 1px 0 rgb(255 255 255 / 0.82);
+    --kn-shadow-inner-dark-line: inset 0 1px 0 rgb(255 255 255 / 0.14);
+
+    --kn-shadow-neon-purple:
+      0 0 1rem rgb(215 92 255 / 0.22),
+      0 0 2.25rem rgb(96 21 108 / 0.18);
+
+    --kn-shadow-neon-blue:
+      0 0 1rem rgb(94 231 255 / 0.22),
+      0 0 2.25rem rgb(94 231 255 / 0.12);
+
+    --kn-shadow-neon-hot:
+      0 0 1.25rem rgb(215 92 255 / 0.28),
+      0 0 3rem rgb(94 231 255 / 0.12);
+
+    /* Visual transitions */
+    --kn-transition-fast: 160ms ease;
+    --kn-transition-standard: 220ms ease;
+
+    /* Theme-only grid snake glow */
+    --kn-grid-snake-cell: 2rem;
+    --kn-grid-snake-thickness: 2.25px;
+    --kn-grid-snake-segment-length: 2.15rem;
+    --kn-grid-snake-opacity: 0.54;
+
+    --kn-grid-snake-one-color: rgb(255 107 214 / 0.44);
+    --kn-grid-snake-one-soft: rgb(255 107 214 / 0.20);
+
+    --kn-grid-snake-two-color: rgb(215 92 255 / 0.44);
+    --kn-grid-snake-two-soft: rgb(215 92 255 / 0.20);
+
+    --kn-grid-snake-three-color: rgb(18 18 18 / 0.30);
+    --kn-grid-snake-three-soft: rgb(18 18 18 / 0.13);
+
+    --kn-grid-snake-four-color: rgb(255 255 255 / 0.58);
+    --kn-grid-snake-four-soft: rgb(255 255 255 / 0.34);
+
+    --kn-grid-snake-five-color: rgb(138 32 172 / 0.40);
+    --kn-grid-snake-five-soft: rgb(138 32 172 / 0.18);
+  }
+
+
+  /* =========================================================
+     2. BASE THEME
+     ========================================================= */
+
+  :where(body) {
+    position: relative;
+    isolation: isolate;
+    background:
+      radial-gradient(circle at 8% 8%, rgb(215 92 255 / 0.28), transparent 18rem),
+      radial-gradient(circle at 88% 6%, rgb(94 231 255 / 0.18), transparent 16rem),
+      radial-gradient(circle at 68% 48%, rgb(183 108 255 / 0.12), transparent 24rem),
+      radial-gradient(circle at 14% 84%, rgb(96 21 108 / 0.13), transparent 22rem),
+      linear-gradient(rgb(96 21 108 / 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(96 21 108 / 0.05) 1px, transparent 1px),
+      linear-gradient(rgb(215 92 255 / 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(215 92 255 / 0.035) 1px, transparent 1px),
+      linear-gradient(135deg, rgb(255 255 255 / 0) 0%, rgb(255 255 255 / 0) 45%, rgb(215 92 255 / 0.08) 45%, rgb(215 92 255 / 0.08) 46%, rgb(255 255 255 / 0) 46%),
+      linear-gradient(180deg, #fffaff 0%, #f7e9ff 34%, #fff8ff 100%);
+    background-size:
+      auto,
+      auto,
+      auto,
+      auto,
+      2rem 2rem,
+      2rem 2rem,
+      8rem 8rem,
+      8rem 8rem,
+      100% 100%,
+      auto;
+    background-attachment:
+      fixed,
+      fixed,
+      fixed,
+      fixed,
+      fixed,
+      fixed,
+      fixed,
+      fixed,
+      fixed,
+      fixed;
+    color: var(--kn-color-text);
+    font-family: var(--kn-font-body);
+    font-weight: var(--kn-font-weight-normal);
+    font-variant-ligatures: contextual;
+  }
+
+  .kn-grid-snake-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .kn-site-header,
+  main,
+  .kn-site-footer {
+    position: relative;
+    z-index: 1;
+  }
+
+  .kn-grid-snake-segment {
+    position: fixed;
+    width: var(--kn-grid-snake-segment-length);
+    height: var(--kn-grid-snake-thickness);
+    border-radius: 999px;
+    opacity: var(--kn-grid-snake-opacity);
+    pointer-events: none;
+    background:
+      linear-gradient(
+        90deg,
+        transparent 0%,
+        var(--kn-grid-snake-soft) 10%,
+        var(--kn-grid-snake-color) 42%,
+        var(--kn-grid-snake-color) 58%,
+        var(--kn-grid-snake-soft) 90%,
+        transparent 100%
+      );
+    box-shadow:
+      0 0 0.4rem var(--kn-grid-snake-soft),
+      0 0 0.85rem var(--kn-grid-snake-soft),
+      0 0 1.25rem var(--kn-grid-snake-soft);
+    filter: saturate(1.14);
+    transform-origin: center center;
+    will-change: transform, opacity;
+  }
+
+  .kn-grid-snake-segment::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: calc(var(--kn-grid-snake-thickness) * 2.35);
+    height: calc(var(--kn-grid-snake-thickness) * 2.35);
+    border-radius: 999px;
+    background: var(--kn-grid-snake-color);
+    box-shadow:
+      0 0 0.3rem var(--kn-grid-snake-soft),
+      0 0 0.65rem var(--kn-grid-snake-soft),
+      0 0 0.95rem var(--kn-grid-snake-soft);
+    transform: translate(-50%, -50%);
+  }
+
+  .kn-grid-snake-one {
+    --kn-grid-snake-color: var(--kn-grid-snake-one-color);
+    --kn-grid-snake-soft: var(--kn-grid-snake-one-soft);
+  }
+
+  .kn-grid-snake-two {
+    --kn-grid-snake-color: var(--kn-grid-snake-two-color);
+    --kn-grid-snake-soft: var(--kn-grid-snake-two-soft);
+  }
+
+  .kn-grid-snake-three {
+    --kn-grid-snake-color: var(--kn-grid-snake-three-color);
+    --kn-grid-snake-soft: var(--kn-grid-snake-three-soft);
+  }
+
+  .kn-grid-snake-four {
+    --kn-grid-snake-color: var(--kn-grid-snake-four-color);
+    --kn-grid-snake-soft: var(--kn-grid-snake-four-soft);
+  }
+
+  .kn-grid-snake-five {
+    --kn-grid-snake-color: var(--kn-grid-snake-five-color);
+    --kn-grid-snake-soft: var(--kn-grid-snake-five-soft);
+  }
+
+  :where(h1, h2, h3, h4) {
+    color: var(--kn-color-heading);
+    font-family: var(--kn-font-heading);
+    font-weight: var(--kn-font-weight-heavy);
+    letter-spacing: -0.06em;
+  }
+
+  :where(h1) {
+    text-shadow:
+      0 0.45rem 1.25rem rgb(96 21 108 / 0.18),
+      0 0 2rem rgb(215 92 255 / 0.12);
+  }
+
+  :where(h2) {
+    text-shadow: 0 0.35rem 1rem rgb(96 21 108 / 0.10);
+  }
+
+  :where(p, li, dd) {
+    color: var(--kn-color-text);
+  }
+
+  :where(dt) {
+    color: var(--kn-color-heading);
+    font-weight: var(--kn-font-weight-bold);
+  }
+
+  :where(strong, b) {
+    color: var(--kn-color-heading);
+    font-weight: var(--kn-font-weight-bold);
+  }
+
+  :where(small) {
+    color: var(--kn-color-muted);
+  }
+
+  :where(code, kbd, samp, pre) {
+    font-family: var(--kn-font-mono);
+  }
+
+  :where(a) {
+    color: var(--kn-color-link);
+    text-decoration-color: rgb(96 21 108 / 0.45);
+    text-decoration-thickness: 0.09em;
+    text-underline-offset: 0.25em;
+    transition:
+      color var(--kn-transition-fast),
+      background-color var(--kn-transition-fast),
+      border-color var(--kn-transition-fast),
+      box-shadow var(--kn-transition-fast),
+      text-decoration-color var(--kn-transition-fast),
+      text-shadow var(--kn-transition-fast);
+  }
+
+  :where(a:hover, a:focus-visible) {
+    color: var(--kn-color-link-hover);
+    text-decoration-color: currentColor;
+    text-shadow: 0 0 0.75rem rgb(215 92 255 / 0.28);
+  }
+
+  :where(::selection) {
+    background: var(--kn-color-primary);
+    color: var(--kn-color-on-primary);
+  }
+
+  :where(:focus-visible) {
+    outline-color: var(--kn-color-primary-hot);
+  }
+
+
+  /* =========================================================
+     3. HEADER / NAV THEME
+     ========================================================= */
+
+  .kn-site-header {
+    background:
+      linear-gradient(90deg, rgb(255 255 255 / 0.86), rgb(248 236 255 / 0.74)),
+      linear-gradient(135deg, rgb(215 92 255 / 0.10), rgb(94 231 255 / 0.06));
+    border-bottom-color: var(--kn-color-border-faint);
+    border-bottom-style: var(--kn-border-style-default);
+    box-shadow:
+      0 0.5rem 1.5rem rgb(31 23 36 / 0.06),
+      inset 0 -1px 0 rgb(255 255 255 / 0.72),
+      0 0 2rem rgb(215 92 255 / 0.08);
+    backdrop-filter: blur(18px);
+  }
+
+  .kn-site-brand {
+    color: var(--kn-color-heading);
+    font-weight: var(--kn-font-weight-heavy);
+    letter-spacing: -0.045em;
+    text-decoration: none;
+    text-shadow: 0 0 1rem rgb(96 21 108 / 0.12);
+  }
+
+  .kn-site-brand:hover,
+  .kn-site-brand:focus-visible {
+    color: var(--kn-color-primary);
+    text-shadow: var(--kn-shadow-neon-purple);
+  }
+
+  .kn-site-brand-logo {
+    border-radius: var(--kn-radius-md);
+    clip-path: var(--kn-clip-button);
+    box-shadow:
+      0 0.45rem 1.1rem rgb(96 21 108 / 0.18),
+      0 0 1.5rem rgb(215 92 255 / 0.16);
+  }
+
+  .kn-site-nav-link {
+    color: var(--kn-color-text);
+    font-weight: var(--kn-font-weight-bold);
+    text-decoration: none;
+    background: transparent;
+    border-radius: var(--kn-radius-md);
+    clip-path: var(--kn-clip-button);
+    transition:
+      color var(--kn-transition-fast),
+      background-color var(--kn-transition-fast),
+      border-color var(--kn-transition-fast),
+      box-shadow var(--kn-transition-fast),
+      text-shadow var(--kn-transition-fast);
+  }
+
+  .kn-site-nav-link:hover,
+  .kn-site-nav-link:focus-visible {
+    color: var(--kn-color-primary);
+    background:
+      linear-gradient(135deg, rgb(215 92 255 / 0.14), rgb(94 231 255 / 0.08));
+    box-shadow:
+      inset 0 0 0 1px var(--kn-color-border-faint),
+      inset 0 1px 0 rgb(255 255 255 / 0.78),
+      0 0 1rem rgb(215 92 255 / 0.12);
+  }
+
+  .kn-site-nav-link[aria-current="page"] {
+    color: var(--kn-color-primary-dark);
+    background:
+      linear-gradient(135deg, rgb(215 92 255 / 0.20), rgb(94 231 255 / 0.13));
+    box-shadow:
+      inset 0 0 0 1px var(--kn-color-border-strong),
+      var(--kn-shadow-inner-line),
+      0 0 1.25rem rgb(215 92 255 / 0.14);
+  }
+
+  .kn-nav-toggle {
+    background:
+      linear-gradient(180deg, rgb(255 255 255 / 0.92), rgb(249 235 255 / 0.82));
+    color: var(--kn-color-text);
+    border-color: var(--kn-color-border);
+    border-style: var(--kn-border-style-default);
+    border-radius: var(--kn-radius-md);
+    clip-path: var(--kn-clip-button);
+    font-weight: var(--kn-font-weight-bold);
+    box-shadow:
+      var(--kn-shadow-soft),
+      var(--kn-shadow-inner-line);
+  }
+
+  .kn-nav-toggle:hover,
+  .kn-nav-toggle:focus-visible {
+    color: var(--kn-color-primary);
+    border-color: var(--kn-color-primary-light);
+    box-shadow:
+      var(--kn-shadow-card),
+      var(--kn-shadow-neon-purple);
+  }
+
+
+  /* =========================================================
+     4. SURFACES / CARDS / MEDIA THEME
+     ========================================================= */
+
+  .kn-card {
+    background:
+      linear-gradient(135deg, rgb(255 255 255 / 0.93), rgb(255 255 255 / 0.70)),
+      linear-gradient(135deg, rgb(215 92 255 / 0.13), rgb(94 231 255 / 0.09));
+    border-color: var(--kn-color-border);
+    border-style: var(--kn-border-style-default);
+    border-radius: var(--kn-radius-lg);
+    clip-path: var(--kn-clip-panel);
+    box-shadow:
+      var(--kn-shadow-soft),
+      var(--kn-shadow-inner-line),
+      inset 0 0 0 1px rgb(255 255 255 / 0.42);
+    backdrop-filter: blur(14px);
+    transition:
+      border-color var(--kn-transition-standard),
+      box-shadow var(--kn-transition-standard),
+      background-color var(--kn-transition-standard),
+      filter var(--kn-transition-standard),
+      transform var(--kn-transition-standard);
+  }
+
+  .kn-card:hover {
+    border-color: var(--kn-color-border-glow);
+    box-shadow:
+      var(--kn-shadow-card),
+      var(--kn-shadow-neon-purple),
+      var(--kn-shadow-inner-line);
+    filter: saturate(1.05);
+  }
+
+  .kn-card-alt {
+    clip-path: var(--kn-clip-panel-alt);
+  }
+
+  .kn-card-media,
+  .kn-media-frame {
+    background:
+      linear-gradient(135deg, rgb(42 8 53 / 0.12), rgb(215 92 255 / 0.16)),
+      linear-gradient(135deg, var(--kn-color-surface-strong), var(--kn-color-primary-soft));
+    border-radius: var(--kn-radius-md);
+    clip-path: var(--kn-clip-media);
+    box-shadow:
+      inset 0 0 0 1px rgb(96 21 108 / 0.18),
+      inset 0 1px 0 rgb(255 255 255 / 0.55),
+      0 0 1.25rem rgb(215 92 255 / 0.08);
+  }
+
+  .kn-feature-image {
+    box-shadow:
+      var(--kn-shadow-card),
+      var(--kn-shadow-neon-purple);
+  }
+
+  .kn-surface {
+    background:
+      linear-gradient(135deg, rgb(255 255 255 / 0.78), rgb(244 233 247 / 0.82));
+  }
+
+  .kn-surface-strong {
+    background:
+      linear-gradient(135deg, rgb(240 221 247 / 0.95), rgb(255 255 255 / 0.72));
+  }
+
+  .kn-surface-muted {
+    background: var(--kn-color-surface-muted);
+  }
+
+  .kn-graphic-plate,
+  .kn-card.kn-graphic-plate {
+    background:
+      radial-gradient(circle at 18% 12%, rgb(215 92 255 / 0.58), transparent 34%),
+      radial-gradient(circle at 84% 16%, rgb(94 231 255 / 0.26), transparent 28%),
+      linear-gradient(135deg, var(--kn-color-primary-dark), #16091c 70%) !important;
+    color: var(--kn-color-on-dark);
+    border-color: rgb(255 255 255 / 0.16);
+    border-style: var(--kn-border-style-default);
+    clip-path: var(--kn-clip-panel);
+    box-shadow:
+      0 1rem 2.5rem rgb(31 23 36 / 0.22),
+      0 0 2rem rgb(215 92 255 / 0.16),
+      inset 0 1px 0 rgb(255 255 255 / 0.16);
+  }
+
+  .kn-graphic-plate :where(h1, h2, h3, h4, p, li, dd, dt, small),
+  .kn-graphic-plate .kn-small-text,
+  .kn-graphic-plate .kn-text-muted {
+    color: var(--kn-color-on-dark);
+  }
+
+  .kn-graphic-plate a {
+    color: var(--kn-color-on-dark);
+  }
+
+  .kn-graphic-plate img {
+    filter:
+      drop-shadow(0 0.5rem 1rem rgb(0 0 0 / 0.32))
+      drop-shadow(0 0 1rem rgb(215 92 255 / 0.18));
+  }
+
+
+  /* =========================================================
+     5. BUTTON THEME
+     ========================================================= */
+
+  :where(button, input[type="submit"], input[type="button"]),
+  .kn-button {
+    color: var(--kn-color-text);
+    background:
+      linear-gradient(135deg, rgb(255 255 255 / 0.74), rgb(248 236 255 / 0.56));
+    border-color: var(--kn-color-border);
+    border-style: var(--kn-border-style-default);
+    border-radius: var(--kn-radius-md);
+    clip-path: var(--kn-clip-button);
+    box-shadow:
+      inset 0 0 0 1px rgb(255 255 255 / 0.46),
+      inset 0 1px 0 rgb(255 255 255 / 0.74),
+      0 0 1rem rgb(215 92 255 / 0.07);
+    font-weight: var(--kn-font-weight-heavy);
+    letter-spacing: -0.025em;
+    text-decoration: none;
+    text-shadow: none;
+    transition:
+      color var(--kn-transition-fast),
+      background-color var(--kn-transition-fast),
+      border-color var(--kn-transition-fast),
+      box-shadow var(--kn-transition-fast),
+      filter var(--kn-transition-fast),
+      text-shadow var(--kn-transition-fast);
+  }
+
+  :where(button:hover, button:focus-visible, input[type="submit"]:hover, input[type="submit"]:focus-visible, input[type="button"]:hover, input[type="button"]:focus-visible),
+  .kn-button:hover,
+  .kn-button:focus-visible {
+    color: var(--kn-color-primary);
+    background:
+      linear-gradient(135deg, rgb(215 92 255 / 0.14), rgb(94 231 255 / 0.08));
+    border-color: var(--kn-color-border-strong);
+    box-shadow:
+      inset 0 0 0 1px var(--kn-color-border-faint),
+      inset 0 1px 0 rgb(255 255 255 / 0.78),
+      0 0 1rem rgb(215 92 255 / 0.14);
+    text-shadow: 0 0 0.75rem rgb(215 92 255 / 0.22);
+    filter: saturate(1.04);
+  }
+
+  :where(button:active, input[type="submit"]:active, input[type="button"]:active),
+  .kn-button:active {
+    filter: saturate(1);
+    box-shadow:
+      inset 0 0 0 1px var(--kn-color-border-strong),
+      inset 0 0.25rem 0.75rem rgb(96 21 108 / 0.12);
+  }
+
+  .kn-button-primary,
+  input[type="submit"] {
+    color: var(--kn-color-on-primary);
+    background:
+      linear-gradient(135deg, var(--kn-color-primary-dark), var(--kn-color-primary) 54%, var(--kn-color-primary-light));
+    border-color: rgb(215 92 255 / 0.72);
+    box-shadow:
+      inset 0 0 0 1px rgb(255 255 255 / 0.12),
+      inset 0 1px 0 rgb(255 255 255 / 0.22),
+      0 0.8rem 1.6rem rgb(96 21 108 / 0.22),
+      0 0 1.4rem rgb(215 92 255 / 0.22);
+    text-shadow: 0 0 0.8rem rgb(255 255 255 / 0.26);
+  }
+
+  .kn-button-primary:hover,
+  .kn-button-primary:focus-visible,
+  input[type="submit"]:hover,
+  input[type="submit"]:focus-visible {
+    color: var(--kn-color-on-primary);
+    background:
+      linear-gradient(135deg, #1b0624, var(--kn-color-primary-dark) 48%, var(--kn-color-primary-hot));
+    border-color: rgb(215 92 255 / 0.92);
+    box-shadow:
+      inset 0 0 0 1px rgb(255 255 255 / 0.16),
+      inset 0 1px 0 rgb(255 255 255 / 0.24),
+      0 0.9rem 1.85rem rgb(96 21 108 / 0.28),
+      0 0 2rem rgb(215 92 255 / 0.34);
+    text-shadow: 0 0 0.95rem rgb(255 255 255 / 0.32);
+  }
+
+  .kn-button-secondary {
+    color: var(--kn-color-primary-dark);
+    background:
+      linear-gradient(135deg, rgb(215 92 255 / 0.20), rgb(94 231 255 / 0.13));
+    border-color: var(--kn-color-border-strong);
+    box-shadow:
+      inset 0 0 0 1px var(--kn-color-border-faint),
+      var(--kn-shadow-inner-line),
+      0 0 1.25rem rgb(215 92 255 / 0.14);
+  }
+
+  .kn-button-secondary:hover,
+  .kn-button-secondary:focus-visible {
+    color: var(--kn-color-primary-dark);
+    background:
+      linear-gradient(135deg, rgb(215 92 255 / 0.28), rgb(94 231 255 / 0.18));
+    border-color: var(--kn-color-border-glow);
+    box-shadow:
+      inset 0 0 0 1px var(--kn-color-border-strong),
+      var(--kn-shadow-inner-line),
+      0 0 1.5rem rgb(215 92 255 / 0.22),
+      0 0 1.5rem rgb(94 231 255 / 0.10);
+  }
+
+  .kn-button-ghost {
+    color: var(--kn-color-text);
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+  }
+
+  .kn-button-ghost:hover,
+  .kn-button-ghost:focus-visible {
+    color: var(--kn-color-primary);
+    background:
+      linear-gradient(135deg, rgb(215 92 255 / 0.14), rgb(94 231 255 / 0.08));
+    border-color: var(--kn-color-border-faint);
+    box-shadow:
+      inset 0 0 0 1px var(--kn-color-border-faint),
+      inset 0 1px 0 rgb(255 255 255 / 0.78),
+      0 0 1rem rgb(215 92 255 / 0.12);
+  }
+
+
+  /* =========================================================
+     6. FORM THEME
+     ========================================================= */
+
+  :where(label) {
+    color: var(--kn-color-heading);
+    font-weight: var(--kn-font-weight-bold);
+  }
+
+  :where(input, textarea, select) {
+    background:
+      linear-gradient(180deg, rgb(255 255 255 / 0.90), rgb(255 255 255 / 0.78));
+    color: var(--kn-color-text);
+    border-color: var(--kn-color-border);
+    border-style: var(--kn-border-style-default);
+    border-radius: var(--kn-radius-md);
+    box-shadow:
+      var(--kn-shadow-inner-line),
+      inset 0 0 0 1px rgb(255 255 255 / 0.34);
+    transition:
+      border-color var(--kn-transition-fast),
+      box-shadow var(--kn-transition-fast),
+      background-color var(--kn-transition-fast);
+  }
+
+  :where(input:focus, textarea:focus, select:focus) {
+    outline: none;
+    background: var(--kn-color-bg-strong);
+    border-color: var(--kn-color-primary-hot);
+    box-shadow:
+      var(--kn-shadow-focus),
+      var(--kn-shadow-inner-line),
+      0 0 1rem rgb(215 92 255 / 0.16);
+  }
+
+  :where(input::placeholder, textarea::placeholder) {
+    color: var(--kn-color-muted);
+  }
+
+  .kn-field-help-icon {
+    color: var(--kn-color-primary);
+    background: rgb(215 92 255 / 0.10);
+    border-radius: var(--kn-radius-pill);
+    box-shadow: inset 0 0 0 1px var(--kn-color-border-faint);
+  }
+
+  .kn-field-help-tooltip {
+    color: var(--kn-color-text);
+    background:
+      linear-gradient(135deg, rgb(255 255 255 / 0.96), rgb(251 243 255 / 0.94));
+    border-color: var(--kn-color-border);
+    border-style: var(--kn-border-style-default);
+    border-radius: var(--kn-radius-lg);
+    box-shadow:
+      var(--kn-shadow-card),
+      var(--kn-shadow-inner-line);
+  }
+
+
+  /* =========================================================
+     7. LIST / TABLE / CODE THEME
+     ========================================================= */
+
+  .kn-feature-list li::marker {
+    color: var(--kn-color-primary-hot);
+  }
+
+  :where(table) {
+    background: var(--kn-color-bg-strong);
+  }
+
+  :where(th) {
+    color: var(--kn-color-heading);
+    font-weight: var(--kn-font-weight-bold);
+  }
+
+  :where(td, th) {
+    border-color: var(--kn-color-border);
+    border-style: var(--kn-border-style-default);
+  }
+
+  :where(pre) {
+    background:
+      radial-gradient(circle at top left, rgb(215 92 255 / 0.22), transparent 35%),
+      linear-gradient(180deg, #24102d, #120616);
+    color: #f8eaff;
+    border-color: rgb(255 255 255 / 0.14);
+    border-style: var(--kn-border-style-default);
+    border-radius: var(--kn-radius-md);
+    clip-path: var(--kn-clip-panel);
+    box-shadow:
+      var(--kn-shadow-soft),
+      0 0 2rem rgb(96 21 108 / 0.20);
+  }
+
+  :where(code) {
+    color: var(--kn-color-primary-dark);
+    background: rgb(215 92 255 / 0.11);
+    border-radius: var(--kn-radius-sm);
+  }
+
+  :where(pre code) {
+    color: inherit;
+    background: transparent;
+  }
+
+
+  /* =========================================================
+     8. VISUAL UTILITY THEME
+     ========================================================= */
+
+  .kn-text-primary {
+    color: var(--kn-color-primary);
+  }
+
+  .kn-text-muted {
+    color: var(--kn-color-muted);
+  }
+
+  .kn-text-success {
+    color: var(--kn-color-success);
+  }
+
+  .kn-text-warning {
+    color: var(--kn-color-warning);
+  }
+
+  .kn-text-danger {
+    color: var(--kn-color-danger);
+  }
+
+  .kn-small-text {
+    color: var(--kn-color-primary);
+    font-weight: var(--kn-font-weight-heavy);
+    letter-spacing: 0.075em;
+    text-transform: uppercase;
+  }
+
+  .kn-bordered {
+    border-color: var(--kn-color-border);
+    border-style: var(--kn-border-style-default);
+    border-radius: var(--kn-radius-md);
+  }
+
+  .kn-rounded {
+    border-radius: var(--kn-radius-md);
+  }
+
+  .kn-rounded-lg {
+    border-radius: var(--kn-radius-lg);
+  }
+
+  .kn-rounded-xl {
+    border-radius: var(--kn-radius-xl);
+  }
+
+  .kn-rounded-pill {
+    border-radius: var(--kn-radius-pill);
+  }
+
+  .kn-angular {
+    clip-path: var(--kn-clip-panel);
+  }
+
+  .kn-angular-alt {
+    clip-path: var(--kn-clip-panel-alt);
+  }
+
+  .kn-shadow-soft {
+    box-shadow: var(--kn-shadow-soft);
+  }
+
+  .kn-shadow-card {
+    box-shadow: var(--kn-shadow-card);
+  }
+
+  .kn-shadow-strong {
+    box-shadow: var(--kn-shadow-strong);
+  }
+
+
+  /* =========================================================
+     9. FOOTER THEME
+     ========================================================= */
+
+  .kn-site-footer {
+    background:
+      radial-gradient(circle at top left, rgb(215 92 255 / 0.13), transparent 26rem),
+      radial-gradient(circle at top right, rgb(94 231 255 / 0.08), transparent 22rem),
+      linear-gradient(180deg, rgb(96 21 108 / 0.11), rgb(96 21 108 / 0.18));
+    border-top-color: var(--kn-color-border);
+    border-top-style: var(--kn-border-style-default);
+    color: var(--kn-color-muted);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.45),
+      0 -0.75rem 2rem rgb(96 21 108 / 0.06);
+  }
+
+  .kn-site-footer a {
+    color: var(--kn-color-text);
+  }
+
+  .kn-site-footer a:hover,
+  .kn-site-footer a:focus-visible {
+    color: var(--kn-color-primary);
+  }
+
+
+  /* =========================================================
+     10. MOTION PREFERENCE
+     ========================================================= */
+
+  @media (prefers-reduced-motion: reduce) {
+    .kn-grid-snake-layer {
+      display: none;
+    }
+
+    :where(a, button, input, textarea, select),
+    .kn-card,
+    .kn-button {
+      transition: none;
+    }
+
+    :where(button:hover, input[type="submit"]:hover, input[type="button"]:hover),
+    .kn-button:hover {
+      transform: none;
+    }
+  }
+}

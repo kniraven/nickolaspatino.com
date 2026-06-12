@@ -4,13 +4,15 @@
  *
  * Expected variables that may be set before requiring this file:
  *
- * $pageTitle        string  Page title
- * $pageDescription  string  Meta description
- * $pageContent      string  Legacy fallback for meta description
+ * $pageTitle        string        Page title
+ * $pageDescription  string        Meta description
+ * $pageContent      string        Legacy fallback for meta description
  * $pageCss          string|array  Page-specific CSS file name(s), without path
- * $additionalCss    array   Extra CSS paths
- * $additionalJs     array   Extra JS paths
- * $additionalHead   string  Extra raw head content
+ * $additionalCss    array         Extra CSS paths
+ * $additionalJs     array         Extra JS paths
+ * $additionalHead   string        Extra raw head content
+ * $pageTheme        string        Optional one-page theme override: light, dark, mike
+ * $allowedKnThemes  array         Optional allowed theme names
  *
  * Example:
  * $pageTitle = "Nickolas Patino | Web Developer";
@@ -35,6 +37,14 @@ $additionalCss = $additionalCss ?? [];
 $additionalJs = $additionalJs ?? [];
 $additionalHead = $additionalHead ?? "";
 
+$allowedKnThemes = $allowedKnThemes ?? [
+    "light",
+    "dark",
+    "mike",
+];
+
+$pageTheme = $pageTheme ?? null;
+
 
 /* =========================================================
    Helper functions
@@ -43,7 +53,7 @@ $additionalHead = $additionalHead ?? "";
 if (!function_exists('asset_version')) {
     /**
      * Adds a filemtime cache-busting query string when possible.
-     * Example output: /assets/css/theme.css?v=1717780000
+     * Example output: /assets/css/kn/kn-standard.css?v=1717780000
      */
     function asset_version(string $publicPath): string
     {
@@ -89,6 +99,30 @@ if (!function_exists('normalize_page_css')) {
     }
 }
 
+if (!function_exists('normalize_kn_theme')) {
+    /**
+     * Returns a safe Kniraven theme name.
+     */
+    function normalize_kn_theme(?string $themeName, array $allowedThemes): string
+    {
+        $themeName = strtolower(trim((string) $themeName));
+
+        if ($themeName === '') {
+            return 'light';
+        }
+
+        if (!preg_match('/^[a-z0-9_-]+$/', $themeName)) {
+            return 'light';
+        }
+
+        if (!in_array($themeName, $allowedThemes, true)) {
+            return 'light';
+        }
+
+        return $themeName;
+    }
+}
+
 
 /* =========================================================
    Normalize optional assets
@@ -103,10 +137,25 @@ if (!is_array($additionalCss)) {
 if (!is_array($additionalJs)) {
     $additionalJs = [$additionalJs];
 }
+
+
+/* =========================================================
+   Theme selection
+   ========================================================= */
+
+$cookieTheme = $_COOKIE['kn_theme'] ?? null;
+
+$activeKnTheme = normalize_kn_theme(
+    is_string($pageTheme) && trim($pageTheme) !== '' ? $pageTheme : (is_string($cookieTheme) ? $cookieTheme : null),
+    $allowedKnThemes
+);
+
+$colorScheme = in_array($activeKnTheme, ['dark', 'mike'], true) ? 'dark' : 'light';
 ?>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="<?= html_attr($colorScheme) ?>">
 
 <title><?= html_attr($pageTitle) ?></title>
 <meta name="description" content="<?= html_attr($pageDescription) ?>">
@@ -114,9 +163,18 @@ if (!is_array($additionalJs)) {
 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 <link rel="icon" href="/favicon.ico" type="image/x-icon">
 
-<!-- Core CSS -->
-<link rel="stylesheet" href="<?= html_attr(asset_version('/assets/css/structure.css')) ?>">
-<link rel="stylesheet" href="<?= html_attr(asset_version('/assets/css/theme.css')) ?>">
+<!-- Kniraven Core CSS -->
+<link rel="stylesheet" href="<?= html_attr(asset_version('/assets/css/kn/kn-normalize.css')) ?>">
+<link rel="stylesheet" href="<?= html_attr(asset_version('/assets/css/kn/kn-standard.css')) ?>">
+<link rel="stylesheet" href="<?= html_attr(asset_version('/assets/css/kn/kn-structure.css')) ?>">
+
+<!-- Active Kniraven Theme -->
+<link
+    id="kn-theme-stylesheet"
+    rel="stylesheet"
+    href="<?= html_attr(asset_version('/assets/css/kn/themes/kn-theme-' . $activeKnTheme . '.css')) ?>"
+    data-active-theme="<?= html_attr($activeKnTheme) ?>"
+>
 
 <!-- Page-specific CSS -->
 <?php foreach ($pageCssFiles as $cssFile): ?>

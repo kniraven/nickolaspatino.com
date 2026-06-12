@@ -1,0 +1,117 @@
+/* =========================================================
+   Kniraven Normalize CSS
+   File: /public/assets/css/kn/kn-normalize.css
+
+   Purpose:
+   This file smooths out browser defaults so a site starts from
+   a predictable baseline across modern browsers.
+
+   This file is intentionally small and low-opinion.
+   Kniraven plain element standards belong in kn-standard.css.
+   Kniraven reusable structural classes belong in kn-structure.css.
+   Visual styling belongs in a kn-theme-*.css file.
+
+   Public/reusable convention:
+   - File name uses the kn- prefix.
+   - This file uses a cascade layer.
+   - This file does not define public utility classes.
+   - This file should avoid project-specific visual decisions.
+   ========================================================= */
+
+@layer kn.normalize, kn.standard, kn.structure, kn.theme;
+
+@layer kn.normalize {
+  /* =========================================================
+     1. BOX MODEL
+     ========================================================= */
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+
+  /* =========================================================
+     2. DOCUMENT BASELINE
+     ========================================================= */
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+  }
+
+
+  /* =========================================================
+     3. DEFAULT MARGIN NORMALIZATION
+     ========================================================= */
+
+  :where(body, h1, h2, h3, h4, p, figure, blockquote, dl, dd) {
+    margin: 0;
+  }
+
+  :where(ul, ol) {
+    margin-block-start: 0;
+  }
+
+
+  /* =========================================================
+     4. MEDIA NORMALIZATION
+     ========================================================= */
+
+  :where(img, picture, svg, canvas, video, iframe) {
+    display: block;
+    max-width: 100%;
+  }
+
+  :where(img, video) {
+    height: auto;
+  }
+
+
+  /* =========================================================
+     5. FORM AND CODE NORMALIZATION
+     ========================================================= */
+
+  :where(button, input, textarea, select) {
+    font: inherit;
+  }
+
+  :where(pre, code, kbd, samp) {
+    font-size: 1em;
+  }
+
+
+  /* =========================================================
+     6. HIDDEN ATTRIBUTE
+     ========================================================= */
+
+  [hidden] {
+    display: none !important;
+  }
+
+
+  /* =========================================================
+     7. REDUCED MOTION
+     ========================================================= */
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+}

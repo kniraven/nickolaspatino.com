@@ -1,17 +1,19 @@
-<!--
+<?php
+declare(strict_types=1);
+
+/*
     Author: Nickolas Patino
     Created: 04/09/2019
     Updated: 06/08/2026
--->
+*/
 
-<?php
-    $projectRoot = dirname($_SERVER['DOCUMENT_ROOT']);
-    $pageLocked = "";
+$projectRoot = dirname($_SERVER['DOCUMENT_ROOT']);
+$pageLocked = "";
 
-    require_once $projectRoot . '/config/session.php';
+require_once $projectRoot . '/config/session.php';
 
-    $pageTitle = "Nickolas Patino | About Me";
-    $pageDescription = "Learn more about Nickolas Patino: local Wisconsin web developer, creator, RPG enthusiast, former competitive sabre fencer, dog lover, and practical problem solver based near Madison.";
+$pageTitle = "Nickolas Patino | About Me";
+$pageDescription = "Learn more about Nickolas Patino: local Wisconsin web developer, creator, RPG enthusiast, former competitive sabre fencer, dog lover, and practical problem solver based near Madison.";
 ?>
 
 <!DOCTYPE html>
@@ -21,25 +23,25 @@
 </head>
 
 <body>
-    <header class="site-header">
-        <div class="container site-header-inner">
+    <header class="kn-site-header">
+        <div class="kn-container kn-site-header-inner">
             <?php require_once $projectRoot . '/src/nav.php'; ?>
         </div>
     </header>
 
     <main>
         <!-- About Hero -->
-        <section class="page-hero">
-            <div class="container">
-                <div class="split split-main">
-                    <div class="page-hero-content">
-                        <p class="small-text">
+        <section class="kn-page-hero">
+            <div class="kn-container">
+                <div class="kn-split kn-split-main">
+                    <div class="kn-page-hero-content">
+                        <p class="kn-small-text">
                             About Me
                         </p>
 
                         <h1>Web developer, creator, and practical builder.</h1>
 
-                        <p class="lead">
+                        <p class="kn-lead">
                             I am Nickolas Patino, a web developer based near Madison, Wisconsin. I build websites, small tools, and practical digital systems for people who need technology to be useful, organized, and understandable.
                         </p>
 
@@ -47,15 +49,15 @@
                             NickolasPatino.com is my professional site: a place for commissions, services, projects, and employer-facing work. When you work with me, you are working directly with a local, single-member Wisconsin small business.
                         </p>
 
-                        <div class="button-group">
-                            <a href="/projects/" class="button button-primary">View Projects</a>
-                            <a href="/contact.php" class="button button-secondary">Contact Me</a>
-                            <a href="/services.php" class="button button-ghost">Services</a>
+                        <div class="kn-button-group">
+                            <a href="/projects/" class="kn-button kn-button-primary">View Projects</a>
+                            <a href="/contact.php" class="kn-button kn-button-secondary">Contact Me</a>
+                            <a href="/services.php" class="kn-button kn-button-ghost">Services</a>
                         </div>
                     </div>
 
-                    <aside class="card card-compact stack stack-tight" aria-label="Quick facts about Nickolas Patino">
-                        <div class="card-media aspect-photo feature-image">
+                    <aside class="kn-card kn-card-compact kn-stack kn-stack-tight" aria-label="Quick facts about Nickolas Patino">
+                        <div class="kn-card-media kn-aspect-photo kn-feature-image">
                             <img
                                 src="/assets/images/portrait.png"
                                 alt="Nickolas Patino"
@@ -64,10 +66,10 @@
                             >
                         </div>
 
-                        <div class="stack stack-tight">
+                        <div class="kn-stack kn-stack-tight">
                             <h2>Nickolas Patino</h2>
 
-                            <ul class="feature-list">
+                            <ul class="kn-feature-list">
                                 <li>Local Wisconsin web developer</li>
                                 <li>Single-member small business owner</li>
                                 <li>RPG, MMO, and TTRPG enthusiast</li>
@@ -82,16 +84,16 @@
 
         <!-- Building and Web Origin -->
         <section>
-            <div class="container">
-                <div class="section-header">
-                    <p class="small-text">
+            <div class="kn-container">
+                <div class="kn-section-header">
+                    <p class="kn-small-text">
                         How I Started
                     </p>
 
                     <h2>I started by making digital spaces feel personal.</h2>
                 </div>
 
-                <div class="text-block stack stack-loose">
+                <div class="kn-text-block kn-stack kn-stack-loose">
                     <p>
                         I first learned HTML, CSS, and JavaScript in high school so I could customize my MySpace page. I did not start with a career plan. I wanted control over how something looked, how it felt, and how people experienced it.
                     </p>
@@ -108,10 +110,10 @@
         </section>
 
         <!-- Personal Background -->
-        <section class="section-tight">
-            <div class="container">
-                <article class="card stack stack-loose">
-                    <p class="small-text">
+        <section class="kn-section-tight">
+            <div class="kn-container">
+                <article class="kn-card kn-stack kn-stack-loose">
+                    <p class="kn-small-text">
                         Why I Build This Way
                     </p>
 
@@ -126,9 +128,9 @@
 
         <!-- Games and Online Communities -->
         <section>
-            <div class="container">
-                <div class="section-header">
-                    <p class="small-text">
+            <div class="kn-container">
+                <div class="kn-section-header">
+                    <p class="kn-small-text">
                         Games, Communities &amp; Content
                     </p>
 
@@ -139,8 +141,8 @@
                     </p>
                 </div>
 
-                <div class="card-grid">
-                    <article class="card card-equal stack">
+                <div class="kn-card-grid">
+                    <article class="kn-card kn-card-equal kn-stack">
                         <h3>MMOs &amp; PvP</h3>
 
                         <p>
@@ -148,7 +150,7 @@
                         </p>
                     </article>
 
-                    <article class="card card-equal stack">
+                    <article class="kn-card kn-card-equal kn-stack">
                         <h3>Guild Leadership</h3>
 
                         <p>
@@ -156,7 +158,7 @@
                         </p>
                     </article>
 
-                    <article class="card card-equal stack">
+                    <article class="kn-card kn-card-equal kn-stack">
                         <h3>TTRPGs &amp; Worldbuilding</h3>
 
                         <p>
@@ -164,7 +166,7 @@
                         </p>
                     </article>
 
-                    <article class="card card-equal stack">
+                    <article class="kn-card kn-card-equal kn-stack">
                         <h3>Video &amp; Streaming</h3>
 
                         <p>
@@ -177,10 +179,10 @@
 
         <!-- Creator Setup -->
         <section>
-            <div class="container">
-                <div class="split split-media">
-                    <div class="card card-compact">
-                        <div class="card-media aspect-video feature-image">
+            <div class="kn-container">
+                <div class="kn-split kn-split-media">
+                    <div class="kn-card kn-card-compact">
+                        <div class="kn-card-media kn-aspect-video kn-feature-image">
                             <img
                                 src="/assets/images/workspace.png"
                                 alt="Nickolas Patino's workspace, gaming setup, or creator setup"
@@ -190,16 +192,16 @@
                         </div>
                     </div>
 
-                    <div class="stack stack-loose">
-                        <div class="section-header">
-                            <p class="small-text">
+                    <div class="kn-stack kn-stack-loose">
+                        <div class="kn-section-header">
+                            <p class="kn-small-text">
                                 Creator Setup
                             </p>
 
                             <h2>I like building the whole system around the work.</h2>
                         </div>
 
-                        <div class="text-block stack stack-loose">
+                        <div class="kn-text-block kn-stack kn-stack-loose">
                             <p>
                                 My interest in creating online is not only the content itself. I also enjoy the setup behind it: websites, editing software, cameras, lighting, green screens, livestreaming tools, and the technical workflow that makes everything function.
                             </p>
@@ -214,19 +216,19 @@
         </section>
 
         <!-- Dogs -->
-        <section class="section-tight">
-            <div class="container">
-                <div class="split split-media-reverse">
-                    <div class="stack stack-loose">
-                        <div class="section-header">
-                            <p class="small-text">
+        <section class="kn-section-tight">
+            <div class="kn-container">
+                <div class="kn-split kn-split-media-reverse">
+                    <div class="kn-stack kn-stack-loose">
+                        <div class="kn-section-header">
+                            <p class="kn-small-text">
                                 Home Life
                             </p>
 
                             <h2>Molly, Czar, and Titan are all adopted or rescued.</h2>
                         </div>
 
-                        <div class="text-block stack stack-loose">
+                        <div class="kn-text-block kn-stack kn-stack-loose">
                             <p>
                                 Molly is the leader of the pack and was the first dog I adopted. She is an Alaskan Malamute who had been cooped up in a small downtown studio apartment with many people and other animals. Her previous home did not know her breed and did not realize how large she would get, so she was released to me.
                             </p>
@@ -241,8 +243,8 @@
                         </div>
                     </div>
 
-                    <div class="card card-compact">
-                        <div class="card-media aspect-video feature-image">
+                    <div class="kn-card kn-card-compact">
+                        <div class="kn-card-media kn-aspect-video kn-feature-image">
                             <img
                                 src="/assets/images/dogs.png"
                                 alt="Czar the Siberian Husky, Titan the Saint Bernard, and Molly the Alaskan Malamute"
@@ -257,9 +259,9 @@
 
         <!-- Competitive Background -->
         <section>
-            <div class="container">
-                <article class="card stack stack-loose">
-                    <p class="small-text">
+            <div class="kn-container">
+                <article class="kn-card kn-stack kn-stack-loose">
+                    <p class="kn-small-text">
                         Competition &amp; Leadership
                     </p>
 
@@ -278,16 +280,16 @@
 
         <!-- Professional Direction -->
         <section>
-            <div class="container">
-                <div class="section-header">
-                    <p class="small-text">
+            <div class="kn-container">
+                <div class="kn-section-header">
+                    <p class="kn-small-text">
                         Professional Direction
                     </p>
 
                     <h2>My professional work and gaming brand have different homes.</h2>
                 </div>
 
-                <div class="text-block stack stack-loose">
+                <div class="kn-text-block kn-stack kn-stack-loose">
                     <p>
                         Because my work crosses web development, online communities, games, streaming, and product ideas, I keep my sites separated by purpose.
                     </p>
@@ -305,28 +307,28 @@
 
         <!-- Education -->
         <section>
-            <div class="container">
-                <div class="split split-media">
-                    <div class="card card-compact graphic-plate center-content">
+            <div class="kn-container">
+                <div class="kn-split kn-split-media">
+                    <div class="kn-card kn-card-compact kn-graphic-plate kn-center-content">
                         <img
                             src="/assets/images/madisoncollege300x200.png"
                             alt="Madison Area Technical College logo"
-                            class="media-logo"
+                            class="kn-media-logo"
                             width="300"
                             height="200"
                         >
                     </div>
 
-                    <div class="stack stack-loose">
-                        <div class="section-header">
-                            <p class="small-text">
+                    <div class="kn-stack kn-stack-loose">
+                        <div class="kn-section-header">
+                            <p class="kn-small-text">
                                 Formal Training
                             </p>
 
                             <h2>Web application development at Madison College.</h2>
                         </div>
 
-                        <div class="text-block stack stack-loose">
+                        <div class="kn-text-block kn-stack kn-stack-loose">
                             <p>
                                 I studied IT: Web Application Development at Madison Area Technical College and maintained a 4.0 GPA. My coursework focused on web development, databases, UX/UI, accessibility, and practical software development fundamentals.
                             </p>
@@ -337,10 +339,10 @@
         </section>
 
         <!-- Contact CTA -->
-        <section class="section-tight">
-            <div class="container">
-                <div class="card stack stack-loose">
-                    <p class="small-text">
+        <section class="kn-section-tight">
+            <div class="kn-container">
+                <div class="kn-card kn-stack kn-stack-loose">
+                    <p class="kn-small-text">
                         Work With Me
                     </p>
 
@@ -355,18 +357,18 @@
                         <a href="mailto:nickolas@kniraven.com">nickolas@kniraven.com</a>
                     </p>
 
-                    <div class="button-group">
-                        <a href="/contact.php" class="button button-primary">Contact Me</a>
-                        <a href="/projects/" class="button button-secondary">View Projects</a>
-                        <a href="/assets/files/nickolas-patino-contact-card.pdf" class="button button-ghost">Download Contact Card</a>
+                    <div class="kn-button-group">
+                        <a href="/contact.php" class="kn-button kn-button-primary">Contact Me</a>
+                        <a href="/projects/" class="kn-button kn-button-secondary">View Projects</a>
+                        <a href="/assets/files/nickolas-patino-contact-card.pdf" class="kn-button kn-button-ghost">Download Contact Card</a>
                     </div>
                 </div>
             </div>
         </section>
     </main>
 
-    <footer class="site-footer">
-        <div class="container site-footer-inner">
+    <footer class="kn-site-footer">
+        <div class="kn-container kn-site-footer-inner">
             <?php require_once $projectRoot . '/src/footer.php'; ?>
         </div>
     </footer>

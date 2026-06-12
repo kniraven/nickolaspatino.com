@@ -1,0 +1,857 @@
+/* =========================================================
+   Kniraven Mike Theme CSS
+   File: /public/assets/css/kn/themes/kn-theme-mike.css
+
+   Purpose:
+   This file defines a red-and-black imp/devil themed Kniraven
+   visual theme.
+
+   This file controls visual skinning only:
+   - Colors
+   - Font families
+   - Font weights
+   - Border colors/styles/radius
+   - Backgrounds
+   - Shadows
+   - Focus/hover visual states
+   - Decorative visual treatments
+
+   Important:
+   This file should be safe to remove or swap without destroying
+   layout. The page may become plain, but it should remain usable
+   if kn-normalize.css, kn-standard.css, and kn-structure.css are
+   still present.
+
+   Public/reusable convention:
+   - File name uses the kn-theme- prefix.
+   - Theme variables use the --kn- prefix.
+   - Theme utility classes use the .kn- prefix.
+   - This file uses the kn.theme cascade layer.
+   - Generic aliases like .card, .button, and .site-header are
+     intentionally omitted to avoid collisions with frameworks.
+   ========================================================= */
+
+@layer kn.normalize, kn.standard, kn.structure, kn.theme;
+
+@layer kn.theme {
+  /* =========================================================
+     1. THEME TOKENS
+     ========================================================= */
+
+  :root {
+    /* Brand colors */
+    --kn-color-primary: #c1121f;
+    --kn-color-primary-dark: #4a0008;
+    --kn-color-primary-deep: #090101;
+    --kn-color-primary-light: #ff3b30;
+    --kn-color-primary-hot: #ff6a00;
+    --kn-color-primary-soft: #2a0808;
+    --kn-color-primary-faint: rgb(193 18 31 / 0.18);
+
+    /* Accent colors */
+    --kn-color-accent-blue: #ffb000;
+    --kn-color-accent-cyan: #ffcf5a;
+    --kn-color-accent-pink: #ff3b30;
+    --kn-color-accent-violet: #7a1111;
+    --kn-color-accent-white: #fff3df;
+
+    /* Page and surface colors */
+    --kn-color-bg: #060101;
+    --kn-color-bg-soft: #130303;
+    --kn-color-bg-strong: #1c0606;
+
+    --kn-color-surface: rgb(28 6 6 / 0.82);
+    --kn-color-surface-solid: #1c0606;
+    --kn-color-surface-strong: #330808;
+    --kn-color-surface-muted: #130303;
+
+    /* Text colors */
+    --kn-color-text: #f7e7d7;
+    --kn-color-muted: #c29b86;
+    --kn-color-heading: #fff3df;
+
+    /* Border colors */
+    --kn-color-border: rgb(255 106 0 / 0.28);
+    --kn-color-border-strong: rgb(255 59 48 / 0.60);
+    --kn-color-border-faint: rgb(255 106 0 / 0.14);
+    --kn-color-border-glow: rgb(255 106 0 / 0.82);
+
+    /* Contrast colors */
+    --kn-color-on-primary: #fff5e8;
+    --kn-color-on-dark: #fff5e8;
+
+    /* Links */
+    --kn-color-link: #ff7a18;
+    --kn-color-link-hover: #ffd166;
+
+    /* Status colors */
+    --kn-color-success: #7ddc7a;
+    --kn-color-warning: #ffcf5a;
+    --kn-color-danger: #ff453a;
+
+    /* Fonts */
+    --kn-font-body: "Trebuchet MS", "Aptos", "Segoe UI", system-ui, sans-serif;
+    --kn-font-heading: "Georgia", "Times New Roman", serif;
+    --kn-font-mono: "Cascadia Code", "Cascadia Mono", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", monospace;
+
+    /* Font weights */
+    --kn-font-weight-normal: 400;
+    --kn-font-weight-medium: 550;
+    --kn-font-weight-semibold: 650;
+    --kn-font-weight-bold: 750;
+    --kn-font-weight-heavy: 900;
+
+    /* Border appearance */
+    --kn-border-style-default: solid;
+
+    /* Decorative radius */
+    --kn-radius-sm: 0.2rem;
+    --kn-radius-md: 0.4rem;
+    --kn-radius-lg: 0.65rem;
+    --kn-radius-xl: 0.9rem;
+    --kn-radius-pill: 999px;
+
+    /* Jagged infernal corner cuts */
+    --kn-corner-cut-sm: 0.35rem;
+    --kn-corner-cut-md: 0.7rem;
+    --kn-corner-cut-lg: 1.1rem;
+    --kn-corner-cut-xl: 1.5rem;
+
+    /* Clip-path shapes */
+    --kn-clip-panel: polygon(
+      0 var(--kn-corner-cut-md),
+      var(--kn-corner-cut-sm) 0,
+      calc(100% - var(--kn-corner-cut-lg)) 0,
+      100% var(--kn-corner-cut-lg),
+      100% calc(100% - var(--kn-corner-cut-sm)),
+      calc(100% - var(--kn-corner-cut-md)) 100%,
+      var(--kn-corner-cut-lg) 100%,
+      0 calc(100% - var(--kn-corner-cut-lg))
+    );
+
+    --kn-clip-panel-alt: polygon(
+      var(--kn-corner-cut-lg) 0,
+      100% 0,
+      100% calc(100% - var(--kn-corner-cut-lg)),
+      calc(100% - var(--kn-corner-cut-sm)) 100%,
+      var(--kn-corner-cut-sm) 100%,
+      0 calc(100% - var(--kn-corner-cut-sm)),
+      0 var(--kn-corner-cut-lg)
+    );
+
+    --kn-clip-button: polygon(
+      var(--kn-corner-cut-sm) 0,
+      calc(100% - var(--kn-corner-cut-sm)) 0,
+      100% 50%,
+      calc(100% - var(--kn-corner-cut-sm)) 100%,
+      var(--kn-corner-cut-sm) 100%,
+      0 50%
+    );
+
+    --kn-clip-media: polygon(
+      var(--kn-corner-cut-md) 0,
+      100% 0,
+      100% calc(100% - var(--kn-corner-cut-md)),
+      calc(100% - var(--kn-corner-cut-md)) 100%,
+      0 100%,
+      0 var(--kn-corner-cut-md)
+    );
+
+    /* Decorative shadows */
+    --kn-shadow-soft: 0 0.8rem 2rem rgb(0 0 0 / 0.34);
+    --kn-shadow-card: 0 1.1rem 3rem rgb(0 0 0 / 0.52);
+    --kn-shadow-strong: 0 1.6rem 4.5rem rgb(0 0 0 / 0.68);
+    --kn-shadow-focus: 0 0 0 0.25rem rgb(255 106 0 / 0.36);
+    --kn-shadow-inner-line: inset 0 1px 0 rgb(255 220 180 / 0.10);
+    --kn-shadow-inner-dark-line: inset 0 1px 0 rgb(255 220 180 / 0.06);
+
+    --kn-shadow-neon-purple:
+      0 0 1rem rgb(255 59 48 / 0.28),
+      0 0 2.25rem rgb(255 106 0 / 0.18);
+
+    --kn-shadow-neon-blue:
+      0 0 1rem rgb(255 176 0 / 0.26),
+      0 0 2.25rem rgb(255 106 0 / 0.14);
+
+    --kn-shadow-neon-hot:
+      0 0 1.25rem rgb(255 59 48 / 0.36),
+      0 0 3rem rgb(255 106 0 / 0.22);
+
+    /* Visual transitions */
+    --kn-transition-fast: 160ms ease;
+    --kn-transition-standard: 220ms ease;
+  }
+
+
+  /* =========================================================
+     2. BASE THEME
+     ========================================================= */
+
+  :where(body) {
+    background:
+      radial-gradient(circle at 12% 8%, rgb(255 59 48 / 0.22), transparent 18rem),
+      radial-gradient(circle at 86% 10%, rgb(255 106 0 / 0.20), transparent 17rem),
+      radial-gradient(circle at 54% 46%, rgb(122 17 17 / 0.24), transparent 24rem),
+      radial-gradient(circle at 18% 86%, rgb(255 176 0 / 0.12), transparent 18rem),
+      linear-gradient(rgb(255 106 0 / 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(255 106 0 / 0.05) 1px, transparent 1px),
+      linear-gradient(135deg, rgb(0 0 0 / 0) 0%, rgb(0 0 0 / 0) 42%, rgb(255 59 48 / 0.12) 42%, rgb(255 59 48 / 0.12) 43%, rgb(0 0 0 / 0) 43%),
+      linear-gradient(180deg, #050000 0%, #170303 38%, #080101 100%);
+    background-size:
+      auto,
+      auto,
+      auto,
+      auto,
+      2.25rem 2.25rem,
+      2.25rem 2.25rem,
+      100% 100%,
+      auto;
+    background-attachment:
+      fixed,
+      fixed,
+      fixed,
+      fixed,
+      fixed,
+      fixed,
+      fixed,
+      fixed;
+    color: var(--kn-color-text);
+    font-family: var(--kn-font-body);
+    font-weight: var(--kn-font-weight-normal);
+  }
+
+  :where(h1, h2, h3, h4) {
+    color: var(--kn-color-heading);
+    font-family: var(--kn-font-heading);
+    font-weight: var(--kn-font-weight-heavy);
+    letter-spacing: -0.035em;
+  }
+
+  :where(h1) {
+    text-shadow:
+      0 0.45rem 1.4rem rgb(0 0 0 / 0.60),
+      0 0 1.9rem rgb(255 59 48 / 0.28),
+      0 0 3.2rem rgb(255 106 0 / 0.18);
+  }
+
+  :where(h2) {
+    text-shadow:
+      0 0.35rem 1.1rem rgb(0 0 0 / 0.48),
+      0 0 1.2rem rgb(255 106 0 / 0.14);
+  }
+
+  :where(p, li, dd) {
+    color: var(--kn-color-text);
+  }
+
+  :where(dt) {
+    color: var(--kn-color-heading);
+    font-weight: var(--kn-font-weight-bold);
+  }
+
+  :where(strong, b) {
+    color: var(--kn-color-heading);
+    font-weight: var(--kn-font-weight-bold);
+  }
+
+  :where(small) {
+    color: var(--kn-color-muted);
+  }
+
+  :where(code, kbd, samp, pre) {
+    font-family: var(--kn-font-mono);
+  }
+
+  :where(a) {
+    color: var(--kn-color-link);
+    text-decoration-color: rgb(255 106 0 / 0.58);
+    text-decoration-thickness: 0.09em;
+    text-underline-offset: 0.25em;
+    transition:
+      color var(--kn-transition-fast),
+      background-color var(--kn-transition-fast),
+      border-color var(--kn-transition-fast),
+      box-shadow var(--kn-transition-fast),
+      text-decoration-color var(--kn-transition-fast),
+      text-shadow var(--kn-transition-fast);
+  }
+
+  :where(a:hover, a:focus-visible) {
+    color: var(--kn-color-link-hover);
+    text-decoration-color: currentColor;
+    text-shadow:
+      0 0 0.75rem rgb(255 59 48 / 0.44),
+      0 0 1.25rem rgb(255 106 0 / 0.22);
+  }
+
+  :where(::selection) {
+    background: var(--kn-color-primary);
+    color: var(--kn-color-on-primary);
+  }
+
+  :where(:focus-visible) {
+    outline-color: var(--kn-color-primary-hot);
+  }
+
+
+  /* =========================================================
+     3. HEADER / NAV THEME
+     ========================================================= */
+
+  .kn-site-header {
+    background:
+      linear-gradient(90deg, rgb(15 2 2 / 0.94), rgb(46 5 5 / 0.82)),
+      linear-gradient(135deg, rgb(255 59 48 / 0.14), rgb(255 176 0 / 0.06));
+    border-bottom-color: var(--kn-color-border-faint);
+    border-bottom-style: var(--kn-border-style-default);
+    box-shadow:
+      0 0.5rem 1.8rem rgb(0 0 0 / 0.44),
+      inset 0 -1px 0 rgb(255 220 180 / 0.08),
+      0 0 2rem rgb(255 59 48 / 0.14);
+    backdrop-filter: blur(18px);
+  }
+
+  .kn-site-brand {
+    color: var(--kn-color-heading);
+    font-weight: var(--kn-font-weight-heavy);
+    letter-spacing: -0.03em;
+    text-decoration: none;
+    text-shadow:
+      0 0 1rem rgb(255 59 48 / 0.22),
+      0 0 1.8rem rgb(255 106 0 / 0.10);
+  }
+
+  .kn-site-brand:hover,
+  .kn-site-brand:focus-visible {
+    color: var(--kn-color-primary-hot);
+    text-shadow: var(--kn-shadow-neon-hot);
+  }
+
+  .kn-site-brand-logo {
+    border-radius: var(--kn-radius-md);
+    clip-path: var(--kn-clip-button);
+    box-shadow:
+      0 0.45rem 1.1rem rgb(0 0 0 / 0.54),
+      0 0 1.5rem rgb(255 59 48 / 0.24);
+  }
+
+  .kn-site-nav-link {
+    color: var(--kn-color-text);
+    font-weight: var(--kn-font-weight-bold);
+    text-decoration: none;
+    background: transparent;
+    border-radius: var(--kn-radius-md);
+    clip-path: var(--kn-clip-button);
+    transition:
+      color var(--kn-transition-fast),
+      background-color var(--kn-transition-fast),
+      border-color var(--kn-transition-fast),
+      box-shadow var(--kn-transition-fast),
+      text-shadow var(--kn-transition-fast);
+  }
+
+  .kn-site-nav-link:hover,
+  .kn-site-nav-link:focus-visible {
+    color: var(--kn-color-primary-hot);
+    background:
+      linear-gradient(135deg, rgb(255 59 48 / 0.18), rgb(255 176 0 / 0.08));
+    box-shadow:
+      inset 0 0 0 1px var(--kn-color-border-faint),
+      inset 0 1px 0 rgb(255 220 180 / 0.10),
+      0 0 1rem rgb(255 59 48 / 0.18);
+  }
+
+  .kn-site-nav-link[aria-current="page"] {
+    color: var(--kn-color-heading);
+    background:
+      linear-gradient(135deg, rgb(255 59 48 / 0.28), rgb(255 106 0 / 0.12));
+    box-shadow:
+      inset 0 0 0 1px var(--kn-color-border-strong),
+      var(--kn-shadow-inner-line),
+      0 0 1.35rem rgb(255 59 48 / 0.24);
+  }
+
+  .kn-nav-toggle {
+    background:
+      linear-gradient(180deg, rgb(52 8 8 / 0.94), rgb(20 3 3 / 0.88));
+    color: var(--kn-color-text);
+    border-color: var(--kn-color-border);
+    border-style: var(--kn-border-style-default);
+    border-radius: var(--kn-radius-md);
+    clip-path: var(--kn-clip-button);
+    font-weight: var(--kn-font-weight-bold);
+    box-shadow:
+      var(--kn-shadow-soft),
+      var(--kn-shadow-inner-line);
+  }
+
+  .kn-nav-toggle:hover,
+  .kn-nav-toggle:focus-visible {
+    color: var(--kn-color-primary-hot);
+    border-color: var(--kn-color-primary-light);
+    box-shadow:
+      var(--kn-shadow-card),
+      var(--kn-shadow-neon-hot);
+  }
+
+
+  /* =========================================================
+     4. SURFACES / CARDS / MEDIA THEME
+     ========================================================= */
+
+  .kn-card {
+    background:
+      radial-gradient(circle at 12% 8%, rgb(255 59 48 / 0.16), transparent 28%),
+      linear-gradient(135deg, rgb(28 6 6 / 0.96), rgb(9 1 1 / 0.82)),
+      linear-gradient(135deg, rgb(255 59 48 / 0.16), rgb(255 176 0 / 0.05));
+    border-color: var(--kn-color-border);
+    border-style: var(--kn-border-style-default);
+    border-radius: var(--kn-radius-lg);
+    clip-path: var(--kn-clip-panel);
+    box-shadow:
+      var(--kn-shadow-soft),
+      var(--kn-shadow-inner-line),
+      inset 0 0 0 1px rgb(255 220 180 / 0.04);
+    backdrop-filter: blur(14px);
+    transition:
+      border-color var(--kn-transition-standard),
+      box-shadow var(--kn-transition-standard),
+      background-color var(--kn-transition-standard),
+      filter var(--kn-transition-standard),
+      transform var(--kn-transition-standard);
+  }
+
+  .kn-card:hover {
+    border-color: var(--kn-color-border-glow);
+    box-shadow:
+      var(--kn-shadow-card),
+      var(--kn-shadow-neon-hot),
+      var(--kn-shadow-inner-line);
+    filter: saturate(1.10) contrast(1.02);
+  }
+
+  .kn-card-alt {
+    clip-path: var(--kn-clip-panel-alt);
+  }
+
+  .kn-card-media,
+  .kn-media-frame {
+    background:
+      radial-gradient(circle at 18% 12%, rgb(255 106 0 / 0.20), transparent 34%),
+      linear-gradient(135deg, var(--kn-color-surface-strong), var(--kn-color-primary-soft));
+    border-radius: var(--kn-radius-md);
+    clip-path: var(--kn-clip-media);
+    box-shadow:
+      inset 0 0 0 1px rgb(255 106 0 / 0.24),
+      inset 0 1px 0 rgb(255 220 180 / 0.10),
+      0 0 1.3rem rgb(255 59 48 / 0.12);
+  }
+
+  .kn-feature-image {
+    box-shadow:
+      var(--kn-shadow-card),
+      var(--kn-shadow-neon-hot);
+  }
+
+  .kn-surface {
+    background:
+      linear-gradient(135deg, rgb(28 6 6 / 0.82), rgb(9 1 1 / 0.86));
+  }
+
+  .kn-surface-strong {
+    background:
+      linear-gradient(135deg, rgb(51 8 8 / 0.98), rgb(20 3 3 / 0.88));
+  }
+
+  .kn-surface-muted {
+    background: var(--kn-color-surface-muted);
+  }
+
+  .kn-graphic-plate,
+  .kn-card.kn-graphic-plate {
+    background:
+      radial-gradient(circle at 18% 12%, rgb(255 59 48 / 0.52), transparent 34%),
+      radial-gradient(circle at 84% 16%, rgb(255 176 0 / 0.18), transparent 28%),
+      linear-gradient(135deg, var(--kn-color-primary-deep), #050000 72%) !important;
+    color: var(--kn-color-on-dark);
+    border-color: rgb(255 220 180 / 0.14);
+    border-style: var(--kn-border-style-default);
+    clip-path: var(--kn-clip-panel);
+    box-shadow:
+      0 1rem 2.5rem rgb(0 0 0 / 0.55),
+      0 0 2rem rgb(255 59 48 / 0.22),
+      inset 0 1px 0 rgb(255 220 180 / 0.10);
+  }
+
+  .kn-graphic-plate :where(h1, h2, h3, h4, p, li, dd, dt, small),
+  .kn-graphic-plate .kn-small-text,
+  .kn-graphic-plate .kn-text-muted {
+    color: var(--kn-color-on-dark);
+  }
+
+  .kn-graphic-plate a {
+    color: var(--kn-color-on-dark);
+  }
+
+  .kn-graphic-plate img {
+    filter:
+      drop-shadow(0 0.5rem 1rem rgb(0 0 0 / 0.52))
+      drop-shadow(0 0 1rem rgb(255 59 48 / 0.22));
+  }
+
+
+  /* =========================================================
+     5. BUTTON THEME
+     ========================================================= */
+
+  :where(button, input[type="submit"], input[type="button"]),
+  .kn-button {
+    color: var(--kn-color-text);
+    background:
+      linear-gradient(135deg, rgb(52 8 8 / 0.88), rgb(20 3 3 / 0.80));
+    border-color: var(--kn-color-border);
+    border-style: var(--kn-border-style-default);
+    border-radius: var(--kn-radius-md);
+    clip-path: var(--kn-clip-button);
+    box-shadow:
+      inset 0 0 0 1px rgb(255 220 180 / 0.06),
+      inset 0 1px 0 rgb(255 220 180 / 0.10),
+      0 0 1rem rgb(255 59 48 / 0.08);
+    font-weight: var(--kn-font-weight-heavy);
+    letter-spacing: 0.015em;
+    text-decoration: none;
+    text-shadow: none;
+    transition:
+      color var(--kn-transition-fast),
+      background-color var(--kn-transition-fast),
+      border-color var(--kn-transition-fast),
+      box-shadow var(--kn-transition-fast),
+      filter var(--kn-transition-fast),
+      text-shadow var(--kn-transition-fast);
+  }
+
+  :where(button:hover, button:focus-visible, input[type="submit"]:hover, input[type="submit"]:focus-visible, input[type="button"]:hover, input[type="button"]:focus-visible),
+  .kn-button:hover,
+  .kn-button:focus-visible {
+    color: var(--kn-color-primary-hot);
+    background:
+      linear-gradient(135deg, rgb(193 18 31 / 0.25), rgb(255 106 0 / 0.10));
+    border-color: var(--kn-color-border-strong);
+    box-shadow:
+      inset 0 0 0 1px var(--kn-color-border-faint),
+      inset 0 1px 0 rgb(255 220 180 / 0.10),
+      0 0 1rem rgb(255 59 48 / 0.22);
+    text-shadow:
+      0 0 0.75rem rgb(255 59 48 / 0.38),
+      0 0 1.25rem rgb(255 106 0 / 0.20);
+    filter: saturate(1.12);
+  }
+
+  :where(button:active, input[type="submit"]:active, input[type="button"]:active),
+  .kn-button:active {
+    filter: saturate(1);
+    box-shadow:
+      inset 0 0 0 1px var(--kn-color-border-strong),
+      inset 0 0.25rem 0.75rem rgb(0 0 0 / 0.38);
+  }
+
+  .kn-button-primary,
+  input[type="submit"] {
+    color: var(--kn-color-on-primary);
+    background:
+      linear-gradient(135deg, #250202, var(--kn-color-primary-dark) 42%, var(--kn-color-primary) 70%, var(--kn-color-primary-hot));
+    border-color: rgb(255 106 0 / 0.84);
+    box-shadow:
+      inset 0 0 0 1px rgb(255 220 180 / 0.10),
+      inset 0 1px 0 rgb(255 220 180 / 0.16),
+      0 0.8rem 1.7rem rgb(0 0 0 / 0.40),
+      0 0 1.7rem rgb(255 59 48 / 0.28);
+    text-shadow: 0 0 0.8rem rgb(255 220 180 / 0.20);
+  }
+
+  .kn-button-primary:hover,
+  .kn-button-primary:focus-visible,
+  input[type="submit"]:hover,
+  input[type="submit"]:focus-visible {
+    color: var(--kn-color-on-primary);
+    background:
+      linear-gradient(135deg, #150000, var(--kn-color-primary-dark) 36%, var(--kn-color-primary-light) 68%, var(--kn-color-primary-hot));
+    border-color: rgb(255 176 0 / 0.94);
+    box-shadow:
+      inset 0 0 0 1px rgb(255 220 180 / 0.14),
+      inset 0 1px 0 rgb(255 220 180 / 0.20),
+      0 0.9rem 1.9rem rgb(0 0 0 / 0.46),
+      0 0 2.2rem rgb(255 59 48 / 0.38),
+      0 0 2.8rem rgb(255 106 0 / 0.20);
+    text-shadow: 0 0 0.95rem rgb(255 220 180 / 0.26);
+  }
+
+  .kn-button-secondary {
+    color: var(--kn-color-heading);
+    background:
+      linear-gradient(135deg, rgb(193 18 31 / 0.24), rgb(255 106 0 / 0.10));
+    border-color: var(--kn-color-border-strong);
+    box-shadow:
+      inset 0 0 0 1px var(--kn-color-border-faint),
+      var(--kn-shadow-inner-line),
+      0 0 1.25rem rgb(255 59 48 / 0.16);
+  }
+
+  .kn-button-secondary:hover,
+  .kn-button-secondary:focus-visible {
+    color: var(--kn-color-heading);
+    background:
+      linear-gradient(135deg, rgb(193 18 31 / 0.34), rgb(255 106 0 / 0.16));
+    border-color: var(--kn-color-border-glow);
+    box-shadow:
+      inset 0 0 0 1px var(--kn-color-border-strong),
+      var(--kn-shadow-inner-line),
+      0 0 1.5rem rgb(255 59 48 / 0.28),
+      0 0 1.5rem rgb(255 106 0 / 0.16);
+  }
+
+  .kn-button-ghost {
+    color: var(--kn-color-text);
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+  }
+
+  .kn-button-ghost:hover,
+  .kn-button-ghost:focus-visible {
+    color: var(--kn-color-primary-hot);
+    background:
+      linear-gradient(135deg, rgb(193 18 31 / 0.18), rgb(255 106 0 / 0.08));
+    border-color: var(--kn-color-border-faint);
+    box-shadow:
+      inset 0 0 0 1px var(--kn-color-border-faint),
+      inset 0 1px 0 rgb(255 220 180 / 0.08),
+      0 0 1rem rgb(255 59 48 / 0.16);
+  }
+
+
+  /* =========================================================
+     6. FORM THEME
+     ========================================================= */
+
+  :where(label) {
+    color: var(--kn-color-heading);
+    font-weight: var(--kn-font-weight-bold);
+  }
+
+  :where(input, textarea, select) {
+    background:
+      linear-gradient(180deg, rgb(28 6 6 / 0.94), rgb(9 1 1 / 0.88));
+    color: var(--kn-color-text);
+    border-color: var(--kn-color-border);
+    border-style: var(--kn-border-style-default);
+    border-radius: var(--kn-radius-md);
+    box-shadow:
+      var(--kn-shadow-inner-line),
+      inset 0 0 0 1px rgb(255 220 180 / 0.04);
+    transition:
+      border-color var(--kn-transition-fast),
+      box-shadow var(--kn-transition-fast),
+      background-color var(--kn-transition-fast);
+  }
+
+  :where(input:focus, textarea:focus, select:focus) {
+    outline: none;
+    background: var(--kn-color-bg-strong);
+    border-color: var(--kn-color-primary-hot);
+    box-shadow:
+      var(--kn-shadow-focus),
+      var(--kn-shadow-inner-line),
+      0 0 1rem rgb(255 59 48 / 0.20);
+  }
+
+  :where(input::placeholder, textarea::placeholder) {
+    color: var(--kn-color-muted);
+  }
+
+  .kn-field-help-icon {
+    color: var(--kn-color-primary-hot);
+    background: rgb(193 18 31 / 0.18);
+    border-radius: var(--kn-radius-pill);
+    box-shadow: inset 0 0 0 1px var(--kn-color-border-faint);
+  }
+
+  .kn-field-help-tooltip {
+    color: var(--kn-color-text);
+    background:
+      linear-gradient(135deg, rgb(28 6 6 / 0.98), rgb(9 1 1 / 0.96));
+    border-color: var(--kn-color-border);
+    border-style: var(--kn-border-style-default);
+    border-radius: var(--kn-radius-lg);
+    box-shadow:
+      var(--kn-shadow-card),
+      var(--kn-shadow-inner-line);
+  }
+
+
+  /* =========================================================
+     7. LIST / TABLE / CODE THEME
+     ========================================================= */
+
+  .kn-feature-list li::marker {
+    color: var(--kn-color-primary-hot);
+  }
+
+  :where(table) {
+    background: var(--kn-color-bg-strong);
+  }
+
+  :where(th) {
+    color: var(--kn-color-heading);
+    font-weight: var(--kn-font-weight-bold);
+  }
+
+  :where(td, th) {
+    border-color: var(--kn-color-border);
+    border-style: var(--kn-border-style-default);
+  }
+
+  :where(pre) {
+    background:
+      radial-gradient(circle at top left, rgb(255 59 48 / 0.20), transparent 35%),
+      linear-gradient(180deg, #230404, #050000);
+    color: #fff3df;
+    border-color: rgb(255 220 180 / 0.12);
+    border-style: var(--kn-border-style-default);
+    border-radius: var(--kn-radius-md);
+    clip-path: var(--kn-clip-panel);
+    box-shadow:
+      var(--kn-shadow-soft),
+      0 0 2rem rgb(193 18 31 / 0.22);
+  }
+
+  :where(code) {
+    color: var(--kn-color-primary-hot);
+    background: rgb(193 18 31 / 0.16);
+    border-radius: var(--kn-radius-sm);
+  }
+
+  :where(pre code) {
+    color: inherit;
+    background: transparent;
+  }
+
+
+  /* =========================================================
+     8. VISUAL UTILITY THEME
+     ========================================================= */
+
+  .kn-text-primary {
+    color: var(--kn-color-primary-hot);
+  }
+
+  .kn-text-muted {
+    color: var(--kn-color-muted);
+  }
+
+  .kn-text-success {
+    color: var(--kn-color-success);
+  }
+
+  .kn-text-warning {
+    color: var(--kn-color-warning);
+  }
+
+  .kn-text-danger {
+    color: var(--kn-color-danger);
+  }
+
+  .kn-small-text {
+    color: var(--kn-color-primary-hot);
+    font-weight: var(--kn-font-weight-heavy);
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+  }
+
+  .kn-bordered {
+    border-color: var(--kn-color-border);
+    border-style: var(--kn-border-style-default);
+    border-radius: var(--kn-radius-md);
+  }
+
+  .kn-rounded {
+    border-radius: var(--kn-radius-md);
+  }
+
+  .kn-rounded-lg {
+    border-radius: var(--kn-radius-lg);
+  }
+
+  .kn-rounded-xl {
+    border-radius: var(--kn-radius-xl);
+  }
+
+  .kn-rounded-pill {
+    border-radius: var(--kn-radius-pill);
+  }
+
+  .kn-angular {
+    clip-path: var(--kn-clip-panel);
+  }
+
+  .kn-angular-alt {
+    clip-path: var(--kn-clip-panel-alt);
+  }
+
+  .kn-shadow-soft {
+    box-shadow: var(--kn-shadow-soft);
+  }
+
+  .kn-shadow-card {
+    box-shadow: var(--kn-shadow-card);
+  }
+
+  .kn-shadow-strong {
+    box-shadow: var(--kn-shadow-strong);
+  }
+
+
+  /* =========================================================
+     9. FOOTER THEME
+     ========================================================= */
+
+  .kn-site-footer {
+    background:
+      radial-gradient(circle at top left, rgb(255 59 48 / 0.14), transparent 26rem),
+      radial-gradient(circle at top right, rgb(255 106 0 / 0.09), transparent 22rem),
+      linear-gradient(180deg, rgb(20 3 3 / 0.90), rgb(6 1 1 / 0.98));
+    border-top-color: var(--kn-color-border);
+    border-top-style: var(--kn-border-style-default);
+    color: var(--kn-color-muted);
+    box-shadow:
+      inset 0 1px 0 rgb(255 220 180 / 0.08),
+      0 -0.75rem 2rem rgb(0 0 0 / 0.32);
+  }
+
+  .kn-site-footer a {
+    color: var(--kn-color-text);
+  }
+
+  .kn-site-footer a:hover,
+  .kn-site-footer a:focus-visible {
+    color: var(--kn-color-primary-hot);
+  }
+
+
+  /* =========================================================
+     10. MOTION PREFERENCE
+     ========================================================= */
+
+  @media (prefers-reduced-motion: reduce) {
+    :where(a, button, input, textarea, select),
+    .kn-card,
+    .kn-button {
+      transition: none;
+    }
+
+    :where(button:hover, input[type="submit"]:hover, input[type="button"]:hover),
+    .kn-button:hover {
+      transform: none;
+    }
+  }
+}

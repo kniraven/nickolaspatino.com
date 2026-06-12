@@ -1,17 +1,19 @@
-<!--
+<?php
+declare(strict_types=1);
+
+/*
     Author: Nickolas Patino
     Created: 06/09/2026
     Updated: 06/09/2026
--->
+*/
 
-<?php
-    $projectRoot = dirname($_SERVER['DOCUMENT_ROOT']);
-    $pageLocked = "";
+$projectRoot = dirname($_SERVER['DOCUMENT_ROOT']);
+$pageLocked = "";
 
-    require_once $projectRoot . '/config/session.php';
+require_once $projectRoot . '/config/session.php';
 
-    $pageTitle = "Nickolas Patino | Goblin Slayer Game Case Study";
-    $pageDescription = "Case study for Goblin Slayer Game, a browser-based JavaScript game prototype using HTML, CSS, JavaScript, sprite sheets, difficulty settings, enemy spawning, collision scoring, and responsive browser controls.";
+$pageTitle = "Nickolas Patino | Goblin Slayer Game Case Study";
+$pageDescription = "Case study for Goblin Slayer Game, a browser-based JavaScript game prototype using HTML, CSS, JavaScript, sprite sheets, difficulty settings, enemy spawning, collision scoring, and responsive browser controls.";
 ?>
 
 <!DOCTYPE html>
@@ -21,36 +23,36 @@
 </head>
 
 <body>
-    <header class="site-header">
-        <div class="container site-header-inner">
+    <header class="kn-site-header">
+        <div class="kn-container kn-site-header-inner">
             <?php require_once $projectRoot . '/src/nav.php'; ?>
         </div>
     </header>
 
     <main>
-        <section class="hero">
-            <div class="container">
-                <div class="stack stack-roomy">
-                    <div class="split split-sidebar align-start">
-                        <div class="page-hero-content">
-                            <p class="small-text text-primary">
+        <section class="kn-hero">
+            <div class="kn-container">
+                <div class="kn-stack kn-stack-roomy">
+                    <div class="kn-split kn-split-sidebar kn-align-start">
+                        <div class="kn-page-hero-content">
+                            <p class="kn-small-text kn-text-primary">
                                 JavaScript • HTML • CSS • Browser Game
                             </p>
 
                             <h1>Goblin Slayer Game</h1>
 
-                            <p class="lead">
+                            <p class="kn-lead">
                                 A browser-based JavaScript game prototype where the player moves across the bottom of the screen to stop falling goblins.
                             </p>
 
-                            <div class="button-group">
-                                <a href="/demos/goblin-slayer/" class="button button-primary" target="_blank" rel="noopener">Live Demo</a>
-                                <a href="https://github.com/kniraven/nickolaspatino.com/tree/main/public/demos/goblin-slayer" class="button button-secondary" target="_blank" rel="noopener">GitHub</a>
-                                <a href="/projects/" class="button button-ghost">Back to Projects</a>
+                            <div class="kn-button-group">
+                                <a href="/demos/goblin-slayer/" class="kn-button kn-button-primary" target="_blank" rel="noopener">Live Demo</a>
+                                <a href="https://github.com/kniraven/nickolaspatino.com/tree/main/public/demos/goblin-slayer" class="kn-button kn-button-secondary" target="_blank" rel="noopener">GitHub</a>
+                                <a href="/projects/" class="kn-button kn-button-ghost">Back to Projects</a>
                             </div>
                         </div>
 
-                        <aside class="card stack">
+                        <aside class="kn-card kn-stack">
                             <h2>Project Summary</h2>
 
                             <dl>
@@ -69,7 +71,7 @@
                         </aside>
                     </div>
 
-                    <div class="media-frame aspect-video">
+                    <div class="kn-media-frame kn-aspect-video">
                         <img
                             src="/assets/images/projects/goblinslayer.png"
                             alt="Goblin Slayer browser game screenshot"
@@ -80,10 +82,10 @@
         </section>
 
         <section>
-            <div class="container">
-                <div class="split split-sidebar align-start">
-                    <article class="stack">
-                        <div class="section-header">
+            <div class="kn-container">
+                <div class="kn-split kn-split-sidebar kn-align-start">
+                    <article class="kn-stack">
+                        <div class="kn-section-header">
                             <h2>Overview</h2>
 
                             <p>
@@ -91,8 +93,8 @@
                             </p>
                         </div>
 
-                        <div class="grid">
-                            <article class="card stack">
+                        <div class="kn-grid">
+                            <article class="kn-card kn-stack">
                                 <h3>Game Objective</h3>
 
                                 <p>
@@ -100,7 +102,7 @@
                                 </p>
                             </article>
 
-                            <article class="card stack">
+                            <article class="kn-card kn-stack">
                                 <h3>Difficulty Settings</h3>
 
                                 <p>
@@ -108,7 +110,7 @@
                                 </p>
                             </article>
 
-                            <article class="card stack">
+                            <article class="kn-card kn-stack">
                                 <h3>Score Tracking</h3>
 
                                 <p>
@@ -118,10 +120,10 @@
                         </div>
                     </article>
 
-                    <aside class="card stack">
+                    <aside class="kn-card kn-stack">
                         <h2>Demo Files</h2>
 
-                        <ul class="feature-list">
+                        <ul class="kn-feature-list">
                             <li><code>index.html</code></li>
                             <li><code>css/styles.css</code></li>
                             <li><code>js/game.js</code></li>
@@ -135,9 +137,9 @@
         </section>
 
         <section>
-            <div class="container">
-                <div class="stack stack-roomy">
-                    <div class="section-header">
+            <div class="kn-container">
+                <div class="kn-stack kn-stack-roomy">
+                    <div class="kn-section-header">
                         <h2>Gameplay Features</h2>
 
                         <p>
@@ -145,8 +147,8 @@
                         </p>
                     </div>
 
-                    <div class="card-grid">
-                        <article class="card stack">
+                    <div class="kn-card-grid">
+                        <article class="kn-card kn-stack">
                             <h3>Player Movement</h3>
 
                             <p>
@@ -154,7 +156,7 @@
                             </p>
                         </article>
 
-                        <article class="card stack">
+                        <article class="kn-card kn-stack">
                             <h3>Enemy Spawning</h3>
 
                             <p>
@@ -162,7 +164,7 @@
                             </p>
                         </article>
 
-                        <article class="card stack">
+                        <article class="kn-card kn-stack">
                             <h3>Sprite Animation</h3>
 
                             <p>
@@ -170,7 +172,7 @@
                             </p>
                         </article>
 
-                        <article class="card stack">
+                        <article class="kn-card kn-stack">
                             <h3>Collision Scoring</h3>
 
                             <p>
@@ -178,7 +180,7 @@
                             </p>
                         </article>
 
-                        <article class="card stack">
+                        <article class="kn-card kn-stack">
                             <h3>Pause and Resume</h3>
 
                             <p>
@@ -186,7 +188,7 @@
                             </p>
                         </article>
 
-                        <article class="card stack">
+                        <article class="kn-card kn-stack">
                             <h3>Scrolling Background</h3>
 
                             <p>
@@ -199,10 +201,10 @@
         </section>
 
         <section>
-            <div class="container">
-                <div class="split split-sidebar align-start">
-                    <div class="stack">
-                        <div class="section-header">
+            <div class="kn-container">
+                <div class="kn-split kn-split-sidebar kn-align-start">
+                    <div class="kn-stack">
+                        <div class="kn-section-header">
                             <h2>Technical Implementation</h2>
 
                             <p>
@@ -210,8 +212,8 @@
                             </p>
                         </div>
 
-                        <div class="grid">
-                            <article class="card stack">
+                        <div class="kn-grid">
+                            <article class="kn-card kn-stack">
                                 <h3>HTML</h3>
 
                                 <p>
@@ -219,7 +221,7 @@
                                 </p>
                             </article>
 
-                            <article class="card stack">
+                            <article class="kn-card kn-stack">
                                 <h3>CSS</h3>
 
                                 <p>
@@ -227,7 +229,7 @@
                                 </p>
                             </article>
 
-                            <article class="card stack">
+                            <article class="kn-card kn-stack">
                                 <h3>JavaScript</h3>
 
                                 <p>
@@ -237,10 +239,10 @@
                         </div>
                     </div>
 
-                    <aside class="card stack">
+                    <aside class="kn-card kn-stack">
                         <h2>Controls</h2>
 
-                        <ul class="feature-list">
+                        <ul class="kn-feature-list">
                             <li><strong>Keyboard:</strong> Arrow keys or A/D</li>
                             <li><strong>Mouse:</strong> Hold and move left or right side of the game area</li>
                             <li><strong>Touch:</strong> Tap/press left or right side of the game area</li>
@@ -253,9 +255,9 @@
         </section>
 
         <section>
-            <div class="container">
-                <div class="split split-sidebar align-start">
-                    <div class="section-header">
+            <div class="kn-container">
+                <div class="kn-split kn-split-sidebar kn-align-start">
+                    <div class="kn-section-header">
                         <h2>Project Scope</h2>
 
                         <p>
@@ -263,10 +265,10 @@
                         </p>
                     </div>
 
-                    <aside class="card stack">
+                    <aside class="kn-card kn-stack">
                         <h3>Possible Next Steps</h3>
 
-                        <ul class="feature-list">
+                        <ul class="kn-feature-list">
                             <li>Game over state</li>
                             <li>Health or lives system</li>
                             <li>Sound effects</li>
@@ -280,9 +282,9 @@
         </section>
 
         <section>
-            <div class="container">
-                <article class="card stack">
-                    <div class="text-block">
+            <div class="kn-container">
+                <article class="kn-card kn-stack">
+                    <div class="kn-text-block">
                         <h2>View the project.</h2>
 
                         <p>
@@ -290,18 +292,18 @@
                         </p>
                     </div>
 
-                    <div class="button-group">
-                        <a href="/demos/goblin-slayer/" class="button button-primary" target="_blank" rel="noopener">Live Demo</a>
-                        <a href="https://github.com/kniraven/nickolaspatino.com/tree/main/public/demos/goblin-slayer" class="button button-secondary" target="_blank" rel="noopener">GitHub</a>
-                        <a href="/projects/" class="button button-ghost">Back to Projects</a>
+                    <div class="kn-button-group">
+                        <a href="/demos/goblin-slayer/" class="kn-button kn-button-primary" target="_blank" rel="noopener">Live Demo</a>
+                        <a href="https://github.com/kniraven/nickolaspatino.com/tree/main/public/demos/goblin-slayer" class="kn-button kn-button-secondary" target="_blank" rel="noopener">GitHub</a>
+                        <a href="/projects/" class="kn-button kn-button-ghost">Back to Projects</a>
                     </div>
                 </article>
             </div>
         </section>
     </main>
 
-    <footer class="site-footer">
-        <div class="container site-footer-inner">
+    <footer class="kn-site-footer">
+        <div class="kn-container kn-site-footer-inner">
             <?php require_once $projectRoot . '/src/footer.php'; ?>
         </div>
     </footer>
