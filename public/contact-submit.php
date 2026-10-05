@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 $projectRoot = dirname($_SERVER['DOCUMENT_ROOT']);
 
-require_once $projectRoot . '/src/graph_mailer.php';
+require_once $projectRoot . '/src/contact_protection.php';
 
 $graphConfigPath = $projectRoot . '/config/graph_mail.php';
 
@@ -48,22 +48,6 @@ function redirectContactError(string $code): void
     redirectContact('error=' . urlencode($code));
 }
 
-function logContactEvent(string $type, string $message): void
-{
-    global $projectRoot;
-
-    $storagePath = $projectRoot . '/storage';
-
-    if (!is_dir($storagePath)) {
-        mkdir($storagePath, 0755, true);
-    }
-
-    $logPath = $storagePath . '/contact_errors.log';
-    $logMessage = '[' . date('Y-m-d H:i:s') . '] [' . $type . '] ' . $message . PHP_EOL;
-
-    file_put_contents($logPath, $logMessage, FILE_APPEND);
-}
-
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirectContact();
 }
@@ -75,6 +59,22 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 if (!empty($_POST['website'] ?? '')) {
     redirectContact('sent=1');
 }
+
+// Reject arrays and oversized input before calling string functions.
+foreach (['name', 'email', 'organization', 'reason', 'message', 'website', 'contact_token'] as $field) {
+    if (isset($_POST[$field]) && !is_string($_POST[$field])) {
+        redirectContactError('missing-fields');
+    }
+}
+if ((int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > 32768) {
+    redirectContactError('invalid-length');
+}
+$pageLocked = '';
+require_once $projectRoot . '/config/session.php';
+if (!consumeContactToken($_POST['contact_token'] ?? '')) {
+    redirectContactError('invalid-token');
+}
+session_write_close();
 
 if (!file_exists($graphConfigPath)) {
     redirectContactError('missing-config');
@@ -113,18 +113,30 @@ $messageData = [
 ];
 
 try {
+    $decision = reserveContactSend(
+        $projectRoot . '/storage/contact-protection',
+        $_SERVER['REMOTE_ADDR'] ?? 'unknown',
+        $email,
+        $message
+    );
+} catch (Throwable $exception) {
+    error_log('Contact protection unavailable; no mail sent.');
+    redirectContactError('protection-unavailable');
+}
+if ($decision !== 'allowed') {
+    redirectContactError($decision);
+}
+
+require_once $projectRoot . '/src/graph_mailer.php';
+try {
     $accessToken = getGraphAccessToken($graphConfig);
 
     sendGraphContactEmail($graphConfig, $messageData, $accessToken);
 
-    try {
-        sendGraphSenderConfirmationEmail($graphConfig, $messageData, $accessToken);
-    } catch (Throwable $confirmationException) {
-        logContactEvent('confirmation-failed', $confirmationException->getMessage());
-    }
+    // No automatic mail to an unverified sender address.
 
     redirectContact('sent=1');
 } catch (Throwable $exception) {
-    logContactEvent('send-failed', $exception->getMessage());
+    error_log('Contact mail delivery failed.');
     redirectContactError('send-failed');
 }

@@ -11,6 +11,9 @@ $projectRoot = dirname($_SERVER['DOCUMENT_ROOT']);
 $pageLocked = "";
 
 require_once $projectRoot . '/config/session.php';
+require_once $projectRoot . '/src/contact_protection.php';
+header('Cache-Control: no-store');
+$contactToken = issueContactToken();
 
 $pageTitle = "Nickolas Patino | Contact";
 $pageDescription = "Contact Nickolas Patino for employment opportunities, local business websites, artist pages, portfolios, game design content, event livestreaming, video editing, Excel/VBA automation, reporting, and reconciliation work.";
@@ -22,6 +25,19 @@ $errorMessage = '';
 
 if ($error !== '') {
     switch ($error) {
+        case 'invalid-token':
+            $errorMessage = 'Please reload the contact page and try again. Allow a few seconds before sending.';
+            break;
+
+        case 'rate-limited':
+            $errorMessage = 'The contact form has reached its sending limit. Please try again later.';
+            break;
+
+        case 'duplicate':
+            $errorMessage = 'This message was already submitted recently. Please wait for a reply instead of sending it again.';
+            break;
+
+        case 'protection-unavailable':
         case 'missing-config':
             $errorMessage = 'The contact form is temporarily unavailable. Please try again later.';
             break;
@@ -119,6 +135,7 @@ if ($error !== '') {
                                 <?php endif; ?>
 
                                 <form class="kn-form" id="contact-message-form" method="post" action="/contact-submit.php">
+                                    <input type="hidden" name="contact_token" value="<?php echo htmlspecialchars($contactToken, ENT_QUOTES, 'UTF-8'); ?>">
                                     <div class="kn-form-row">
                                         <div class="kn-form-field">
                                             <label for="name">Name</label>
