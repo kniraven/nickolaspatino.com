@@ -1,0 +1,2853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Purple Sci-Fi Stream Overlay - OBS Optimized</title>
+<!--
+  OBS-optimized version.
+  Main performance changes:
+  - JavaScript particle loop is capped with CONFIG.render.targetFps.
+  - Particle canvas renders internally at CONFIG.render.canvasRenderScale.
+  - Default particle count, connection distance, glow, and signal lines are reduced.
+  - CSS background-position/blur/drop-shadow effects are reduced in obs mode.
+  - Notification popups default to one active panel and slower scan animation.
+-->
+
+<style>
+/* =========================================================
+   00. GLOBAL DESIGN SETTINGS
+   ---------------------------------------------------------
+   The overlay is built on a fixed 1920x1080 canvas.
+   JavaScript scales the entire overlay uniformly so it never
+   stretches or distorts.
+========================================================= */
+
+:root {
+  --overlay-width: 1920px;
+  --overlay-height: 1080px;
+
+  --global-glow-strength: 0.7;
+}
+
+
+/* =========================================================
+   00A. COLOR MODE SETTINGS
+   ---------------------------------------------------------
+   This file supports two visual modes:
+
+   normal:
+   - original purple / white look
+
+   inverted:
+   - brand-safe inverted look
+   - darker violet lines and darker frame details
+   - better visibility over mostly white or mostly purple scenes
+
+   Change the mode in the JavaScript CONFIG section:
+   colorMode: "normal"
+   colorMode: "inverted"
+========================================================= */
+
+:root,
+:root[data-color-mode="normal"] {
+  --purple-dark: #16001f;
+  --purple-main: #60156c;
+  --purple-bright: #b340ff;
+  --purple-soft: #d98cff;
+  --white: #ffffff;
+
+  --purple-main-rgb: 96, 21, 108;
+  --purple-bright-rgb: 179, 64, 255;
+  --purple-soft-rgb: 217, 140, 255;
+  --white-rgb: 255, 255, 255;
+
+  --bar-color-a: var(--purple-main);
+  --bar-color-b: var(--white);
+  --bar-color-c: var(--purple-bright);
+
+  --corner-color: #ffffff;
+  --tech-color-a: var(--purple-bright);
+  --tech-color-b: var(--white);
+
+  --grid-rgb: var(--purple-bright-rgb);
+  --edge-glow-a-rgb: var(--purple-bright-rgb);
+  --edge-glow-b-rgb: var(--white-rgb);
+  --edge-glow-side-rgb: var(--purple-main-rgb);
+
+  --scan-color-a-rgb: var(--white-rgb);
+  --scan-color-b-rgb: var(--purple-bright-rgb);
+
+  --data-border-rgb: var(--purple-soft-rgb);
+  --data-white-rgb: var(--white-rgb);
+  --data-purple-rgb: var(--purple-bright-rgb);
+
+  --glow-rgb: var(--purple-bright-rgb);
+  --shine-color: var(--white);
+}
+
+:root[data-color-mode="inverted"] {
+  --purple-dark: #ffffff;
+  --purple-main: #d98cff;
+  --purple-bright: #16001f;
+  --purple-soft: #60156c;
+  --white: #16001f;
+
+  --purple-main-rgb: 217, 140, 255;
+  --purple-bright-rgb: 22, 0, 31;
+  --purple-soft-rgb: 96, 21, 108;
+  --white-rgb: 22, 0, 31;
+
+  --bar-color-a: #ffffff;
+  --bar-color-b: #16001f;
+  --bar-color-c: #60156c;
+
+  --corner-color: #ffffff;
+  --tech-color-a: #16001f;
+  --tech-color-b: #ffffff;
+
+  --grid-rgb: 22, 0, 31;
+  --edge-glow-a-rgb: 22, 0, 31;
+  --edge-glow-b-rgb: 255, 255, 255;
+  --edge-glow-side-rgb: 22, 0, 31;
+
+  --scan-color-a-rgb: 22, 0, 31;
+  --scan-color-b-rgb: 255, 255, 255;
+
+  --data-border-rgb: 22, 0, 31;
+  --data-white-rgb: 255, 255, 255;
+  --data-purple-rgb: 22, 0, 31;
+
+  --glow-rgb: 255, 255, 255;
+  --shine-color: #16001f;
+}
+
+
+/* =========================================================
+   01. FULL-OVERLAY SCAN LINE SETTINGS
+   ---------------------------------------------------------
+   Creates a horizontal light band that sweeps downward
+   across the entire overlay.
+========================================================= */
+
+:root {
+  --overlay-scan-height: 70px;
+  --overlay-scan-opacity: 0.28;
+  --overlay-scan-blur: 6px;
+  --overlay-scan-duration: 8.5s;
+}
+
+
+/* =========================================================
+   02. OUTER FRAME SETTINGS
+========================================================= */
+
+:root {
+  --outer-margin-x: 70px;
+  --outer-bar-top: 42px;
+  --outer-bar-bottom: 42px;
+  --outer-bar-height: 3px;
+
+  --corner-size: 120px;
+  --corner-offset: 42px;
+  --corner-border-width: 4px;
+}
+
+
+/* =========================================================
+   03. BACKGROUND GRID SETTINGS
+========================================================= */
+
+:root {
+  --grid-size: 48px;
+  --grid-opacity: 0.32;
+  --grid-line-opacity: 0.052;
+}
+
+
+/* =========================================================
+   04. TECH LINE SETTINGS
+========================================================= */
+
+:root {
+  --tech-line-height: 2px;
+  --tech-line-opacity: 0.58;
+
+  --tech-line-one-width: 360px;
+  --tech-line-one-top: 210px;
+  --tech-line-one-left: 115px;
+
+  --tech-line-two-width: 270px;
+  --tech-line-two-top: 330px;
+  --tech-line-two-right: 160px;
+
+  --tech-line-three-width: 420px;
+  --tech-line-three-bottom: 245px;
+  --tech-line-three-left: 250px;
+}
+
+
+/* =========================================================
+   05. VERTICAL DATA STRIP SETTINGS
+========================================================= */
+
+:root {
+  --data-strip-right: 42px;
+  --data-strip-top: 190px;
+  --data-strip-width: 22px;
+  --data-strip-height: 520px;
+  --data-strip-opacity: 0.58;
+}
+
+
+/* =========================================================
+   05A. EVE / GALLENTE NOTIFICATION SETTINGS
+   ---------------------------------------------------------
+   Toggle this feature in JavaScript:
+   CONFIG.eveNotifications.enabled = true / false
+
+   These panels only appear in the left third or right third
+   of the fixed 1920x1080 design canvas.
+========================================================= */
+
+:root {
+  --eve-panel-width: 390px;
+  --eve-panel-min-height: 86px;
+
+  --eve-panel-left-x: 92px;
+  --eve-panel-right-x: 1438px;
+
+  --eve-panel-top-min: 135px;
+  --eve-panel-top-max: 790px;
+
+  --eve-panel-border-opacity: 0.88;
+  --eve-panel-background-opacity: 0.34;
+  --eve-panel-glow-opacity: 0.45;
+
+  --eve-panel-title-size: 13px;
+  --eve-panel-body-size: 15px;
+  --eve-panel-meta-size: 11px;
+
+  /*
+    Panel readability controls.
+    Increase backdrop opacity if the game footage behind the overlay is busy.
+  */
+  --eve-panel-backdrop-opacity: 0.74;
+  --eve-panel-text-shadow-opacity: 0.95;
+  --eve-panel-letter-spacing: 0.8px;
+
+  /*
+    Type-based UI adjustments.
+  */
+  --eve-panel-default-bar-width: 7px;
+  --eve-panel-default-radius: 0px;
+
+  /*
+    Internal popup scan controls.
+
+    sweep-width controls how wide the moving bright band is.
+    sweep-opacity controls how visible it is.
+    texture-opacity controls the subtle sci-fi line texture.
+  */
+  --eve-panel-sweep-width: 78%;
+  --eve-panel-sweep-opacity: 0.48;
+  --eve-panel-texture-opacity: 0.14;
+  --eve-panel-scan-duration: 4.4s;
+}
+
+
+/* =========================================================
+   06. PAGE RESET
+========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+
+/* =========================================================
+   07. VIEWPORT AND NON-DISTORTING 16:9 OVERLAY CANVAS
+   ---------------------------------------------------------
+   The overlay starts at top-left.
+   Extra space appears on the right or bottom.
+========================================================= */
+
+.viewport {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: transparent;
+}
+
+.overlay {
+  position: absolute;
+  width: var(--overlay-width);
+  height: var(--overlay-height);
+  left: 0;
+  top: 0;
+  transform-origin: top left;
+  transform: scale(1);
+  overflow: hidden;
+  background: transparent;
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   08. CANVAS PARTICLE NETWORK LAYER
+========================================================= */
+
+#particleCanvas {
+  position: absolute;
+  inset: 0;
+  width: var(--overlay-width);
+  height: var(--overlay-height);
+  opacity: 1;
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   09. BACKGROUND GRID
+========================================================= */
+
+.grid {
+  position: absolute;
+  inset: 0;
+  will-change: background-position;
+  background:
+    linear-gradient(
+      rgba(var(--grid-rgb), var(--grid-line-opacity)) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(var(--grid-rgb), var(--grid-line-opacity)) 1px,
+      transparent 1px
+    );
+  background-size: var(--grid-size) var(--grid-size);
+  mask-image: radial-gradient(circle at 68% 55%, transparent 0%, black 42%, black 100%);
+  opacity: var(--grid-opacity);
+  animation: gridDrift 12s linear infinite;
+}
+
+
+/* =========================================================
+   10. EDGE GLOW
+========================================================= */
+
+.edge-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 8% 12%, rgba(var(--edge-glow-a-rgb), 0.38), transparent 18%),
+    radial-gradient(circle at 92% 82%, rgba(var(--edge-glow-b-rgb), 0.2), transparent 18%),
+    linear-gradient(
+      90deg,
+      rgba(var(--edge-glow-side-rgb), 0.38),
+      transparent 28%,
+      transparent 72%,
+      rgba(var(--edge-glow-side-rgb), 0.38)
+    );
+  opacity: 0.78;
+}
+
+
+/* =========================================================
+   11. FULL-OVERLAY SCAN LINE
+========================================================= */
+
+.overlay-scan {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.overlay-scan::after {
+  content: "";
+  position: absolute;
+  will-change: transform, opacity;
+  left: 0;
+  right: 0;
+  top: calc(var(--overlay-scan-height) * -1);
+  height: var(--overlay-scan-height);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(var(--scan-color-a-rgb), 0),
+      rgba(var(--scan-color-a-rgb), 0.16),
+      rgba(var(--scan-color-b-rgb), var(--overlay-scan-opacity)),
+      rgba(var(--scan-color-a-rgb), 0.2),
+      rgba(var(--scan-color-a-rgb), 0)
+    );
+  filter: blur(var(--overlay-scan-blur));
+  animation: overlayScanDown var(--overlay-scan-duration) linear infinite;
+  opacity: 0.9;
+}
+
+
+/* =========================================================
+   12. TOP AND BOTTOM OUTER BARS
+========================================================= */
+
+.top-bar,
+.bottom-bar {
+  position: absolute;
+  left: var(--outer-margin-x);
+  right: var(--outer-margin-x);
+  height: var(--outer-bar-height);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--bar-color-a),
+    var(--bar-color-b),
+    var(--bar-color-c),
+    transparent
+  );
+  box-shadow:
+    0 0 calc(8px * var(--global-glow-strength)) rgba(var(--glow-rgb), 1),
+    0 0 calc(18px * var(--global-glow-strength)) rgba(var(--glow-rgb), 0.7);
+  opacity: 0.92;
+}
+
+.top-bar {
+  top: var(--outer-bar-top);
+}
+
+.bottom-bar {
+  bottom: var(--outer-bar-bottom);
+}
+
+.top-bar::before,
+.bottom-bar::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -220px;
+  width: 180px;
+  height: 7px;
+  background: linear-gradient(90deg, transparent, var(--shine-color), transparent);
+  filter: blur(1px);
+  animation: lightSweep 4s linear infinite;
+  will-change: transform;
+}
+
+
+/* =========================================================
+   13. OUTER CORNER BRACKETS
+========================================================= */
+
+.corner {
+  position: absolute;
+  width: var(--corner-size);
+  height: var(--corner-size);
+
+  /*
+    Important:
+    The individual corner rules use border shorthand like:
+    border-top: 4px solid;
+
+    Without color: var(--corner-color), that shorthand can render using
+    currentColor, which may appear black/dark. Setting both color and
+    border-color forces the brackets to use the intended corner color.
+  */
+  color: var(--corner-color);
+  border-color: var(--corner-color);
+  opacity: 0.95;
+  filter:
+    drop-shadow(0 0 calc(5px * var(--global-glow-strength)) rgba(var(--glow-rgb), 1))
+    drop-shadow(0 0 calc(15px * var(--global-glow-strength)) rgba(var(--glow-rgb), 0.7));
+}
+
+.corner.tl {
+  top: var(--corner-offset);
+  left: var(--corner-offset);
+  border-top: var(--corner-border-width) solid var(--corner-color);
+  border-left: var(--corner-border-width) solid var(--corner-color);
+}
+
+.corner.tr {
+  top: var(--corner-offset);
+  right: var(--corner-offset);
+  border-top: var(--corner-border-width) solid var(--corner-color);
+  border-right: var(--corner-border-width) solid var(--corner-color);
+}
+
+.corner.bl {
+  bottom: var(--corner-offset);
+  left: var(--corner-offset);
+  border-bottom: var(--corner-border-width) solid var(--corner-color);
+  border-left: var(--corner-border-width) solid var(--corner-color);
+}
+
+.corner.br {
+  bottom: var(--corner-offset);
+  right: var(--corner-offset);
+  border-bottom: var(--corner-border-width) solid var(--corner-color);
+  border-right: var(--corner-border-width) solid var(--corner-color);
+}
+
+
+/* =========================================================
+   14. ANIMATED TECH LINES
+========================================================= */
+
+.tech-lines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.tech-line {
+  position: absolute;
+  will-change: transform, opacity;
+  height: var(--tech-line-height);
+  background: linear-gradient(90deg, transparent, var(--tech-color-a), var(--tech-color-b), transparent);
+  box-shadow: 0 0 8px rgba(var(--glow-rgb), 1);
+  opacity: var(--tech-line-opacity);
+  animation: techFlow 5s linear infinite;
+}
+
+.tech-line.one {
+  width: var(--tech-line-one-width);
+  top: var(--tech-line-one-top);
+  left: var(--tech-line-one-left);
+}
+
+.tech-line.two {
+  width: var(--tech-line-two-width);
+  top: var(--tech-line-two-top);
+  right: var(--tech-line-two-right);
+  animation-delay: 1.1s;
+}
+
+.tech-line.three {
+  width: var(--tech-line-three-width);
+  bottom: var(--tech-line-three-bottom);
+  left: var(--tech-line-three-left);
+  animation-delay: 2.1s;
+}
+
+
+/* =========================================================
+   15. VERTICAL DATA STRIP
+========================================================= */
+
+.vertical-data {
+  position: absolute;
+  right: var(--data-strip-right);
+  top: var(--data-strip-top);
+  width: var(--data-strip-width);
+  height: var(--data-strip-height);
+  border-left: 1px solid rgba(var(--data-border-rgb), 0.42);
+  border-right: 1px solid rgba(var(--data-border-rgb), 0.42);
+  overflow: hidden;
+  opacity: var(--data-strip-opacity);
+}
+
+.vertical-data::before {
+  content: "";
+  position: absolute;
+  will-change: transform;
+  inset: -100% 0 0 0;
+  background: repeating-linear-gradient(
+    180deg,
+    transparent 0 18px,
+    rgba(var(--data-white-rgb), 0.75) 18px 22px,
+    rgba(var(--data-purple-rgb), 0.85) 22px 30px
+  );
+  animation: dataFall 2.2s linear infinite;
+}
+
+
+/* =========================================================
+   15A. EVE / GALLENTE NOTIFICATION PANELS
+   ---------------------------------------------------------
+   The panels are generated by JavaScript and inserted into
+   .eve-notification-layer. They use the same color-mode
+   variables as the rest of the overlay.
+
+   Each popup can also receive a type class:
+   - type-news
+   - type-traffic
+   - type-gallente
+   - type-flirt
+   - type-emergency
+   - type-bounty
+========================================================= */
+
+.eve-notification-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.eve-popup {
+  position: absolute;
+  width: var(--eve-panel-width);
+  min-height: var(--eve-panel-min-height);
+  padding: 16px 20px 16px 20px;
+
+  /*
+    Default typed-style variables. These are overridden per type.
+  */
+  --panel-accent-rgb: 179, 64, 255;
+  --panel-accent-soft-rgb: 217, 140, 255;
+  --panel-bright-rgb: 255, 255, 255;
+  --panel-dark-top: 12, 4, 18;
+  --panel-dark-bottom: 26, 8, 42;
+  --panel-border-rgb: 217, 140, 255;
+  --panel-glow-rgb: 179, 64, 255;
+  --panel-badge-rgb: 217, 140, 255;
+  --panel-meta-rgb: 217, 140, 255;
+  --panel-bar-width: var(--eve-panel-default-bar-width);
+  --panel-width: var(--eve-panel-width);
+
+  width: var(--panel-width);
+  border: 1px solid rgba(var(--panel-border-rgb), 0.92);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(var(--panel-dark-top), calc(var(--eve-panel-background-opacity) + 0.08)),
+      rgba(var(--panel-dark-bottom), calc(var(--eve-panel-background-opacity) + 0.03))
+    );
+  box-shadow:
+    inset 0 0 22px rgba(var(--panel-accent-rgb), 0.16),
+    0 0 20px rgba(var(--panel-glow-rgb), 0.42),
+    0 0 36px rgba(var(--panel-glow-rgb), 0.18);
+  clip-path: polygon(
+    0 0,
+    calc(100% - 26px) 0,
+    100% 26px,
+    100% 100%,
+    24px 100%,
+    0 calc(100% - 24px)
+  );
+  overflow: hidden;
+  opacity: 0;
+  transform: translate3d(0, 8px, 0);
+  backface-visibility: hidden;
+  transition:
+    opacity var(--eve-enter-duration, 140ms) ease-out,
+    transform var(--eve-enter-duration, 140ms) ease-out;
+  will-change: opacity, transform;
+}
+
+.eve-popup.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.eve-popup.is-hiding {
+  opacity: 0;
+  transform: translate3d(0, -8px, 0);
+  transition:
+    opacity var(--eve-exit-duration, 260ms) ease-in,
+    transform var(--eve-exit-duration, 260ms) ease-in;
+}
+
+.eve-popup[data-side="left"] {
+  left: var(--eve-panel-left-x);
+}
+
+.eve-popup[data-side="right"] {
+  left: var(--eve-panel-right-x);
+}
+
+.eve-popup::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(var(--panel-dark-top), var(--eve-panel-backdrop-opacity)),
+      rgba(var(--panel-dark-bottom), calc(var(--eve-panel-backdrop-opacity) * 0.82))
+    );
+  opacity: 0.98;
+}
+
+.eve-popup::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 3;
+  width: var(--panel-bar-width);
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    rgba(var(--panel-bright-rgb), 0.18),
+    rgba(var(--panel-accent-rgb), 0.97),
+    rgba(var(--panel-bright-rgb), 0.18)
+  );
+  box-shadow:
+    0 0 8px rgba(var(--panel-glow-rgb), 0.95),
+    0 0 16px rgba(var(--panel-glow-rgb), 0.65);
+}
+
+/*
+  Static texture layer.
+
+  This does NOT slide the whole backing panel anymore. It only drifts
+  a small texture pattern so the panel stays continuously covered.
+*/
+.eve-popup-scan {
+  position: absolute;
+  inset: 0;
+  will-change: background-position;
+  z-index: 1;
+  pointer-events: none;
+  opacity: var(--eve-panel-texture-opacity);
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 14px,
+      rgba(var(--panel-bright-rgb), 0.075) 14px 16px
+    );
+  background-size: 32px 100%;
+  animation: evePanelTextureDrift var(--eve-panel-scan-duration) linear infinite;
+}
+
+/*
+  Main visible horizontal sweep.
+
+  This is the effect that moves across the message. It starts fully
+  off-panel on the left and ends fully off-panel on the right, so it
+  visibly passes through the full popup instead of appearing only on
+  the left and right sections.
+*/
+.eve-popup-sweep {
+  position: absolute;
+  top: -18%;
+  will-change: transform;
+  bottom: -18%;
+  left: 0;
+  z-index: 1;
+  width: var(--eve-panel-sweep-width);
+  pointer-events: none;
+  opacity: var(--eve-panel-sweep-opacity);
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(var(--panel-bright-rgb), 0.10) 12%,
+      rgba(var(--panel-accent-rgb), 0.24) 24%,
+      rgba(var(--panel-bright-rgb), 0.48) 42%,
+      rgba(var(--panel-accent-rgb), 0.38) 52%,
+      rgba(var(--panel-bright-rgb), 0.30) 60%,
+      rgba(var(--panel-accent-rgb), 0.20) 72%,
+      transparent 100%
+    );
+  filter: blur(2px);
+  transform: translate3d(-120%, 0, 0) skewX(-14deg);
+  animation: evePanelFullSweep var(--eve-panel-scan-duration) linear infinite;
+}
+
+.eve-popup-sweep::after {
+  content: "";
+  position: absolute;
+  left: 46%;
+  top: 8%;
+  bottom: 8%;
+  width: 2px;
+  background:
+    linear-gradient(
+      180deg,
+      transparent,
+      rgba(var(--panel-bright-rgb), 0.92),
+      rgba(var(--panel-accent-rgb), 0.92),
+      transparent
+    );
+  box-shadow:
+    0 0 8px rgba(var(--panel-bright-rgb), 0.9),
+    0 0 18px rgba(var(--panel-accent-rgb), 0.72);
+  opacity: 0.95;
+}
+
+.eve-popup-header,
+.eve-popup-body,
+.eve-popup-meta {
+  position: relative;
+  z-index: 2;
+}
+
+.eve-popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 9px;
+}
+
+.eve-popup-title {
+  color: #ffffff;
+  font-size: var(--eve-panel-title-size);
+  font-weight: 700;
+  letter-spacing: 2.4px;
+  text-transform: uppercase;
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, var(--eve-panel-text-shadow-opacity)),
+    0 0 7px rgba(var(--panel-bright-rgb), 0.72),
+    0 0 14px rgba(var(--panel-glow-rgb), 0.78);
+  white-space: nowrap;
+}
+
+.eve-popup-badge {
+  color: rgba(var(--panel-badge-rgb), 0.98);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, var(--eve-panel-text-shadow-opacity)),
+    0 0 8px rgba(var(--panel-glow-rgb), 0.72);
+  white-space: nowrap;
+}
+
+.eve-popup-body {
+  color: rgba(255, 255, 255, 0.97);
+  font-size: var(--eve-panel-body-size);
+  font-weight: 600;
+  line-height: 1.38;
+  letter-spacing: var(--eve-panel-letter-spacing);
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, var(--eve-panel-text-shadow-opacity)),
+    0 0 5px rgba(var(--panel-glow-rgb), 0.35);
+}
+
+.eve-popup-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 11px;
+  color: rgba(var(--panel-meta-rgb), 0.95);
+  font-size: var(--eve-panel-meta-size);
+  font-weight: 700;
+  letter-spacing: 1.7px;
+  text-transform: uppercase;
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, var(--eve-panel-text-shadow-opacity)),
+    0 0 6px rgba(var(--panel-glow-rgb), 0.55);
+}
+
+.eve-popup-meta::before {
+  content: "";
+  width: 48px;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    rgba(var(--panel-accent-rgb), 0.96),
+    rgba(var(--panel-bright-rgb), 0.82),
+    transparent
+  );
+  box-shadow: 0 0 8px rgba(var(--panel-glow-rgb), 0.82);
+}
+
+.eve-popup.priority {
+  box-shadow:
+    inset 0 0 24px rgba(var(--panel-bright-rgb), 0.12),
+    0 0 28px rgba(var(--panel-glow-rgb), 0.88),
+    0 0 42px rgba(var(--panel-glow-rgb), 0.24);
+}
+
+.eve-popup.priority .eve-popup-badge {
+  color: #ffffff;
+}
+
+
+/* =========================================================
+   15B. TYPE VARIANTS
+========================================================= */
+
+/* NEWS - Gallente white + soft green */
+.eve-popup.type-news {
+  --panel-accent-rgb: 170, 255, 210;
+  --panel-accent-soft-rgb: 225, 255, 238;
+  --panel-bright-rgb: 255, 255, 255;
+  --panel-dark-top: 10, 22, 18;
+  --panel-dark-bottom: 12, 36, 26;
+  --panel-border-rgb: 170, 255, 210;
+  --panel-glow-rgb: 170, 255, 210;
+  --panel-badge-rgb: 240, 255, 246;
+  --panel-meta-rgb: 170, 255, 210;
+}
+
+.eve-popup.type-news .eve-popup-scan {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 16px,
+      rgba(255, 255, 255, 0.08) 16px 18px
+    );
+  background-size: 36px 100%;
+}
+
+/* TRAFFIC - brighter green */
+.eve-popup.type-traffic {
+  --panel-accent-rgb: 100, 255, 170;
+  --panel-accent-soft-rgb: 200, 255, 224;
+  --panel-bright-rgb: 255, 255, 255;
+  --panel-dark-top: 8, 24, 16;
+  --panel-dark-bottom: 10, 42, 24;
+  --panel-border-rgb: 100, 255, 170;
+  --panel-glow-rgb: 100, 255, 170;
+  --panel-badge-rgb: 220, 255, 236;
+  --panel-meta-rgb: 140, 255, 194;
+}
+
+.eve-popup.type-traffic .eve-popup-scan {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 11px,
+      rgba(255, 255, 255, 0.08) 11px 12px
+    );
+  background-size: 28px 100%;
+}
+
+/* GALLENTE - classic Gallente green */
+.eve-popup.type-gallente {
+  --panel-accent-rgb: 88, 255, 138;
+  --panel-accent-soft-rgb: 182, 255, 205;
+  --panel-bright-rgb: 255, 255, 255;
+  --panel-dark-top: 7, 25, 14;
+  --panel-dark-bottom: 10, 42, 20;
+  --panel-border-rgb: 88, 255, 138;
+  --panel-glow-rgb: 88, 255, 138;
+  --panel-badge-rgb: 182, 255, 205;
+  --panel-meta-rgb: 110, 255, 155;
+}
+
+.eve-popup.type-gallente .eve-popup-scan {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 15px,
+      rgba(255, 255, 255, 0.08) 15px 17px
+    );
+  background-size: 34px 100%;
+}
+
+/* FLIRT - purple + white */
+.eve-popup.type-flirt {
+  --panel-accent-rgb: 196, 120, 255;
+  --panel-accent-soft-rgb: 232, 205, 255;
+  --panel-bright-rgb: 255, 255, 255;
+  --panel-dark-top: 28, 12, 40;
+  --panel-dark-bottom: 40, 10, 56;
+  --panel-border-rgb: 196, 120, 255;
+  --panel-glow-rgb: 196, 120, 255;
+  --panel-badge-rgb: 232, 205, 255;
+  --panel-meta-rgb: 214, 170, 255;
+  --panel-bar-width: 9px;
+  --panel-width: 410px;
+}
+
+.eve-popup.type-flirt .eve-popup-scan {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 18px,
+      rgba(255, 255, 255, 0.075) 18px 19px
+    );
+  background-size: 40px 100%;
+}
+
+.eve-popup.type-flirt .eve-popup-title {
+  letter-spacing: 2px;
+}
+
+.eve-popup.type-flirt .eve-popup-badge {
+  color: #ffffff;
+}
+
+/* EMERGENCY - white + deep green/purple, no Minmatar red */
+.eve-popup.type-emergency {
+  --panel-accent-rgb: 255, 255, 255;
+  --panel-accent-soft-rgb: 210, 255, 228;
+  --panel-bright-rgb: 255, 255, 255;
+  --panel-dark-top: 18, 20, 28;
+  --panel-dark-bottom: 14, 34, 24;
+  --panel-border-rgb: 170, 255, 210;
+  --panel-glow-rgb: 196, 120, 255;
+  --panel-badge-rgb: 255, 255, 255;
+  --panel-meta-rgb: 182, 255, 205;
+  --panel-bar-width: 10px;
+}
+
+.eve-popup.type-emergency .eve-popup-scan {
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      rgba(255, 255, 255, 0.07) 0 8px,
+      transparent 8px 16px
+    );
+  background-size: 34px 34px;
+}
+
+.eve-popup.type-emergency .eve-popup-title,
+.eve-popup.type-emergency .eve-popup-badge {
+  color: #ffffff;
+}
+
+/* BOUNTY - purple-green hybrid, no Amarr yellow */
+.eve-popup.type-bounty {
+  --panel-accent-rgb: 152, 255, 188;
+  --panel-accent-soft-rgb: 222, 255, 234;
+  --panel-bright-rgb: 255, 255, 255;
+  --panel-dark-top: 18, 16, 34;
+  --panel-dark-bottom: 14, 36, 30;
+  --panel-border-rgb: 196, 120, 255;
+  --panel-glow-rgb: 152, 255, 188;
+  --panel-badge-rgb: 232, 205, 255;
+  --panel-meta-rgb: 152, 255, 188;
+  --panel-bar-width: 8px;
+  --panel-width: 405px;
+}
+
+.eve-popup.type-bounty .eve-popup-scan {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 13px,
+      rgba(255, 255, 255, 0.08) 13px 15px
+    );
+  background-size: 32px 100%;
+}
+
+.eve-popup.type-bounty .eve-popup-title {
+  letter-spacing: 2.2px;
+}
+
+
+/* =========================================================
+   15C. OBS PERFORMANCE MODES
+   ---------------------------------------------------------
+   These mode selectors reduce browser-source cost without
+   changing the overall Gallente sci-fi identity.
+
+   CONFIG.visual.performanceMode controls the active mode:
+   - obs       = default performance-safe mode
+   - cinematic = heavier glow/motion
+   - static    = emergency low-resource mode
+========================================================= */
+
+:root[data-performance-mode="obs"] .grid {
+  animation: none;
+  mask-image: none;
+  -webkit-mask-image: none;
+}
+
+:root[data-performance-mode="obs"] .overlay-scan::after {
+  filter: none;
+}
+
+:root[data-performance-mode="obs"] .top-bar,
+:root[data-performance-mode="obs"] .bottom-bar {
+  box-shadow:
+    0 0 calc(5px * var(--global-glow-strength)) rgba(var(--glow-rgb), 0.8),
+    0 0 calc(11px * var(--global-glow-strength)) rgba(var(--glow-rgb), 0.42);
+}
+
+:root[data-performance-mode="obs"] .top-bar::before,
+:root[data-performance-mode="obs"] .bottom-bar::before {
+  filter: none;
+  animation-duration: 7.5s;
+}
+
+:root[data-performance-mode="obs"] .corner {
+  filter: none;
+  box-shadow:
+    0 0 calc(4px * var(--global-glow-strength)) rgba(var(--glow-rgb), 0.72),
+    0 0 calc(9px * var(--global-glow-strength)) rgba(var(--glow-rgb), 0.32);
+}
+
+:root[data-performance-mode="obs"] .tech-line {
+  box-shadow: none;
+  animation-duration: 7.5s;
+}
+
+:root[data-performance-mode="obs"] .vertical-data::before {
+  animation-duration: 4.4s;
+}
+
+:root[data-performance-mode="obs"] .eve-popup {
+  box-shadow:
+    inset 0 0 12px rgba(var(--panel-accent-rgb), 0.12),
+    0 0 12px rgba(var(--panel-glow-rgb), 0.28),
+    0 0 22px rgba(var(--panel-glow-rgb), 0.1);
+}
+
+:root[data-performance-mode="obs"] .eve-popup.priority {
+  box-shadow:
+    inset 0 0 14px rgba(var(--panel-bright-rgb), 0.1),
+    0 0 18px rgba(var(--panel-glow-rgb), 0.48),
+    0 0 28px rgba(var(--panel-glow-rgb), 0.16);
+}
+
+:root[data-performance-mode="obs"] .eve-popup::after,
+:root[data-performance-mode="obs"] .eve-popup-meta::before,
+:root[data-performance-mode="obs"] .eve-popup-sweep::after {
+  box-shadow: none;
+}
+
+:root[data-performance-mode="obs"] .eve-popup-scan {
+  animation: none;
+}
+
+:root[data-performance-mode="obs"] .eve-popup-sweep {
+  filter: none;
+}
+
+:root[data-performance-mode="obs"] .eve-popup-title,
+:root[data-performance-mode="obs"] .eve-popup-badge,
+:root[data-performance-mode="obs"] .eve-popup-body,
+:root[data-performance-mode="obs"] .eve-popup-meta {
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, var(--eve-panel-text-shadow-opacity)),
+    0 0 4px rgba(var(--panel-glow-rgb), 0.34);
+}
+
+:root[data-performance-mode="cinematic"] {
+  --global-glow-strength: 1;
+  --overlay-scan-opacity: 0.42;
+  --overlay-scan-blur: 16px;
+  --grid-opacity: 0.48;
+  --grid-line-opacity: 0.075;
+  --tech-line-opacity: 0.8;
+  --data-strip-opacity: 0.9;
+  --eve-panel-sweep-opacity: 0.78;
+  --eve-panel-texture-opacity: 0.32;
+  --eve-panel-scan-duration: 2.6s;
+}
+
+:root[data-performance-mode="static"] .grid,
+:root[data-performance-mode="static"] .overlay-scan::after,
+:root[data-performance-mode="static"] .top-bar::before,
+:root[data-performance-mode="static"] .bottom-bar::before,
+:root[data-performance-mode="static"] .tech-line,
+:root[data-performance-mode="static"] .vertical-data::before,
+:root[data-performance-mode="static"] .eve-popup-scan,
+:root[data-performance-mode="static"] .eve-popup-sweep {
+  animation: none !important;
+}
+
+:root[data-performance-mode="static"] .overlay-scan,
+:root[data-performance-mode="static"] #particleCanvas {
+  display: none;
+}
+
+/* =========================================================
+   16. CSS ANIMATIONS
+========================================================= */
+
+@keyframes gridDrift {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 96px 48px;
+  }
+}
+
+@keyframes lightSweep {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(calc(var(--overlay-width) - (var(--outer-margin-x) * 2) + 220px), 0, 0);
+  }
+}
+
+@keyframes overlayScanDown {
+  from {
+    transform: translateY(calc(var(--overlay-scan-height) * -1));
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 0.9;
+  }
+
+  90% {
+    opacity: 0.9;
+  }
+
+  to {
+    transform: translateY(calc(1080px + var(--overlay-scan-height)));
+    opacity: 0;
+  }
+}
+
+@keyframes techFlow {
+  0% {
+    opacity: 0;
+    transform: translateX(-60px) scaleX(0.3);
+  }
+
+  25% {
+    opacity: 0.85;
+  }
+
+  70% {
+    opacity: 0.85;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(140px) scaleX(1);
+  }
+}
+
+@keyframes dataFall {
+  from {
+    transform: translateY(-120px);
+  }
+
+  to {
+    transform: translateY(120px);
+  }
+}
+
+@keyframes evePanelTextureDrift {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 96px 0;
+  }
+}
+
+@keyframes evePanelFullSweep {
+  from {
+    transform: translate3d(-120%, 0, 0) skewX(-14deg);
+  }
+
+  to {
+    transform: translate3d(230%, 0, 0) skewX(-14deg);
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- =======================================================
+     01. RESPONSIVE VIEWPORT WRAPPER
+======================================================= -->
+<div class="viewport">
+
+  <!-- =====================================================
+       02. FIXED 1920x1080 OVERLAY CANVAS
+       -----------------------------------------------------
+       This is anchored to the top-left of the viewport.
+  ===================================================== -->
+  <main class="overlay" id="overlay">
+
+    <!-- ===================================================
+         03. CONNECTED PARTICLE NETWORK
+    =================================================== -->
+    <canvas id="particleCanvas" width="1920" height="1080"></canvas>
+
+    <!-- ===================================================
+         04. BACKGROUND GRID AND EDGE GLOW
+    =================================================== -->
+    <div class="grid"></div>
+    <div class="edge-glow"></div>
+
+    <!-- ===================================================
+         05. FULL-OVERLAY SCAN LINE
+    =================================================== -->
+    <div class="overlay-scan"></div>
+
+    <!-- ===================================================
+         05A. EVE / GALLENTE NOTIFICATION LAYER
+         ---------------------------------------------------
+         Toggle in JavaScript:
+         CONFIG.eveNotifications.enabled = true / false
+    =================================================== -->
+    <div class="eve-notification-layer" id="eveNotificationLayer"></div>
+
+    <!-- ===================================================
+         06. OUTER TOP/BOTTOM BARS
+    =================================================== -->
+    <div class="top-bar"></div>
+    <div class="bottom-bar"></div>
+
+    <!-- ===================================================
+         07. OUTER CORNER BRACKETS
+    =================================================== -->
+    <div class="corner tl"></div>
+    <div class="corner tr"></div>
+    <div class="corner bl"></div>
+    <div class="corner br"></div>
+
+    <!-- ===================================================
+         08. ANIMATED TECH LINES
+    =================================================== -->
+    <div class="tech-lines">
+      <div class="tech-line one"></div>
+      <div class="tech-line two"></div>
+      <div class="tech-line three"></div>
+    </div>
+
+    <!-- ===================================================
+         09. RIGHT-SIDE DATA STRIP
+    =================================================== -->
+    <div class="vertical-data"></div>
+
+  </main>
+</div>
+
+<script>
+/* =========================================================
+   00. JAVASCRIPT CONFIG
+========================================================= */
+
+const CONFIG = {
+  visual: {
+    /*
+      COLOR MODE SETTING
+
+      Use:
+      "normal"   = original purple / white version
+      "inverted" = darker brand-safe inverted version
+
+      This affects both CSS elements and the canvas particle network.
+    */
+    colorMode: "normal",
+
+    /*
+      PERFORMANCE MODE SETTING
+
+      Use:
+      "obs"       = default; lower browser-source cost for OBS
+      "cinematic" = heavier glow and motion, for screenshots/recordings
+      "static"    = almost no animation; emergency low-resource mode
+    */
+    performanceMode: "obs"
+  },
+
+  design: {
+    width: 1920,
+    height: 1080
+  },
+
+  render: {
+    /*
+      OBS-friendly browser-source controls.
+
+      targetFps caps the JavaScript/canvas particle loop. This is separate
+      from the Browser Source FPS setting in OBS. For OBS, use 30 FPS in OBS
+      and keep this at 24 or 30.
+
+      canvasRenderScale draws the particle canvas at a lower internal
+      resolution, then lets the browser upscale it to the 1920x1080 overlay.
+      This reduces per-frame canvas pixel work substantially.
+    */
+    targetFps: 24,
+    canvasRenderScale: 0.75,
+    pauseWhenDocumentHidden: true
+  },
+
+  particleNetwork: {
+    enabled: true,
+
+    /*
+      OBS-friendly density with a visibility boost.
+      Still much lighter than the original full-intensity version, but
+      brighter than the first optimized pass.
+    */
+    particleCount: 72,
+    connectionDistance: 158,
+
+    /*
+      Particle dot sizing.
+    */
+    minRadius: 1.35,
+    maxRadius: 3.35,
+
+    /*
+      Movement speed.
+    */
+    speed: 0.24,
+
+    /*
+      Particle placement zone behavior.
+
+      "full"        = particles can exist anywhere
+      "outerThirds" = particles only appear in the left 1/3 and right 1/3
+
+      zoneInset adds a little padding so particles do not sit directly on edges.
+    */
+    zoneMode: "outerThirds",
+    zoneInset: 18,
+    leftZoneMaxRatio: 1 / 3,
+    rightZoneMinRatio: 2 / 3,
+
+    /*
+      Particle brightness.
+    */
+    particleBaseOpacity: 0.68,
+    particlePulseOpacity: 0.22,
+
+    /*
+      Line brightness.
+    */
+    lineBaseOpacity: 0.16,
+    lineMaxOpacity: 0.38,
+    lineWidth: 2.00,
+
+    /*
+      Glow settings.
+    */
+    particleGlowBlur: 0,
+    lineGlowBlur: 0,
+
+    /*
+      OBS-friendly visibility boost.
+      This draws a cheap soft halo with normal canvas circles instead of
+      expensive shadowBlur, so particles stand out more without reverting
+      to the heavier original glow behavior.
+    */
+    cheapParticleHalo: true,
+    cheapParticleHaloRadiusMultiplier: 2.8,
+    cheapParticleHaloOpacity: 0.22,
+
+    /*
+      Accent nodes.
+    */
+    accentParticleChance: 0.08,
+
+    /*
+      Occasional brighter signal lines.
+    */
+    signalLinesEnabled: false,
+    signalLineChance: 0.004,
+    signalLineOpacity: 0.52,
+    signalLineWidth: 1.35
+  },
+
+  eveNotifications: {
+    /*
+      Toggle EVE / Gallente sci-fi pop-up panels.
+      true  = enabled
+      false = disabled
+    */
+    enabled: true,
+
+    /*
+      If true, popups receive a type-specific UI style based on the message type.
+      If false, all popups use the default shared appearance.
+    */
+    useTypeStyles: true,
+
+    /*
+      Timing controls.
+
+      spawnIntervalMin / spawnIntervalMax:
+      - how often a new panel appears
+      - random value is chosen between these two numbers
+
+      visibleDurationMin / visibleDurationMax:
+      - how long each panel stays readable before disappearing
+      - random value is chosen between these two numbers
+    */
+    spawnIntervalMin: 6500,
+    spawnIntervalMax: 13000,
+    visibleDurationMin: 5600,
+    visibleDurationMax: 8200,
+
+    /*
+      Pop animation speed controls.
+
+      enterDurationMin / enterDurationMax:
+      - how quickly the panel pops in
+      - lower = more sudden
+
+      exitDurationMin / exitDurationMax:
+      - how quickly the panel fades/slides out
+
+      These are randomized each time so the panels do not feel mechanical.
+    */
+    enterDurationMin: 85,
+    enterDurationMax: 180,
+    exitDurationMin: 180,
+    exitDurationMax: 320,
+
+    /*
+      Internal horizontal scan speed inside each popup.
+      Lower = faster sweep.
+    */
+    scanDurationMin: 3600,
+    scanDurationMax: 5200,
+
+    /*
+      Placement controls.
+      Panels appear only in the left third or right third of the 1920x1080 canvas.
+      Y position is randomized between topMin and topMax.
+    */
+    leftX: 92,
+    rightX: 1438,
+    topMin: 135,
+    topMax: 790,
+
+    /*
+      Avoids visual clutter.
+    */
+    maxActivePanels: 1,
+
+    /*
+      Side behavior:
+      "both"  = left and right
+      "left"  = left third only
+      "right" = right third only
+    */
+    sides: "both",
+
+    /*
+      Message variety controls.
+
+      useMessageDeck:
+      - true = shuffle messages into a deck and avoid repeats until most
+        messages have been used
+      - false = pure random selection
+
+      recentMessageMemory:
+      - prevents the same title/body pair from repeating too soon even
+        after the deck refreshes
+    */
+    useMessageDeck: true,
+    recentMessageMemory: 18,
+
+    /*
+      CUSTOMIZABLE MESSAGES
+
+      Available types:
+      "news"
+      "traffic"
+      "gallente"
+      "flirt"
+      "emergency"
+      "bounty"
+
+      Each message can define:
+      title
+      badge
+      body
+      meta
+      type
+      priority (optional)
+    */
+    messages: [
+      /* NEWS / THE SCOPE / EXPANSION FEED */
+      {
+        type: "news",
+        title: "THE SCOPE",
+        badge: "BREAKING",
+        body: "Fresh reporting from Heydieles indicates another wave of capsuleer activity as Cradle of War objectives continue to pull pilots toward the Placid front.",
+        meta: "PLACID // LIVE",
+        priority: true
+      },
+      {
+        type: "news",
+        title: "ALTON HAVERI",
+        badge: "SCOPE REPORT",
+        body: "From Dodixie to Heydieles, capsuleer actions are increasingly being framed as part of a longer conflict arc rather than isolated engagements.",
+        meta: "NEW EDEN NEWS"
+      },
+      {
+        type: "news",
+        title: "CRADLE OF WAR",
+        badge: "STATUS",
+        body: "Campaign reporting suggests present actions will leave lasting marks on New Eden, with successes and failures both shaping the war’s future memory.",
+        meta: "EXPANSION FEED"
+      },
+      {
+        type: "news",
+        title: "EPIC ARC UPDATE",
+        badge: "ARCHIVE",
+        body: "Interest is rising around the new Epic Arc, with Gallente pilots circulating briefings and historical references through regional comms.",
+        meta: "HISTORY CHANNEL"
+      },
+      {
+        type: "news",
+        title: "THE SCOPE",
+        badge: "WAR DESK",
+        body: "Federal analysts are calling the latest militia surge a test case for how regional pressure can shape campaign outcomes.",
+        meta: "STRATEGIC FEED"
+      },
+      {
+        type: "news",
+        title: "SCOPE WIRE",
+        badge: "REGIONAL",
+        body: "Dodixie remains a key resupply hub for capsuleers pushing toward active Gallente war corridors.",
+        meta: "ESSENCE REPORT"
+      },
+      {
+        type: "news",
+        title: "FEDERAL PRESS",
+        badge: "CIVIC FEED",
+        body: "Gallente citizens are watching campaign progress closely as capsuleer actions become part of the public war narrative.",
+        meta: "PUBLIC CHANNEL"
+      },
+      {
+        type: "news",
+        title: "SCOPE ANALYSIS",
+        badge: "POLITICAL",
+        body: "The Federation Senate is expected to face renewed public pressure as pilots demand clearer recognition for frontline service.",
+        meta: "CIVIC WATCH"
+      },
+      {
+        type: "news",
+        title: "REGIONAL FEED",
+        badge: "PLACID",
+        body: "Heydieles traffic patterns suggest militia pilots are rotating through shorter, riskier engagement loops.",
+        meta: "FIELD REPORT"
+      },
+      {
+        type: "news",
+        title: "SCOPE BULLETIN",
+        badge: "ESSENCE",
+        body: "Market observers in Dodixie report a noticeable increase in capsuleer outfitting before low-security deployments.",
+        meta: "TRADE REPORT"
+      },
+      {
+        type: "news",
+        title: "GALNET ROUNDUP",
+        badge: "FEDERATION",
+        body: "Campaign participation, militia recognition, and Rogue Drone research remain dominant stories across Gallente channels.",
+        meta: "DAILY FEED"
+      },
+      {
+        type: "news",
+        title: "FEDERAL WATCH",
+        badge: "PUBLIC",
+        body: "Civilian networks are replaying capsuleer combat clips from the warzone, with particular interest in solo militia pilots.",
+        meta: "BROADCAST NET"
+      },
+      {
+        type: "news",
+        title: "SCOPE SIGNAL",
+        badge: "LIVE",
+        body: "New footage from contested systems is being verified before public release.",
+        meta: "MEDIA HOLD"
+      },
+      {
+        type: "news",
+        title: "FREEDOM PRESS",
+        badge: "UPDATE",
+        body: "Gallente-aligned commentators are celebrating every successful campaign push as proof that capsuleer initiative can move history.",
+        meta: "OPINION FEED"
+      },
+      {
+        type: "news",
+        title: "THE SCOPE",
+        badge: "SHORTFORM",
+        body: "Heydieles remains hot. Dodixie remains busy. The war machine keeps turning.",
+        meta: "SCOPE // NOW"
+      },
+
+      /* TRAFFIC / ROUTE / MARKET NOTICES */
+      {
+        type: "traffic",
+        title: "DODIXIE TRAFFIC",
+        badge: "ROUTE UPDATE",
+        body: "Approach congestion has increased on the Dodixie lanes. Expect heavier shuttle, hauler, and militia movement near major docking routes.",
+        meta: "ESSENCE // NAV"
+      },
+      {
+        type: "traffic",
+        title: "HEYDIELES GRID",
+        badge: "LOCAL TRAFFIC",
+        body: "Plex runners, militia frigates, and resupply hulls are crowding active vectors. Grid conditions may shift quickly.",
+        meta: "FRONTLINE MOVEMENT"
+      },
+      {
+        type: "traffic",
+        title: "DODIXIE MARKET",
+        badge: "SUPPLY LANE",
+        body: "Turnover on drones, nanite paste, and ammunition remains high. Logistics cycling through Dodixie has accelerated.",
+        meta: "COMMERCIAL WATCH"
+      },
+      {
+        type: "traffic",
+        title: "NAV-COM",
+        badge: "ALIGNMENT",
+        body: "Recommended protocol: stay aligned when lingering in active low-security corridors.",
+        meta: "FLIGHT ASSIST"
+      },
+      {
+        type: "traffic",
+        title: "FEDERAL ROUTING",
+        badge: "JUMP CHECK",
+        body: "Gate traffic shows intermittent surges. Confirm destination state before committing to the next jump.",
+        meta: "TRAVEL ADVISORY"
+      },
+      {
+        type: "traffic",
+        title: "ESSENCE HAULERS",
+        badge: "FREIGHT",
+        body: "Drone bay restocks and hybrid charges are moving faster than usual through Dodixie trade channels.",
+        meta: "SUPPLY TRACKER"
+      },
+      {
+        type: "traffic",
+        title: "PLACID VECTOR",
+        badge: "GRIDFLOW",
+        body: "Short-range routes into Heydieles are seeing uneven traffic. Expect quiet gates to turn active without warning.",
+        meta: "ROUTE MONITOR"
+      },
+      {
+        type: "traffic",
+        title: "DODIXIE DOCKING",
+        badge: "QUEUE",
+        body: "Station services report a mild spike in capsuleer refit activity.",
+        meta: "LOCAL CONTROL"
+      },
+      {
+        type: "traffic",
+        title: "MILITIA ROUTE",
+        badge: "TRANSIT",
+        body: "Recommended militia staging paths are being recalculated around hostile movement reports.",
+        meta: "NAV UPDATE"
+      },
+      {
+        type: "traffic",
+        title: "HEYDIELES LANES",
+        badge: "ACTIVE",
+        body: "Scouts report rapid movement between small-ship engagement pockets.",
+        meta: "LOWSEC TRANSIT"
+      },
+      {
+        type: "traffic",
+        title: "FDU LOGISTICS",
+        badge: "RESUPPLY",
+        body: "Frontline losses are driving repeated hull replacement runs out of Dodixie.",
+        meta: "MILITIA FREIGHT"
+      },
+      {
+        type: "traffic",
+        title: "AUTOPILOT NOTICE",
+        badge: "MANUAL ONLY",
+        body: "Autopilot through contested routes remains strongly discouraged.",
+        meta: "NAV SAFETY"
+      },
+      {
+        type: "traffic",
+        title: "DOCKING ADVISORY",
+        badge: "DODIXIE",
+        body: "Expect rapid undock-redock cycling from combat pilots refitting for the warzone.",
+        meta: "STATION TRAFFIC"
+      },
+      {
+        type: "traffic",
+        title: "REGIONAL GATES",
+        badge: "PATTERN",
+        body: "Traffic is pulsing rather than flowing steadily. Empty gates may not stay empty.",
+        meta: "SENSOR NET"
+      },
+      {
+        type: "traffic",
+        title: "SUPPLY CORRIDOR",
+        badge: "GREEN",
+        body: "Current route reports show no sustained disruption, but scouts recommend continued caution.",
+        meta: "ROUTE STATUS"
+      },
+
+      /* GALLENTE / CAMPAIGN / FEDERATION NOTICES */
+      {
+        type: "gallente",
+        title: "FEDERATION NAVY",
+        badge: "CAMPAIGN",
+        body: "Military Campaign participation requests remain active. Gallente-aligned pilots are being called on for combat, logistics, industry, and reconnaissance support.",
+        meta: "CRADLE OF WAR",
+        priority: true
+      },
+      {
+        type: "gallente",
+        title: "CELES AGUARD",
+        badge: "FEDERAL LINK",
+        body: "Federal channels continue emphasizing democratic resolve and sustained warzone pressure as Gallente campaign goals expand under Cradle of War.",
+        meta: "EXECUTIVE FEED",
+        priority: true
+      },
+      {
+        type: "gallente",
+        title: "JACUS RODEN",
+        badge: "STRATEGIC NOTE",
+        body: "Roden-linked commentary is stressing the importance of Titles & Achievements in shaping long-term Gallente campaign reputation.",
+        meta: "FEDERATION ADVISORY"
+      },
+      {
+        type: "gallente",
+        title: "FDU COMMAND",
+        badge: "OBJECTIVE",
+        body: "Capture windows remain open. Pilots are advised to prioritize survival, contribution, and repeated redeployment.",
+        meta: "MILITIA DIRECTIVE"
+      },
+      {
+        type: "gallente",
+        title: "CREODRON ARRAY",
+        badge: "DRONE TECH",
+        body: "Rogue Drone telemetry remains a priority for campaign-linked Gallente research channels.",
+        meta: "R&D UPLINK"
+      },
+      {
+        type: "gallente",
+        title: "FEDERAL SENATE",
+        badge: "RECOGNITION",
+        body: "Campaign title petitions are increasing as militia pilots request public acknowledgment for frontline service.",
+        meta: "CIVIC PROCESS"
+      },
+      {
+        type: "gallente",
+        title: "LIBERTY GRID",
+        badge: "ONLINE",
+        body: "Auxiliary Gallente overlay systems active. Capsuleer performance feed is being routed through the public support net.",
+        meta: "INTERFACE READY"
+      },
+      {
+        type: "gallente",
+        title: "FDU WARZONE",
+        badge: "STATUS",
+        body: "Militia beacon activity detected. Local grid remains contested.",
+        meta: "FRONTLINE UPDATE"
+      },
+      {
+        type: "gallente",
+        title: "DRONE CONTROL",
+        badge: "NEXUS",
+        body: "Autonomous combat routines loaded. Bandwidth allocation nominal.",
+        meta: "GALLENTE SYSTEMS"
+      },
+      {
+        type: "gallente",
+        title: "FEDERATION INTEL",
+        badge: "SCAN",
+        body: "Signature bloom detected. Cross-checking against known hostile patterns.",
+        meta: "SENSOR PASS"
+      },
+      {
+        type: "gallente",
+        title: "FREEDOM DOCTRINE",
+        badge: "ACTIVE",
+        body: "Individual initiative remains a valid contribution path. Fight, scout, mine, haul, hack, or build for the cause.",
+        meta: "FEDERAL MESSAGE"
+      },
+      {
+        type: "gallente",
+        title: "GALLENTE MILITIA",
+        badge: "ROE",
+        body: "Engagement profile updated. Scram/web envelope recalculated.",
+        meta: "TACTICAL OVERLAY"
+      },
+      {
+        type: "gallente",
+        title: "FEDERATION RELAY",
+        badge: "PUBLIC",
+        body: "Every capsuleer action is being treated as part of the larger campaign ledger.",
+        meta: "CAMPAIGN RECORD"
+      },
+      {
+        type: "gallente",
+        title: "SENATE RELAY",
+        badge: "BROADCAST",
+        body: "Federal authority packet received. Liberty protocol authenticated.",
+        meta: "CIVIC NET"
+      },
+      {
+        type: "gallente",
+        title: "FEDERAL HONORS",
+        badge: "TITLE WATCH",
+        body: "Achievement tracking updated. Campaign distinction records are available for review.",
+        meta: "REPUTATION NET"
+      },
+
+      /* EMERGENCY / THREAT ALERTS */
+      {
+        type: "emergency",
+        title: "THREAT ALERT",
+        badge: "PRIORITY",
+        body: "Hostile signatures detected along the Heydieles lanes. Maintain an immediate extraction route and assume tackle risk until local conditions stabilize.",
+        meta: "WARZONE WARNING",
+        priority: true
+      },
+      {
+        type: "emergency",
+        title: "LOCAL SPIKE",
+        badge: "SCRAM RISK",
+        body: "Sudden local increase registered. Tactical recommendation: watch gates, monitor short scan, and stay aligned.",
+        meta: "CONTACT WARNING"
+      },
+      {
+        type: "emergency",
+        title: "BOUNCER WARNING",
+        badge: "DEFCON",
+        body: "Multiple threat vectors possible. This system may become unsafe with very little warning.",
+        meta: "STAY ALIGNED"
+      },
+      {
+        type: "emergency",
+        title: "TACKLE RISK",
+        badge: "DANGER",
+        body: "Close-range hostile profile detected. If engaged, expect scram pressure and fast drone aggression.",
+        meta: "COMBAT WARNING"
+      },
+      {
+        type: "emergency",
+        title: "GATE WATCH",
+        badge: "CAUTION",
+        body: "Potential camp behavior observed. Bounce points and alternate exits recommended.",
+        meta: "TACTICAL ROUTE"
+      },
+      {
+        type: "emergency",
+        title: "D-SCAN ALERT",
+        badge: "CONTACT",
+        body: "Unverified combat hulls entering scan range. Confirm vector before committing.",
+        meta: "SENSOR WARNING"
+      },
+      {
+        type: "emergency",
+        title: "NEUTRAL CONTACT",
+        badge: "UNKNOWN",
+        body: "Neutral pilot behavior inconsistent with transit. Treat as possible hunter.",
+        meta: "LOCAL INTEL"
+      },
+      {
+        type: "emergency",
+        title: "WARP DISRUPTION",
+        badge: "RISK",
+        body: "Projected tackle envelope exceeds safe operating tolerance.",
+        meta: "ESCAPE ADVISORY"
+      },
+      {
+        type: "emergency",
+        title: "COMBAT TIMER",
+        badge: "CHECK",
+        body: "Engagement window may restrict docking or tether behavior. Confirm status before route change.",
+        meta: "SAFETY FLAG"
+      },
+      {
+        type: "emergency",
+        title: "SIGNATURE WARNING",
+        badge: "PROBES",
+        body: "Probe activity detected. If you are exposed in space, reposition now.",
+        meta: "SCAN THREAT"
+      },
+      {
+        type: "emergency",
+        title: "SHORT SCAN",
+        badge: "HOT",
+        body: "Hostile combat profile appears inside rapid-response distance.",
+        meta: "TACTICAL ALERT"
+      },
+      {
+        type: "emergency",
+        title: "LOSS PREVENTION",
+        badge: "CHECKLIST",
+        body: "Scram? Web? Neut pressure? Drones assigned? If not, do not commit.",
+        meta: "PILOT ASSIST"
+      },
+      {
+        type: "emergency",
+        title: "EXTRACTION ROUTE",
+        badge: "VERIFY",
+        body: "Safe exit not confirmed. Establish warp-out before accepting further grid risk.",
+        meta: "ESCAPE PATH"
+      },
+      {
+        type: "emergency",
+        title: "HULL WARNING",
+        badge: "ARMOR",
+        body: "Sustained hostile pressure predicted. Heat management and disengagement timing are now critical.",
+        meta: "DAMAGE CONTROL"
+      },
+      {
+        type: "emergency",
+        title: "PIRATE MOVEMENT",
+        badge: "UNCONFIRMED",
+        body: "Possible pirate-aligned movement near active objectives. Maintain suspicion.",
+        meta: "INTEL HOLD"
+      },
+
+      /* BOUNTY / CONTRACTS */
+      {
+        type: "bounty",
+        title: "BOUNTY BOARD",
+        badge: "CONTRACT",
+        body: "A new hostile interdiction contract is circulating through Gallente militia channels. Confirm target identity before pursuit.",
+        meta: "FEDNET // WANTED"
+      },
+      {
+        type: "bounty",
+        title: "MILITIA LISTING",
+        badge: "REWARD OFFER",
+        body: "Wanted notice updated. Reward pool increased for verified hostile interdiction across active Gallente war corridors.",
+        meta: "FDU // RESTRICTED"
+      },
+      {
+        type: "bounty",
+        title: "CAPSULEER WANTED",
+        badge: "PAYMENT READY",
+        body: "Selective bounty contracts remain available for hostile suppression, reconnaissance confirmation, and kill-right exploitation.",
+        meta: "CONTRACT EXCHANGE"
+      },
+      {
+        type: "bounty",
+        title: "FDU CONTRACT",
+        badge: "OPEN",
+        body: "Reward authorized for confirmed removal of hostile small-ship threats near Gallente objectives.",
+        meta: "MILITIA PAYOUT"
+      },
+      {
+        type: "bounty",
+        title: "HUNTER POSTING",
+        badge: "LIVE",
+        body: "A repeat offender has been flagged by militia channels. Combat pilots may claim credit with verified proof.",
+        meta: "TARGET LEDGER"
+      },
+      {
+        type: "bounty",
+        title: "PRIZE NOTICE",
+        badge: "CLAIMABLE",
+        body: "Bonus pool reserved for clean kills against hostile disruptors operating near active complexes.",
+        meta: "WARZONE REWARD"
+      },
+      {
+        type: "bounty",
+        title: "KILLRIGHT FEED",
+        badge: "REVIEW",
+        body: "Potential kill-right opportunities detected. Confirm legality before engagement.",
+        meta: "CONCORD SYNC"
+      },
+      {
+        type: "bounty",
+        title: "CONTRACT EXCHANGE",
+        badge: "FRESH",
+        body: "New micro-contracts posted for scout confirmation, tackle denial, and hostile route disruption.",
+        meta: "BOUNTY NET"
+      },
+      {
+        type: "bounty",
+        title: "FEDERAL WARRANT",
+        badge: "ACTIVE",
+        body: "Wanted capsuleer profile updated with recent low-security activity.",
+        meta: "LEGAL FEED"
+      },
+      {
+        type: "bounty",
+        title: "COMBAT CREDIT",
+        badge: "PENDING",
+        body: "Campaign-linked kill confirmation awaiting final ledger sync.",
+        meta: "REWARD QUEUE"
+      },
+      {
+        type: "bounty",
+        title: "DODIXIE BOARD",
+        badge: "POSTED",
+        body: "Private backers are offering supplemental payouts for militia-aligned combat footage.",
+        meta: "LOCAL CONTRACT"
+      },
+      {
+        type: "bounty",
+        title: "TARGET PACKAGE",
+        badge: "SEALED",
+        body: "Encrypted bounty details available after identity verification.",
+        meta: "SECURE HANDOFF"
+      },
+      {
+        type: "bounty",
+        title: "WARZONE PAYOUT",
+        badge: "BONUS",
+        body: "Additional reward allocated for confirmed objective denial against hostile pilots.",
+        meta: "FDU FUND"
+      },
+      {
+        type: "bounty",
+        title: "RECONTRACT NOTICE",
+        badge: "UPDATED",
+        body: "Previous bounty expanded after additional hostile activity reports.",
+        meta: "WANTED LEDGER"
+      },
+      {
+        type: "bounty",
+        title: "CLAIM WINDOW",
+        badge: "OPEN",
+        body: "Submit proof before the payout window expires.",
+        meta: "CONTRACT TIMER"
+      },
+
+      /* FAN / SOCIAL / FLIRT - intentionally fewer than other categories */
+      {
+        type: "flirt",
+        title: "KNIRAVEN FAN CLUB",
+        badge: "SOCIAL PING",
+        body: "Tonight’s fan vote was unanimous: if you dock in Dodixie, someone is buying you dinner.",
+        meta: "PRIVATE INVITE"
+      },
+      {
+        type: "flirt",
+        title: "CELES AGUARD",
+        badge: "CIVIC NOTE",
+        body: "Your recent conduct has been noticed. Should you find yourself in Luminaire after the campaign, civilized company and a proper drink would not be out of the question.",
+        meta: "PERSONAL CHANNEL",
+        priority: true
+      },
+      {
+        type: "flirt",
+        title: "AURI VELINE",
+        badge: "OPEN COMMS",
+        body: "I saw your name come through the Heydieles chatter. If you survive this op intact, meet me in Dodixie and I’ll make sure the first round is waiting.",
+        meta: "ADMIRER FEED"
+      },
+      {
+        type: "flirt",
+        title: "LISSARA FANE",
+        badge: "DINNER INVITE",
+        body: "You fly like you expect to be watched. Convenient for me, because I was already planning to invite you to dinner.",
+        meta: "SOCIAL CHANNEL"
+      },
+      {
+        type: "flirt",
+        title: "SERAINE MIREL",
+        badge: "FAN MAIL",
+        body: "Not to be forward, capsuleer, but anyone who moves through Heydieles that confidently deserves drinks afterward.",
+        meta: "PRIVATE MESSAGE"
+      },
+      {
+        type: "flirt",
+        title: "MELISANDE VEAUX",
+        badge: "VIP INVITE",
+        body: "There is a booth in Dodixie with your name on it. Try not to arrive in a pod.",
+        meta: "SOCIAL RESERVE"
+      },
+      {
+        type: "flirt",
+        title: "YVETTE CORON",
+        badge: "PRIVATE FEED",
+        body: "Your combat record is making my dinner invitation look increasingly justified.",
+        meta: "PERSONAL NOTE"
+      },
+      {
+        type: "flirt",
+        title: "KNIRAVEN FAN CLUB",
+        badge: "MEMBER VOTE",
+        body: "Current club consensus: heroic, dangerous, and probably late for drinks.",
+        meta: "AUDIENCE FEED"
+      },
+      {
+        type: "flirt",
+        title: "ELISE VAUDAN",
+        badge: "AFTER ACTION",
+        body: "If you come back from Heydieles in one piece, I’ll consider that your RSVP.",
+        meta: "DINNER HOLD"
+      }
+    ]
+  }
+};
+
+
+/* =========================================================
+   00A. CANVAS COLOR THEMES
+   ---------------------------------------------------------
+   These are separate from the CSS variables because canvas
+   drawing uses JavaScript colors directly.
+========================================================= */
+
+const CANVAS_THEMES = {
+  normal: {
+    /*
+      White particle network for the standard mode.
+    */
+    particleColor: "255, 255, 255",
+    lineColor: "255, 255, 255",
+    whiteAccentColor: "255, 255, 255",
+    particleShadowColor: "rgba(255, 255, 255, 0.82)",
+    accentShadowColor: "rgba(255, 255, 255, 0.82)",
+    lineShadowColor: "rgba(255, 255, 255, 0.72)",
+    signalShadowColor: "rgba(255, 255, 255, 0.86)"
+  },
+
+  inverted: {
+    /*
+      Keep the particle network white in inverted mode too,
+      so it remains consistent regardless of color mode.
+    */
+    particleColor: "255, 255, 255",
+    lineColor: "255, 255, 255",
+    whiteAccentColor: "255, 255, 255",
+    particleShadowColor: "rgba(255, 255, 255, 0.82)",
+    accentShadowColor: "rgba(255, 255, 255, 0.82)",
+    lineShadowColor: "rgba(255, 255, 255, 0.72)",
+    signalShadowColor: "rgba(255, 255, 255, 0.86)"
+  }
+};
+
+
+/* =========================================================
+   01. ELEMENT REFERENCES
+========================================================= */
+
+const overlay = document.getElementById("overlay");
+const canvas = document.getElementById("particleCanvas");
+const ctx = canvas.getContext("2d");
+const eveNotificationLayer = document.getElementById("eveNotificationLayer");
+
+
+/* =========================================================
+   02. PARTICLE STATE
+========================================================= */
+
+let particles = [];
+let canvasTheme = CANVAS_THEMES.normal;
+let activeNotificationCount = 0;
+let resizeAnimationFrame = null;
+let lastAnimationTime = 0;
+let canvasRenderScale = 1;
+let overlayPaused = false;
+
+const TWO_PI = Math.PI * 2;
+const NOTIFICATION_TYPES = new Set([
+  "news",
+  "traffic",
+  "gallente",
+  "flirt",
+  "emergency",
+  "bounty"
+]);
+
+
+/* =========================================================
+   03. COLOR MODE APPLICATION
+========================================================= */
+
+function applyVisualMode() {
+  document.documentElement.dataset.colorMode = CONFIG.visual.colorMode;
+  document.documentElement.dataset.performanceMode = CONFIG.visual.performanceMode;
+  canvasTheme = CANVAS_THEMES[CONFIG.visual.colorMode] || CANVAS_THEMES.normal;
+}
+
+function getCanvasTheme() {
+  return canvasTheme;
+}
+
+
+/* =========================================================
+   04. NON-DISTORTING 16:9 SCALE HANDLER
+   ---------------------------------------------------------
+   The overlay is scaled uniformly and anchored at top-left.
+   Extra space appears on the right or bottom, not equally
+   around the design.
+========================================================= */
+
+function updateOverlayScale() {
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+
+  const scale = Math.min(
+    viewportWidth / CONFIG.design.width,
+    viewportHeight / CONFIG.design.height
+  );
+
+  overlay.style.transform = `scale(${scale})`;
+}
+
+function requestOverlayScaleUpdate() {
+  if (resizeAnimationFrame !== null) return;
+
+  resizeAnimationFrame = window.requestAnimationFrame(() => {
+    resizeAnimationFrame = null;
+    updateOverlayScale();
+  });
+}
+
+function updateParticleCanvasResolution() {
+  canvasRenderScale = clamp(CONFIG.render.canvasRenderScale || 1, 0.35, 1);
+
+  const targetWidth = Math.round(CONFIG.design.width * canvasRenderScale);
+  const targetHeight = Math.round(CONFIG.design.height * canvasRenderScale);
+
+  if (canvas.width !== targetWidth) {
+    canvas.width = targetWidth;
+  }
+
+  if (canvas.height !== targetHeight) {
+    canvas.height = targetHeight;
+  }
+
+  ctx.setTransform(canvasRenderScale, 0, 0, canvasRenderScale, 0, 0);
+}
+
+
+/* =========================================================
+   05. UTILITY FUNCTIONS
+========================================================= */
+
+function randomBetween(min, max) {
+  return min + Math.random() * (max - min);
+}
+
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
+
+
+/* =========================================================
+   06. PARTICLE CREATION
+========================================================= */
+
+/* =========================================================
+   05A. PARTICLE ZONE HELPERS
+   ---------------------------------------------------------
+   These helpers keep the connected particle network confined
+   to the left and right thirds of the 1920x1080 overlay.
+========================================================= */
+
+function getParticleZoneBounds(zone) {
+  if (CONFIG.particleNetwork.zoneMode !== "outerThirds") {
+    return {
+      minX: 0,
+      maxX: CONFIG.design.width
+    };
+  }
+
+  const inset = CONFIG.particleNetwork.zoneInset;
+  const leftMax =
+    CONFIG.design.width * CONFIG.particleNetwork.leftZoneMaxRatio - inset;
+  const rightMin =
+    CONFIG.design.width * CONFIG.particleNetwork.rightZoneMinRatio + inset;
+
+  if (zone === "left") {
+    return {
+      minX: inset,
+      maxX: leftMax
+    };
+  }
+
+  return {
+    minX: rightMin,
+    maxX: CONFIG.design.width - inset
+  };
+}
+
+function getRandomParticleZone() {
+  if (CONFIG.particleNetwork.zoneMode !== "outerThirds") {
+    return "full";
+  }
+
+  return Math.random() < 0.5 ? "left" : "right";
+}
+
+
+function createParticles() {
+  particles = [];
+
+  for (let i = 0; i < CONFIG.particleNetwork.particleCount; i++) {
+    const isAccent =
+      Math.random() < CONFIG.particleNetwork.accentParticleChance;
+
+    const zone = getRandomParticleZone();
+    const bounds = getParticleZoneBounds(zone);
+
+    particles.push({
+      zone,
+      minX: bounds.minX,
+      maxX: bounds.maxX,
+      x: randomBetween(bounds.minX, bounds.maxX),
+      y: Math.random() * CONFIG.design.height,
+      vx: randomBetween(-CONFIG.particleNetwork.speed, CONFIG.particleNetwork.speed),
+      vy: randomBetween(-CONFIG.particleNetwork.speed, CONFIG.particleNetwork.speed),
+      radius: randomBetween(
+        CONFIG.particleNetwork.minRadius,
+        CONFIG.particleNetwork.maxRadius
+      ),
+      pulse: Math.random() * TWO_PI,
+      isAccent
+    });
+  }
+}
+
+
+/* =========================================================
+   07. PARTICLE MOVEMENT
+========================================================= */
+
+function updateParticles() {
+  const height = CONFIG.design.height;
+
+  for (const particle of particles) {
+    particle.x += particle.vx;
+    particle.y += particle.vy;
+    particle.pulse += 0.035;
+
+    if (particle.x < particle.minX) {
+      particle.x = particle.minX;
+      particle.vx *= -1;
+    }
+
+    if (particle.x > particle.maxX) {
+      particle.x = particle.maxX;
+      particle.vx *= -1;
+    }
+
+    if (particle.y < 0) {
+      particle.y = 0;
+      particle.vy *= -1;
+    }
+
+    if (particle.y > height) {
+      particle.y = height;
+      particle.vy *= -1;
+    }
+  }
+}
+
+
+/* =========================================================
+   08. PARTICLE DOT DRAWING
+========================================================= */
+
+function drawParticleDots() {
+  const theme = canvasTheme;
+  const networkConfig = CONFIG.particleNetwork;
+  const baseOpacity = networkConfig.particleBaseOpacity;
+  const pulseOpacity = networkConfig.particlePulseOpacity;
+  const particleGlowBlur = networkConfig.particleGlowBlur;
+  const whiteAccentColor = theme.whiteAccentColor;
+  const useParticleGlow = particleGlowBlur > 0;
+
+  if (!useParticleGlow) {
+    ctx.shadowBlur = 0;
+  }
+
+  for (const particle of particles) {
+    const pulse = baseOpacity + Math.sin(particle.pulse) * pulseOpacity;
+    const opacity = clamp(pulse, 0.16, 0.92);
+    const color = particle.isAccent ? whiteAccentColor : theme.particleColor;
+
+    if (useParticleGlow) {
+      ctx.shadowBlur = particleGlowBlur;
+      ctx.shadowColor = particle.isAccent
+        ? theme.accentShadowColor
+        : theme.particleShadowColor;
+    }
+
+    if (networkConfig.cheapParticleHalo) {
+      ctx.beginPath();
+      ctx.arc(
+        particle.x,
+        particle.y,
+        particle.radius * networkConfig.cheapParticleHaloRadiusMultiplier,
+        0,
+        TWO_PI
+      );
+      ctx.fillStyle = `rgba(${color}, ${opacity * networkConfig.cheapParticleHaloOpacity})`;
+      ctx.fill();
+    }
+
+    ctx.beginPath();
+    ctx.arc(particle.x, particle.y, particle.radius, 0, TWO_PI);
+    ctx.fillStyle = `rgba(${color}, ${opacity})`;
+    ctx.fill();
+
+    /*
+      Small center highlight. No shadow in OBS mode; shadow is only used if
+      particleGlowBlur is enabled for cinematic mode.
+    */
+    ctx.beginPath();
+    ctx.arc(particle.x, particle.y, particle.radius * 0.36, 0, TWO_PI);
+    ctx.fillStyle = `rgba(${whiteAccentColor}, ${opacity * 0.42})`;
+    ctx.fill();
+  }
+}
+
+
+/* =========================================================
+   09. CONNECTING LINE DRAWING
+========================================================= */
+
+function drawParticleConnections() {
+  const theme = canvasTheme;
+  const networkConfig = CONFIG.particleNetwork;
+  const maxDistance = networkConfig.connectionDistance;
+  const maxDistanceSquared = maxDistance * maxDistance;
+  const skipCrossZoneConnections = networkConfig.zoneMode === "outerThirds";
+  const useLineGlow = networkConfig.lineGlowBlur > 0;
+
+  ctx.shadowBlur = useLineGlow ? networkConfig.lineGlowBlur : 0;
+  ctx.shadowColor = useLineGlow ? theme.lineShadowColor : "transparent";
+  ctx.lineWidth = networkConfig.lineWidth;
+
+  for (let i = 0; i < particles.length; i++) {
+    const a = particles[i];
+
+    for (let j = i + 1; j < particles.length; j++) {
+      const b = particles[j];
+
+      /*
+        Outer-thirds mode means opposite-side particles never connect. This
+        preserves the visible intent while avoiding unnecessary distance work.
+      */
+      if (skipCrossZoneConnections && a.zone !== b.zone) {
+        continue;
+      }
+
+      const dx = a.x - b.x;
+      const dy = a.y - b.y;
+      const distanceSquared = dx * dx + dy * dy;
+
+      if (distanceSquared < maxDistanceSquared) {
+        /*
+          OBS optimization: use squared-distance closeness instead of calling
+          Math.sqrt for every connected pair every frame.
+        */
+        const closeness = 1 - distanceSquared / maxDistanceSquared;
+        const opacity = networkConfig.lineBaseOpacity + closeness * networkConfig.lineMaxOpacity;
+        const hasAccent = a.isAccent || b.isAccent;
+
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.strokeStyle = hasAccent
+          ? `rgba(${theme.whiteAccentColor}, ${opacity * 0.45})`
+          : `rgba(${theme.lineColor}, ${opacity})`;
+        ctx.stroke();
+
+        drawSignalLine(a, b, closeness, theme, networkConfig);
+      }
+    }
+  }
+}
+
+
+/* =========================================================
+   10. OCCASIONAL BRIGHT SIGNAL LINES
+========================================================= */
+
+function drawSignalLine(a, b, closeness, theme, networkConfig) {
+  if (!networkConfig.signalLinesEnabled) return;
+
+  const shouldDraw =
+    Math.random() < networkConfig.signalLineChance * closeness;
+
+  if (!shouldDraw) return;
+
+  ctx.save();
+
+  ctx.shadowBlur = 10;
+  ctx.shadowColor = theme.signalShadowColor;
+  ctx.lineWidth = networkConfig.signalLineWidth;
+
+  ctx.beginPath();
+  ctx.moveTo(a.x, a.y);
+  ctx.lineTo(b.x, b.y);
+  ctx.strokeStyle = `rgba(${theme.whiteAccentColor}, ${networkConfig.signalLineOpacity})`;
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+
+/* =========================================================
+   10A. EVE / GALLENTE NOTIFICATION HELPERS
+   ---------------------------------------------------------
+   Messages are customizable in:
+   CONFIG.eveNotifications.messages
+========================================================= */
+
+let eveNotificationTimer = null;
+let eveMessageDeck = [];
+let eveRecentMessageKeys = [];
+
+function getAllowedNotificationSide() {
+  const sideSetting = CONFIG.eveNotifications.sides;
+
+  if (sideSetting === "left" || sideSetting === "right") {
+    return sideSetting;
+  }
+
+  return Math.random() > 0.5 ? "left" : "right";
+}
+
+function getActiveNotificationCount() {
+  return activeNotificationCount;
+}
+
+function getMessageKey(message) {
+  return `${message.type || "unknown"}::${message.title || ""}::${message.body || ""}`;
+}
+
+function shuffleArray(items) {
+  const shuffled = [...items];
+
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+
+  return shuffled;
+}
+
+function rebuildEveMessageDeck(messages) {
+  const recentKeys = new Set(eveRecentMessageKeys);
+  const preferredMessages = messages.filter((message) => {
+    return !recentKeys.has(getMessageKey(message));
+  });
+
+  /*
+    Prefer messages outside the recent memory window. If the pool somehow
+    becomes too small, fall back to the full list so popups keep working.
+  */
+  eveMessageDeck = shuffleArray(
+    preferredMessages.length >= Math.min(8, messages.length)
+      ? preferredMessages
+      : messages
+  );
+}
+
+function getRandomEveMessage() {
+  const messages = CONFIG.eveNotifications.messages;
+
+  if (!Array.isArray(messages) || messages.length === 0) {
+    return {
+      type: "gallente",
+      title: "FEDERATION RELAY",
+      badge: "ONLINE",
+      body: "Gallente interface active. No custom messages configured.",
+      meta: "DEFAULT MESSAGE"
+    };
+  }
+
+  if (!CONFIG.eveNotifications.useMessageDeck) {
+    return messages[Math.floor(Math.random() * messages.length)];
+  }
+
+  if (eveMessageDeck.length === 0) {
+    rebuildEveMessageDeck(messages);
+  }
+
+  const message = eveMessageDeck.pop();
+  const key = getMessageKey(message);
+
+  eveRecentMessageKeys.push(key);
+
+  while (eveRecentMessageKeys.length > CONFIG.eveNotifications.recentMessageMemory) {
+    eveRecentMessageKeys.shift();
+  }
+
+  return message;
+}
+
+function getSafeMessageType(message) {
+  if (message && NOTIFICATION_TYPES.has(message.type)) {
+    return message.type;
+  }
+
+  return "gallente";
+}
+
+function createPopupPart(className, text) {
+  const element = document.createElement("div");
+  element.className = className;
+  element.textContent = text || "";
+  return element;
+}
+
+function buildPopupContent(panel, message) {
+  const scan = createPopupPart("eve-popup-scan", "");
+  const sweep = createPopupPart("eve-popup-sweep", "");
+  const header = createPopupPart("eve-popup-header", "");
+  const title = createPopupPart("eve-popup-title", message.title);
+  const badge = createPopupPart("eve-popup-badge", message.badge);
+  const body = createPopupPart("eve-popup-body", message.body);
+  const meta = createPopupPart("eve-popup-meta", message.meta);
+
+  header.append(title, badge);
+  panel.append(scan, sweep, header, body, meta);
+}
+
+function scheduleNextEveNotification() {
+  if (!CONFIG.eveNotifications.enabled) return;
+
+  const delay = randomBetween(
+    CONFIG.eveNotifications.spawnIntervalMin,
+    CONFIG.eveNotifications.spawnIntervalMax
+  );
+
+  eveNotificationTimer = window.setTimeout(() => {
+    spawnEveNotification();
+    scheduleNextEveNotification();
+  }, delay);
+}
+
+function spawnEveNotification() {
+  if (!CONFIG.eveNotifications.enabled) return;
+  if (!eveNotificationLayer) return;
+
+  if (getActiveNotificationCount() >= CONFIG.eveNotifications.maxActivePanels) {
+    return;
+  }
+
+  const side = getAllowedNotificationSide();
+  const message = getRandomEveMessage();
+  const type = getSafeMessageType(message);
+
+  const panel = document.createElement("div");
+  panel.className = "eve-popup";
+
+  if (CONFIG.eveNotifications.useTypeStyles) {
+    panel.classList.add(`type-${type}`);
+  }
+
+  if (message.priority || Math.random() < 0.12) {
+    panel.classList.add("priority");
+  }
+
+  panel.dataset.side = side;
+  panel.dataset.type = type;
+
+  const visibleDuration = randomBetween(
+    CONFIG.eveNotifications.visibleDurationMin,
+    CONFIG.eveNotifications.visibleDurationMax
+  );
+
+  const enterDuration = randomBetween(
+    CONFIG.eveNotifications.enterDurationMin,
+    CONFIG.eveNotifications.enterDurationMax
+  );
+
+  const exitDuration = randomBetween(
+    CONFIG.eveNotifications.exitDurationMin,
+    CONFIG.eveNotifications.exitDurationMax
+  );
+
+  const scanDuration = randomBetween(
+    CONFIG.eveNotifications.scanDurationMin,
+    CONFIG.eveNotifications.scanDurationMax
+  );
+
+  const top = randomBetween(
+    CONFIG.eveNotifications.topMin,
+    CONFIG.eveNotifications.topMax
+  );
+
+  panel.style.top = `${top}px`;
+  panel.style.left = side === "left"
+    ? `${CONFIG.eveNotifications.leftX}px`
+    : `${CONFIG.eveNotifications.rightX}px`;
+  panel.style.setProperty("--eve-enter-duration", `${enterDuration}ms`);
+  panel.style.setProperty("--eve-exit-duration", `${exitDuration}ms`);
+  panel.style.setProperty("--eve-panel-scan-duration", `${scanDuration}ms`);
+
+  buildPopupContent(panel, message);
+
+  eveNotificationLayer.appendChild(panel);
+  activeNotificationCount += 1;
+
+  /*
+    Let the browser commit the starting opacity/transform without forcing
+    synchronous layout, then snap the panel into the visible state.
+  */
+  window.requestAnimationFrame(() => {
+    if (panel.isConnected) {
+      panel.classList.add("is-visible");
+    }
+  });
+
+  window.setTimeout(() => {
+    panel.classList.remove("is-visible");
+    panel.classList.add("is-hiding");
+  }, visibleDuration);
+
+  window.setTimeout(() => {
+    panel.remove();
+    activeNotificationCount = Math.max(0, activeNotificationCount - 1);
+  }, visibleDuration + exitDuration + 80);
+}
+
+function initializeEveNotifications() {
+  if (!CONFIG.eveNotifications.enabled) {
+    if (eveNotificationTimer) {
+      window.clearTimeout(eveNotificationTimer);
+    }
+
+    return;
+  }
+
+  /*
+    First notification appears quickly enough to confirm the feature is working,
+    then the normal randomized timing takes over.
+  */
+  window.setTimeout(spawnEveNotification, 900);
+  scheduleNextEveNotification();
+}
+
+
+/* =========================================================
+   11. MAIN ANIMATION LOOP
+========================================================= */
+
+function animate(timestamp = 0) {
+  const targetFps = Math.max(1, CONFIG.render.targetFps || 30);
+  const frameInterval = 1000 / targetFps;
+
+  if (!overlayPaused && timestamp - lastAnimationTime >= frameInterval) {
+    lastAnimationTime = timestamp;
+
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.setTransform(canvasRenderScale, 0, 0, canvasRenderScale, 0, 0);
+
+    if (CONFIG.particleNetwork.enabled && CONFIG.visual.performanceMode !== "static") {
+      updateParticles();
+      drawParticleConnections();
+      drawParticleDots();
+    }
+  }
+
+  requestAnimationFrame(animate);
+}
+
+
+/* =========================================================
+   12. INITIALIZATION
+========================================================= */
+
+window.addEventListener("resize", requestOverlayScaleUpdate, { passive: true });
+
+document.addEventListener("visibilitychange", () => {
+  if (!CONFIG.render.pauseWhenDocumentHidden) return;
+  overlayPaused = document.hidden;
+});
+
+applyVisualMode();
+updateOverlayScale();
+updateParticleCanvasResolution();
+createParticles();
+initializeEveNotifications();
+animate();
+</script>
+</body>
+</html>
