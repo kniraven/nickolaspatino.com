@@ -117,3 +117,43 @@ function reserveContactSend(string $directory, string $ip, string $email, string
         umask($previousMask);
     }
 }
+
+// A locally generated question tied to the single-use submission token.
+// No third-party network call, cookie tracking, or JavaScript required.
+function issueContactQuestion(string $token): string
+{
+    if (session_status() !== PHP_SESSION_ACTIVE || !isset($_SESSION['contact_tokens'][$token])) {
+        throw new RuntimeException('Contact token is unavailable.');
+    }
+    $first = random_int(2, 9);
+    $second = random_int(1, 9);
+    $_SESSION['contact_questions'][$token] = (string) ($first + $second);
+    return 'What is ' . $first . ' + ' . $second . '?';
+}
+
+function consumeContactQuestion(string $token, string $answer): bool
+{
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        return false;
+    }
+    $expected = $_SESSION['contact_questions'][$token] ?? null;
+    unset($_SESSION['contact_questions'][$token]);
+    return is_string($expected) && hash_equals($expected, trim($answer));
+}
+
+// Content signals are a separate defense against generic link and cash-lure spam.
+// A normal single portfolio / reference URL is still permitted.
+function classifyContactSpam(string $message): bool
+{
+    $normalized = preg_replace('/\s+/u', ' ', $message);
+    if (!is_string($normalized)) {
+        return true;
+    }
+    preg_match_all('~(?:https?://|www\.)[^\s<>]+~iu', $normalized, $links);
+    if (count($links[0]) >= 3) {
+        return true;
+    }
+    $moneyLure = preg_match('/(?:\$\s*\d[\d,.]*|\b\d[\d,.]*\s*(?:usd|dollars?)\b)/iu', $normalized) === 1;
+    $enticement = preg_match('/\b(?:earn|win|claim|free money|passive income|profit|crypto|investment|guaranteed returns?|per month)\b/iu', $normalized) === 1;
+    return count($links[0]) > 0 && $moneyLure && $enticement;
+}

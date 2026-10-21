@@ -61,7 +61,7 @@ if (!empty($_POST['website'] ?? '')) {
 }
 
 // Reject arrays and oversized input before calling string functions.
-foreach (['name', 'email', 'organization', 'reason', 'message', 'website', 'contact_token'] as $field) {
+foreach (['name', 'email', 'organization', 'reason', 'message', 'website', 'contact_token', 'contact_answer'] as $field) {
     if (isset($_POST[$field]) && !is_string($_POST[$field])) {
         redirectContactError('missing-fields');
     }
@@ -71,10 +71,15 @@ if ((int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > 32768) {
 }
 $pageLocked = '';
 require_once $projectRoot . '/config/session.php';
+// Evaluate both once, so a failed challenge cannot reuse its token.
+$questionValid = consumeContactQuestion($_POST['contact_token'] ?? '', $_POST['contact_answer'] ?? '');
 if (!consumeContactToken($_POST['contact_token'] ?? '')) {
     redirectContactError('invalid-token');
 }
 session_write_close();
+if (!$questionValid) {
+    redirectContactError('invalid-challenge');
+}
 
 if (!file_exists($graphConfigPath)) {
     redirectContactError('missing-config');
@@ -102,6 +107,10 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 
 if (!in_array($reason, $allowedReasons, true)) {
     redirectContactError('invalid-reason');
+}
+
+if (classifyContactSpam($message)) {
+    redirectContactError('spam-rejected');
 }
 
 $messageData = [

@@ -39,6 +39,14 @@ try {
     for ($i = 0; $i < 20; $i++) { issueContactToken(1000); }
     check(count($_SESSION['contact_tokens']) === 8, 'Token pool is unbounded.');
 
+    $challengeToken = issueContactToken(1000);
+    $question = issueContactQuestion($challengeToken);
+    check(preg_match('/What is (\d+) \+ (\d+)\?/', $question, $parts) === 1, 'Question missing.');
+    check(!consumeContactQuestion($challengeToken, '999'), 'Wrong answer passed.');
+    check(!consumeContactQuestion($challengeToken, (string) ((int)$parts[1] + (int)$parts[2])), 'Question reused.');
+    check(classifyContactSpam('Read the weather for $50,000,000 per month https://example.org/join'), 'Spam lure not rejected.');
+    check(!classifyContactSpam('Please review my website at https://example.org for a new portfolio.'), 'Legitimate reference URL blocked.');
+
     $directory = $fixture . '/limits';
     check(reserveContactSend($directory, 'ip', 'a@example.com', 'Hello world', 10000) === 'allowed', 'First send rejected.');
     check(reserveContactSend($directory, 'other', 'b@example.com', " HELLO \n world ", 10001) === 'duplicate', 'Duplicate bypassed by changing sender.');
@@ -91,6 +99,9 @@ session_save_path(__DIR__);
 require __DIR__ . '/config/session.php';
 require __DIR__ . '/src/contact_protection.php';
 $_POST = ['name' => 'Fixture', 'email' => 'fixture@example.com', 'reason' => 'Other / not sure yet', 'message' => 'Legitimate fixture inquiry', 'website' => '', 'contact_token' => issueContactToken(time() - 4)];
+$_POST['contact_answer'] = (string) (function () { $q = issueContactQuestion($_POST['contact_token']); preg_match('/(\d+) \+ (\d+)/', $q, $m); return (int)$m[1] + (int)$m[2]; })();
+if ($scenario === 'bad-challenge') { $_POST['contact_answer'] = '999'; }
+if ($scenario === 'spam') { $_POST['message'] = 'Earn $50,000 per month https://scam.example/test'; }
 if ($scenario === 'missing-token') { unset($_POST['contact_token']); }
 if ($scenario === 'honeypot') { $_POST['website'] = 'bot'; }
 if ($scenario === 'array') { $_POST['email'] = ['invalid']; }
@@ -102,7 +113,7 @@ if ($scenario === 'unavailable') { file_put_contents(__DIR__ . '/storage/contact
 require __DIR__ . '/public/contact-submit.php';
 RUNNER
     );
-    foreach (['get', 'missing-token', 'honeypot', 'array', 'invalid-email', 'invalid-reason', 'oversized', 'fast'] as $scenario) {
+    foreach (['get', 'missing-token', 'honeypot', 'array', 'invalid-email', 'invalid-reason', 'oversized', 'fast', 'bad-challenge', 'spam'] as $scenario) {
         runPhp($fixture . '/runner.php', [$scenario]);
         check(!file_exists($fixture . '/mail.txt'), 'Blocked scenario reached mail: ' . $scenario);
     }
@@ -120,6 +131,7 @@ RUNNER
     file_put_contents($fixture . '/page.php', '<?php $_SERVER["DOCUMENT_ROOT"] = __DIR__ . "/public"; session_save_path(__DIR__); require __DIR__ . "/public/contact.php";');
     $html = runPhp($fixture . '/page.php');
     check(preg_match('/name="contact_token" value="[a-f0-9]{64}"/', $html) === 1, 'Contact page did not render a token.');
+    check(strpos($html, 'name="contact_answer"') !== false, 'Contact challenge not rendered.');
     check(strpos($html, 'Additional contact details:') !== false, 'Follow-up questions were lost.');
 
     // Concurrent workers cannot each consume the same remaining capacity.

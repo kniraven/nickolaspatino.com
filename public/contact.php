@@ -14,6 +14,7 @@ require_once $projectRoot . '/config/session.php';
 require_once $projectRoot . '/src/contact_protection.php';
 header('Cache-Control: no-store');
 $contactToken = issueContactToken();
+$contactQuestion = issueContactQuestion($contactToken);
 
 $pageTitle = "Nickolas Patino | Contact";
 $pageDescription = "Contact Nickolas Patino for employment opportunities, local business websites, artist pages, portfolios, game design content, event livestreaming, video editing, Excel/VBA automation, reporting, and reconciliation work.";
@@ -27,6 +28,14 @@ if ($error !== '') {
     switch ($error) {
         case 'invalid-token':
             $errorMessage = 'Please reload the contact page and try again. Allow a few seconds before sending.';
+            break;
+
+        case 'invalid-challenge':
+            $errorMessage = 'Please answer the verification question and try again.';
+            break;
+
+        case 'spam-rejected':
+            $errorMessage = 'Your message could not be accepted. Please remove promotional links or contact me through another listed channel.';
             break;
 
         case 'rate-limited':
@@ -219,6 +228,12 @@ if ($error !== '') {
                                             tabindex="-1"
                                             autocomplete="off"
                                         >
+                                    </div>
+
+                                    <div class="kn-form-field">
+                                        <label for="contact_answer"><?php echo htmlspecialchars($contactQuestion, ENT_QUOTES, 'UTF-8'); ?> <span aria-hidden="true">*</span></label>
+                                        <input type="text" id="contact_answer" name="contact_answer" inputmode="numeric" autocomplete="off" maxlength="3" required aria-describedby="contact-answer-help">
+                                        <p id="contact-answer-help">A short verification question to reduce automated spam.</p>
                                     </div>
 
                                     <input type="hidden" name="form_source" value="nickolaspatino_contact_page">
