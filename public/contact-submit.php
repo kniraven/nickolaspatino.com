@@ -63,6 +63,11 @@ function redirectContactError(string $code): void
                 redirectContact('error=' . urlencode($code));
             }
         }
+        for ($index = 0; $index < 5; $index++) {
+            $key = 'reason_detail_' . $index;
+            $raw = $_POST[$key] ?? '';
+            $values[$key] = is_string($raw) ? substr($raw, 0, 500) : '';
+        }
         $_SESSION['contact_form_restore'] = $values;
         session_write_close();
     }
@@ -84,6 +89,12 @@ if (!empty($_POST['website'] ?? '')) {
 // Reject arrays and oversized input before calling string functions.
 foreach (['name', 'email', 'organization', 'reason', 'message', 'website', 'contact_token', 'contact_answer'] as $field) {
     if (isset($_POST[$field]) && !is_string($_POST[$field])) {
+        redirectContactError('missing-fields');
+    }
+}
+for ($index = 0; $index < 5; $index++) {
+    $key = 'reason_detail_' . $index;
+    if (isset($_POST[$key]) && !is_string($_POST[$key])) {
         redirectContactError('missing-fields');
     }
 }
@@ -130,7 +141,69 @@ if (!in_array($reason, $allowedReasons, true)) {
     redirectContactError('invalid-reason');
 }
 
-if (classifyContactSpam($message)) {
+// Assemble supplementary answers on the server, keeping the editable message untouched.
+// The labels come from the server's allowlist, not untrusted client text.
+$questionLabelsByReason = [
+    'Employer / hiring conversation' => [
+        'What role, position, or type of opportunity is this?',
+        'What company or team is this for?',
+        'Is this full-time, part-time, contract, freelance, remote, hybrid, or on-site?',
+        'What kind of work would I be doing?',
+        'What is the hiring timeline or preferred next step?',
+    ],
+    'Business website, artist page, portfolio, personal brand, or gaming website' => [
+        'What type of site do you need?',
+        'Are we starting from scratch or improving an existing site?',
+        'What pages or features do you need?',
+        'Do you need admin pages or a content management workflow?',
+        'Do you have a launch date, deadline, or event date?',
+    ],
+    'Game design, TTRPG content, campaign module, worldbuilding, or stat blocks' => [
+        'What kind of game content do you need?',
+        'What rules system or game is this for?',
+        'Do you need new content from scratch, cleanup of existing drafts, or both?',
+        'What should the final deliverable look like?',
+        'Do you have publisher rules, house rules, formatting standards, or examples to follow?',
+    ],
+    'Event livestreaming, livestreaming backpack coverage, or video editing' => [
+        'What do you need?',
+        'For event streaming: what is the event date, location, and expected length?',
+        'For streaming: what is the internet situation at the location?',
+        'For editing: what footage do you have and where will the finished video be posted?',
+        'What call to action should the video or stream support?',
+    ],
+    'Excel/VBA automation, recurring report, reconciliation, or reporting template' => [
+        'What kind of work is this?',
+        'How often does this process happen?',
+        'What data sources, files, systems, or exports are involved?',
+        'What manual steps should be reduced or automated?',
+        'What should the final report, reconciliation, or output show?',
+    ],
+    'Other / not sure yet' => [
+        'What are you trying to accomplish?',
+        'Are we starting from scratch or working from existing material?',
+        'What would a successful result look like?',
+        'Is there a deadline, event date, launch date, or recurring schedule?',
+    ],
+];
+$detailLines = [];
+foreach ($questionLabelsByReason[$reason] as $index => $label) {
+    $value = cleanContactMessage($_POST['reason_detail_' . $index] ?? '');
+    if ($value === '') {
+        continue;
+    }
+    if (strlen($value) > 500) {
+        redirectContactError('invalid-length');
+    }
+    $detailLines[] = $label . ' ' . $value;
+}
+$fullMessage = $message;
+if ($detailLines !== []) {
+    $fullMessage .= "\n\n---\nAdditional contact details:\nReason selected: "
+        . $reason . "\n" . implode("\n", $detailLines);
+}
+
+if (classifyContactSpam($fullMessage)) {
     redirectContactError('spam-rejected');
 }
 
@@ -139,7 +212,7 @@ $messageData = [
     'email' => $email,
     'organization' => $organization,
     'reason' => $reason,
-    'message' => $message,
+    'message' => $fullMessage,
 ];
 
 try {
@@ -147,7 +220,7 @@ try {
         $projectRoot . '/storage/contact-protection',
         $_SERVER['REMOTE_ADDR'] ?? 'unknown',
         $email,
-        $message
+        $fullMessage
     );
 } catch (Throwable $exception) {
     error_log('Contact protection unavailable; no mail sent.');

@@ -318,7 +318,13 @@ if ($error !== '') {
                 reasonSelect.value = previousReason;
             }
             const defaultMessagePlaceholder = messageField.getAttribute('placeholder');
-            const contextDelimiter = "\n\n---\nAdditional contact details:\n";
+            const restoredDetails = <?php echo json_encode([
+                $restore['reason_detail_0'] ?? '',
+                $restore['reason_detail_1'] ?? '',
+                $restore['reason_detail_2'] ?? '',
+                $restore['reason_detail_3'] ?? '',
+                $restore['reason_detail_4'] ?? '',
+            ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 
             const questionSets = {
                 'Employer / hiring conversation': {
@@ -627,32 +633,15 @@ if ($error !== '') {
                 messageField.setAttribute('placeholder', questionSet.placeholder);
 
                 questionSet.questions.forEach(function (question, index) {
-                    questionsFields.appendChild(createField(question, index));
+                    const field = createField(question, index);
+                    const input = field.querySelector('input, select, textarea');
+                    if (input && previousReason === selectedReason && restoredDetails[index] !== undefined) {
+                        input.value = restoredDetails[index];
+                    }
+                    questionsFields.appendChild(field);
                 });
 
                 questionsCard.hidden = false;
-            }
-
-            function collectQuestionAnswers() {
-                const answers = [];
-                const selectedReason = reasonSelect.value;
-                const fields = questionsFields.querySelectorAll('input, select, textarea');
-
-                fields.forEach(function (field) {
-                    const value = field.value.trim();
-
-                    if (value === '') {
-                        return;
-                    }
-
-                    answers.push(field.dataset.questionLabel + ' ' + value);
-                });
-
-                if (answers.length === 0) {
-                    return '';
-                }
-
-                return 'Reason selected: ' + selectedReason + "\n" + answers.join("\n");
             }
 
             reasonSelect.addEventListener('change', renderQuestions);
@@ -664,28 +653,7 @@ if ($error !== '') {
                 errorNotice.focus({ preventScroll: true });
             }
 
-            form.addEventListener('submit', function (event) {
-                const baseMessage = messageField.value.split(contextDelimiter)[0].trim();
-                const questionAnswers = collectQuestionAnswers();
 
-                if (questionAnswers === '') {
-                    messageField.value = baseMessage;
-                    return;
-                }
-
-                const combinedMessage = baseMessage + contextDelimiter + questionAnswers;
-                const maxLength = parseInt(messageField.getAttribute('maxlength'), 10) || 4000;
-
-                if (combinedMessage.length > maxLength) {
-                    event.preventDefault();
-                    messageField.setCustomValidity('Please shorten your main message or some of the extra contact details before sending.');
-                    messageField.reportValidity();
-                    messageField.setCustomValidity('');
-                    return;
-                }
-
-                messageField.value = combinedMessage;
-            });
         })();
     </script>
 </body>

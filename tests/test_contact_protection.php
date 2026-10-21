@@ -85,7 +85,7 @@ try {
     file_put_contents($fixture . '/src/graph_mailer.php', <<<'STUB'
 <?php
 function getGraphAccessToken(array $config): string { file_put_contents(dirname(__DIR__) . '/mail.txt', "token\n", FILE_APPEND); return 'fixture'; }
-function sendGraphContactEmail(array $config, array $message, ?string $token = null): void { file_put_contents(dirname(__DIR__) . '/mail.txt', "send\n", FILE_APPEND); }
+function sendGraphContactEmail(array $config, array $message, ?string $token = null): void { file_put_contents(dirname(__DIR__) . '/mail.txt', "send\n", FILE_APPEND); file_put_contents(dirname(__DIR__) . '/mail-body.txt', $message['message']); }
 function sendGraphSenderConfirmationEmail(array $config, array $message, ?string $token = null): void { throw new RuntimeException('Confirmation must not run.'); }
 STUB
     );
@@ -100,6 +100,7 @@ require __DIR__ . '/config/session.php';
 require __DIR__ . '/src/contact_protection.php';
 $_POST = ['name' => 'Fixture', 'email' => 'fixture@example.com', 'reason' => 'Other / not sure yet', 'message' => 'Legitimate fixture inquiry', 'website' => '', 'contact_token' => issueContactToken(time() - 4)];
 $_POST['contact_answer'] = (string) (function () { $q = issueContactQuestion($_POST['contact_token']); preg_match('/(\d+) \+ (\d+)/', $q, $m); return (int)$m[1] + (int)$m[2]; })();
+if ($scenario === 'valid') { $_POST['reason_detail_0'] = 'Initial requirements'; }
 if ($scenario === 'bad-challenge') { $_POST['contact_answer'] = '999'; }
 if ($scenario === 'spam') { $_POST['message'] = 'Earn $50,000 per month https://scam.example/test'; }
 if ($scenario === 'missing-token') { unset($_POST['contact_token']); }
@@ -119,6 +120,10 @@ RUNNER
     }
     runPhp($fixture . '/runner.php', ['valid']);
     check(file_get_contents($fixture . '/mail.txt') === "token\nsend\n", 'Valid handler did not send exactly one owner notification.');
+    $mailBody = file_get_contents($fixture . '/mail-body.txt');
+    check(strpos($mailBody, 'Legitimate fixture inquiry') !== false, 'Visitor message missing from owner email.');
+    check(strpos($mailBody, 'What are you trying to accomplish? Initial requirements') !== false, 'Follow-up answers missing from owner email.');
+    check(substr_count($mailBody, 'Additional contact details:') === 1, 'Supplementary details duplicated in owner email.');
     runPhp($fixture . '/runner.php', ['valid']);
     runPhp($fixture . '/runner.php', ['unavailable']);
     check(file_get_contents($fixture . '/mail.txt') === "token\nsend\n", 'Duplicate or failed protection reached mail.');
@@ -132,7 +137,8 @@ RUNNER
     $html = runPhp($fixture . '/page.php');
     check(preg_match('/name="contact_token" value="[a-f0-9]{64}"/', $html) === 1, 'Contact page did not render a token.');
     check(strpos($html, 'name="contact_answer"') !== false, 'Contact challenge not rendered.');
-    check(strpos($html, 'Additional contact details:') !== false, 'Follow-up questions were lost.');
+    check(strpos($html, "input.name = 'reason_detail_' + index") !== false, 'Follow-up question fields are missing.');
+    check(strpos($html, 'restoredDetails[index]') !== false, 'Individual follow-up answers are not restored.');
 
     // Concurrent workers cannot each consume the same remaining capacity.
     $worker = $fixture . '/worker.php';
