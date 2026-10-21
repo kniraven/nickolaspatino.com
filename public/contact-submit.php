@@ -45,6 +45,27 @@ function redirectContact(string $queryString = ''): void
 
 function redirectContactError(string $code): void
 {
+    // Only keep data for correctable user errors, never for rejected spam.
+    $recoverable = ['invalid-challenge', 'invalid-token', 'missing-fields',
+        'invalid-length', 'invalid-email', 'invalid-reason', 'send-failed'];
+    if (in_array($code, $recoverable, true) && isset($_POST) && is_array($_POST)) {
+        $limits = ['name' => 120, 'email' => 160, 'organization' => 160,
+            'reason' => 160, 'message' => 4000];
+        $values = [];
+        foreach ($limits as $key => $limit) {
+            $raw = $_POST[$key] ?? '';
+            $values[$key] = is_string($raw) ? substr($raw, 0, $limit) : '';
+        }
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            // session.php has already configured the session for POST requests;
+            // the handler may have released its lock after consuming the token.
+            if (session_start() !== true) {
+                redirectContact('error=' . urlencode($code));
+            }
+        }
+        $_SESSION['contact_form_restore'] = $values;
+        session_write_close();
+    }
     redirectContact('error=' . urlencode($code));
 }
 

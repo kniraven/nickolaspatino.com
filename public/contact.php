@@ -20,7 +20,16 @@ $pageTitle = "Nickolas Patino | Contact";
 $pageDescription = "Contact Nickolas Patino for employment opportunities, local business websites, artist pages, portfolios, game design content, event livestreaming, video editing, Excel/VBA automation, reporting, and reconciliation work.";
 
 $sent = isset($_GET['sent']) && $_GET['sent'] === '1';
-$error = $_GET['error'] ?? '';
+$error = is_string($_GET['error'] ?? null) ? $_GET['error'] : '';
+$restore = $_SESSION['contact_form_restore'] ?? [];
+unset($_SESSION['contact_form_restore']);
+if (!is_array($restore) || $sent || $error === '') {
+    $restore = [];
+}
+function oldContactValue(array $restore, string $key): string
+{
+    return htmlspecialchars(is_string($restore[$key] ?? null) ? $restore[$key] : '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
 
 $errorMessage = '';
 
@@ -31,7 +40,7 @@ if ($error !== '') {
             break;
 
         case 'invalid-challenge':
-            $errorMessage = 'Please answer the verification question and try again.';
+            $errorMessage = 'Incorrect verification answer. Your message has been preserved; please answer the new question and try again.';
             break;
 
         case 'spam-rejected':
@@ -134,7 +143,7 @@ if ($error !== '') {
                                 </div>
 
                                 <?php if ($errorMessage !== ''): ?>
-                                    <div class="kn-card kn-stack">
+                                    <div class="kn-card kn-stack" role="alert" id="contact-form-error" tabindex="-1" aria-live="assertive">
                                         <h3>Message Not Sent</h3>
 
                                         <p>
@@ -154,6 +163,7 @@ if ($error !== '') {
                                                 name="name"
                                                 autocomplete="name"
                                                 maxlength="120"
+                                                value="<?php echo oldContactValue($restore, 'name'); ?>"
                                                 required
                                             >
                                         </div>
@@ -166,6 +176,7 @@ if ($error !== '') {
                                                 name="email"
                                                 autocomplete="email"
                                                 maxlength="160"
+                                                value="<?php echo oldContactValue($restore, 'email'); ?>"
                                                 required
                                             >
                                         </div>
@@ -179,13 +190,14 @@ if ($error !== '') {
                                             name="organization"
                                             autocomplete="organization"
                                             maxlength="160"
+                                            value="<?php echo oldContactValue($restore, 'organization'); ?>"
                                             placeholder="Optional"
                                         >
                                     </div>
 
                                     <div class="kn-form-field">
                                         <label for="reason">Reason for Contact</label>
-                                        <select id="reason" name="reason" required>
+                                        <select id="reason" name="reason" required data-restore-reason="<?php echo oldContactValue($restore, 'reason'); ?>">
                                             <option value="">Select one</option>
                                             <option value="Employer / hiring conversation">Employer / hiring conversation</option>
                                             <option value="Business website, artist page, portfolio, personal brand, or gaming website">Business website, artist page, portfolio, personal brand, or gaming website</option>
@@ -216,7 +228,7 @@ if ($error !== '') {
                                             maxlength="4000"
                                             required
                                             placeholder="Tell me the main reason you are reaching out. Employers can include the role, team, company, and next step. Project inquiries can include the goal, timeline, links, files, examples, or current problem."
-                                        ></textarea>
+                                        ><?php echo oldContactValue($restore, 'message'); ?></textarea>
                                     </div>
 
                                     <div class="kn-visually-hidden" aria-hidden="true">
@@ -301,6 +313,10 @@ if ($error !== '') {
                 return;
             }
 
+            const previousReason = reasonSelect.dataset.restoreReason || '';
+            if (previousReason && Array.from(reasonSelect.options).some(option => option.value === previousReason)) {
+                reasonSelect.value = previousReason;
+            }
             const defaultMessagePlaceholder = messageField.getAttribute('placeholder');
             const contextDelimiter = "\n\n---\nAdditional contact details:\n";
 
@@ -640,6 +656,13 @@ if ($error !== '') {
             }
 
             reasonSelect.addEventListener('change', renderQuestions);
+            if (previousReason) {
+                renderQuestions();
+            }
+            const errorNotice = document.getElementById('contact-form-error');
+            if (errorNotice) {
+                errorNotice.focus({ preventScroll: true });
+            }
 
             form.addEventListener('submit', function (event) {
                 const baseMessage = messageField.value.split(contextDelimiter)[0].trim();
